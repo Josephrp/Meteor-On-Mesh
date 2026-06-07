@@ -1,0 +1,152 @@
+ERC report (2026-06-03T21:36:43, Encoding UTF8)
+Report includes: Errors, Warnings, Exclusions
+
+***** Sheet /
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(4650 mils, 3400 mils): Global Label 'UART0_RX'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(4650 mils, 3550 mils): Global Label 'UART0_TX'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(4650 mils, 4000 mils): Global Label 'I2C_SDA'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(4650 mils, 4150 mils): Global Label 'I2C_SCL'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(4650 mils, 4950 mils): Global Label 'ADC_LIGHT'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(6500 mils, 4300 mils): Global Label 'TFT_TOUCH_IRQ'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(9000 mils, 2850 mils): Global Label 'MCP_GPB6'
+[lib_symbol_mismatch]: Symbol 'Seeed-SD' doesn't match copy in library 'libdb'
+    ; warning (excluded)
+    @(4900 mils, 1450 mils): Symbol J18 [Seeed-SD]
+
+***** Sheet /Breakout_GPIO/
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 2700 mils): Symbol J1 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 2800 mils): Symbol J1 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 3300 mils): Symbol J2 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 3400 mils): Symbol J2 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 3950 mils): Symbol J26 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 4050 mils): Symbol J26 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 4550 mils): Symbol J27 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 4650 mils): Symbol J27 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 2700 mils): Symbol J1 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 2800 mils): Symbol J1 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 3300 mils): Symbol J2 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 3400 mils): Symbol J2 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 3950 mils): Symbol J26 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 4050 mils): Symbol J26 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 4550 mils): Symbol J27 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 4650 mils): Symbol J27 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 5150 mils): Symbol J28 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 5250 mils): Symbol J28 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 5800 mils): Symbol J24 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 5900 mils): Symbol J24 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 2100 mils): Symbol J25 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 2200 mils): Symbol J25 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 5800 mils): Symbol J24 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 5900 mils): Symbol J24 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 2100 mils): Symbol J25 Pin 1 [1, Passive, Inverted clock]
+    @(5950 mils, 2250 mils): Symbol #FLG02 Pin 1 [Power output, Line]
+[pin_to_pin]: Conflict problem between pins
+    ; warning (excluded)
+    @(2050 mils, 2200 mils): Symbol J25 Pin 2 [2, Passive, Inverted]
+    @(1800 mils, 7150 mils): Symbol #FLG04 Pin 1 [Power output, Line]
+
+***** Sheet /Power/
+
+***** Sheet /Xiao_Core/
+
+***** Sheet /Sensors/
+
+***** Sheet /LoRa/
+
+***** Sheet /Periferals/
+
+ ** ERC messages: 34  Errors 0  Warnings 34
+
+ ** Ignored checks:
+    - Global label only appears once in the schematic
+    - Four connection points are joined together
+    - SPICE model issue
+    - Assigned footprint doesn't match footprint filters
