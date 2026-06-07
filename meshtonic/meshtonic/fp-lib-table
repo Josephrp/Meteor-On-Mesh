@@ -16,6 +16,7 @@
 	(lib (name "Misc") (type "KiCad") (uri "${KIPRJMOD}/libs/Misc.pretty") (options "") (descr ""))
 	(lib (name "New_XIAO_Series_Footprints") (type "KiCad") (uri "${KIPRJMOD}/libs/New_XIAO_Series_Footprints.pretty") (options "") (descr ""))
 	(lib (name "Seeed_Xiao") (type "KiCad") (uri "${KIPRJMOD}/libs/Seeed_Xiao.pretty") (options "") (descr ""))
+	(lib (name "Graphics") (type "KiCad") (uri "${KIPRJMOD}/libs/Graphics.pretty") (options "") (descr ""))
 	(lib (name "Wio") (type "KiCad") (uri "${KIPRJMOD}/libs/Wio.pretty") (options "") (descr ""))
 	(lib (name "Module") (type "KiCad") (uri "${KIPRJMOD}/libs/Module.pretty") (options "") (descr ""))
 )
