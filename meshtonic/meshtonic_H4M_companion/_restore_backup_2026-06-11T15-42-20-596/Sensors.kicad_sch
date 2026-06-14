@@ -1,0 +1,4879 @@
+(kicad_sch
+	(version 20260306)
+	(generator "eeschema")
+	(generator_version "10.0")
+	(uuid "903971fb-fb3d-42fb-89d5-c2177816937a")
+	(paper "A4")
+	(lib_symbols
+		(symbol "Connector_Generic:Conn_01x06"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J"
+				(at 0 7.62 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x06"
+				(at 0 -10.16 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "Conn_01x06_1_1"
+				(rectangle
+					(start -1.27 6.35)
+					(end 1.27 -8.89)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -1.27 5.207)
+					(end 0 4.953)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 2.667)
+					(end 0 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -4.953)
+					(end 0 -5.207)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -7.493)
+					(end 0 -7.747)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(pin passive line
+					(at -5.08 5.08 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 2.54 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -5.08 0)
+					(length 3.81)
+					(name "Pin_5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -7.62 0)
+					(length 3.81)
+					(name "Pin_6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Interface_Expansion:TCA9548APWR"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "U"
+				(at -7.62 21.59 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "TCA9548APWR"
+				(at 1.016 21.59 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm"
+				(at 0 -25.4 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "http://www.ti.com/lit/ds/symlink/tca9548a.pdf"
+				(at 1.27 6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Low voltage 8-channel I2C switch with reset, TSSOP-24"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "Low voltage 8-channel I2C switch with reset"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "TSSOP*4.4x7.8mm*P0.65mm*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "TCA9548APWR_0_1"
+				(rectangle
+					(start -7.62 20.32)
+					(end 7.62 -22.86)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "TCA9548APWR_1_1"
+				(pin input line
+					(at -10.16 -12.7 0)
+					(length 2.54)
+					(name "A0"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -10.16 -10.16 0)
+					(length 2.54)
+					(name "A1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -10.16 5.08 0)
+					(length 2.54)
+					(name "~{RESET}"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 10.16 15.24 180)
+					(length 2.54)
+					(name "SD0"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 17.78 180)
+					(length 2.54)
+					(name "SC0"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 10.16 10.16 180)
+					(length 2.54)
+					(name "SD1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 12.7 180)
+					(length 2.54)
+					(name "SC1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 10.16 5.08 180)
+					(length 2.54)
+					(name "SD2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 7.62 180)
+					(length 2.54)
+					(name "SC2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "9"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 10.16 0 180)
+					(length 2.54)
+					(name "SD3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "10"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 2.54 180)
+					(length 2.54)
+					(name "SC3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "11"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -25.4 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "12"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 10.16 -5.08 180)
+					(length 2.54)
+					(name "SD4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "13"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 -2.54 180)
+					(length 2.54)
+					(name "SC4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "14"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 10.16 -10.16 180)
+					(length 2.54)
+					(name "SD5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "15"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 -7.62 180)
+					(length 2.54)
+					(name "SC5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "16"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 10.16 -15.24 180)
+					(length 2.54)
+					(name "SD6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "17"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 -12.7 180)
+					(length 2.54)
+					(name "SC6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "18"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at 10.16 -20.32 180)
+					(length 2.54)
+					(name "SD7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "19"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 10.16 -17.78 180)
+					(length 2.54)
+					(name "SC7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "20"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -10.16 -7.62 0)
+					(length 2.54)
+					(name "A2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "21"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at -10.16 17.78 0)
+					(length 2.54)
+					(name "SCL"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "22"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin bidirectional line
+					(at -10.16 15.24 0)
+					(length 2.54)
+					(name "SDA"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "23"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 22.86 270)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "24"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "OPL_Capacitor:CERAMIC-100NF-50V-10%-X7R_0805_"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "C"
+				(at -3.81 1.27 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.143 1.143)
+					)
+					(justify left bottom)
+				)
+			)
+			(property "Value" "CERAMIC-100NF-50V-10%-X7R_0805_"
+				(at -3.81 -2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.143 1.143)
+					)
+					(justify left bottom)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "MPN" "CC0805KRX7R9BB104"
+				(at 0.762 3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 0.508 0.508)
+					)
+				)
+			)
+			(property "SKU" "302010165"
+				(at 0.762 3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 0.508 0.508)
+					)
+				)
+			)
+			(property "ki_locked" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "*C0805*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "CERAMIC-100NF-50V-10%-X7R_0805__1_0"
+				(polyline
+					(pts
+						(xy -1.27 0) (xy -0.635 0)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.635 0) (xy -0.635 1.016)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.635 -1.016) (xy -0.635 0)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.635 1.016) (xy 0.635 0)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.635 0) (xy 0.635 -1.016)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.635 0) (xy 1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "CERAMIC-100NF-50V-10%-X7R_0805__1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "PCM_SparkFun-Resistor:0_0603"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "R"
+				(at 0 -2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "0"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+				(at 0 -4.572 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://industrial.panasonic.com/cdbs/www-data/pdf/RDN0000/AOA0000C313.pdf"
+				(at 0 -8.89 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Resistor"
+				(at 0 -11.43 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "PROD_ID" "RES-08609"
+				(at 0 -6.858 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "SparkFun R res resistor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "R_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "0_0603_0_1"
+				(polyline
+					(pts
+						(xy -1.524 0) (xy -1.143 1.016) (xy -0.762 0) (xy -0.381 -1.016) (xy 0 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0.381 1.016) (xy 0.762 0) (xy 1.143 -1.016) (xy 1.524 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "0_0603_1_1"
+				(pin passive line
+					(at -2.54 0 0)
+					(length 1.016)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 0 180)
+					(length 1.016)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "PCM_SparkFun-Resistor:10k_0603"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "R"
+				(at 0 -2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "10k"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+				(at 0 -4.318 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+				(at 0 -8.89 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Resistor"
+				(at 0 -11.43 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "PROD_ID" "RES-00824"
+				(at 0 -6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "SparkFun R res resistor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "R_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "10k_0603_0_1"
+				(polyline
+					(pts
+						(xy -1.524 0) (xy -1.143 1.016) (xy -0.762 0) (xy -0.381 -1.016) (xy 0 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0.381 1.016) (xy 0.762 0) (xy 1.143 -1.016) (xy 1.524 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "10k_0603_1_1"
+				(pin passive line
+					(at -2.54 0 0)
+					(length 1.016)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 0 180)
+					(length 1.016)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(text "BMI160 IMU\nTCA Ch3	Addr 0x68/0x69\nAlign axes to board silkscreen"
+		(exclude_from_sim no)
+		(at 164.084 118.872 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "09c3edea-671c-4643-8255-fd44e28a2023")
+	)
+	(text "AS5600 Magnetic Encoder\nMain I2C	Fixed Addr 0x36\nNOT AS5045B!"
+		(exclude_from_sim no)
+		(at 164.592 148.844 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "19881109-565e-44fb-a2ee-50dd6fb3d103")
+	)
+	(text "SHT31-DIS Humidity\nTCA Ch2	Addr 0x44/0x45\nNo conformal coat over sensor"
+		(exclude_from_sim no)
+		(at 162.56 95.504 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "24580e55-d141-49a6-bd3e-9daa3ff47e88")
+	)
+	(text "BMM150 Magnetometer\nTCA Ch0	Addr 0x10/0x11 \nKEEP AWAY FROM MAGNETS"
+		(exclude_from_sim no)
+		(at 163.322 40.64 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "685fa311-2051-4f16-9c52-e826e5cbfdf1")
+	)
+	(text "MESHTONIC"
+		(exclude_from_sim no)
+		(at 177.292 166.878 0)
+		(effects
+			(font
+				(size 12.7 12.7)
+			)
+			(justify left top)
+		)
+		(uuid "b03a97c7-40a4-40d2-8a82-d17cc07db3fd")
+	)
+	(text "BMP280 Barometer\nTCA Ch1	Addr 0x76/0x77\nPressure port must vent"
+		(exclude_from_sim no)
+		(at 162.052 68.326 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "cf20efb7-c5d2-4f49-995c-04da03aba879")
+	)
+	(junction
+		(at 139.7 106.68)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1f414ce2-5b10-41b2-87da-2e80be9bf42b")
+	)
+	(junction
+		(at 139.7 135.89)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "4ee6511c-3af9-4f29-bd68-ab33bee29ec3")
+	)
+	(junction
+		(at 116.84 109.22)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "55b71094-37c4-4c67-981b-b008f2ef615a")
+	)
+	(junction
+		(at 116.84 30.48)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "6f326bcd-8283-4092-b71d-237f465f03b2")
+	)
+	(junction
+		(at 139.7 27.94)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "758c9386-76a0-4f28-818e-ac8112a33b13")
+	)
+	(junction
+		(at 139.7 55.88)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "94381f5e-894b-4815-b015-7a01f0362187")
+	)
+	(junction
+		(at 116.84 85.09)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "94a3bbe7-40e0-4e19-a52b-54e6a89c3e6f")
+	)
+	(junction
+		(at 116.84 138.43)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a6ae3a76-a001-48cb-9ecf-a001271d904c")
+	)
+	(junction
+		(at 116.84 58.42)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "bb40f37e-dc35-4074-8137-f6e06ba17c7f")
+	)
+	(junction
+		(at 139.7 82.55)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "c452b655-100f-4e1e-a277-3cfdf26eb9df")
+	)
+	(junction
+		(at 54.61 77.47)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d2eea455-b2be-45e7-a208-b2f6d3b3d353")
+	)
+	(no_connect
+		(at 142.24 148.59)
+		(uuid "0c5dc966-d52d-487a-9e9f-5a383619c818")
+	)
+	(no_connect
+		(at 64.77 110.49)
+		(uuid "21b3e218-f248-4fc7-a1c9-bb5fe5ddb8a2")
+	)
+	(no_connect
+		(at 64.77 120.65)
+		(uuid "48ce732f-2b70-4328-bb61-7535f22d02ee")
+	)
+	(no_connect
+		(at 64.77 123.19)
+		(uuid "53803e85-a8ef-4c38-82d8-c150f7b71f99")
+	)
+	(no_connect
+		(at 142.24 146.05)
+		(uuid "579df6ee-8bca-4a20-a137-39f728b62f03")
+	)
+	(no_connect
+		(at 64.77 105.41)
+		(uuid "6646ad54-6027-4b81-9ef1-9ddc818cfac8")
+	)
+	(no_connect
+		(at 64.77 113.03)
+		(uuid "8c3edefa-6b24-49c3-ad93-21cd5ded4457")
+	)
+	(no_connect
+		(at 64.77 118.11)
+		(uuid "a85b747f-20d4-4668-b724-3112dcb2c6b9")
+	)
+	(no_connect
+		(at 64.77 115.57)
+		(uuid "ad463ff2-b9f1-4048-bf7a-852c212f9d34")
+	)
+	(no_connect
+		(at 64.77 107.95)
+		(uuid "fb3b3182-485a-41d8-8db2-e95a1ebdab08")
+	)
+	(wire
+		(pts
+			(xy 116.84 53.34) (xy 116.84 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "12bdeb44-3f30-4c5f-991f-daba0b4f10c5")
+	)
+	(wire
+		(pts
+			(xy 133.35 82.55) (xy 139.7 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "133885c7-04bb-45c5-8b3d-0c1b12be9187")
+	)
+	(wire
+		(pts
+			(xy 139.7 78.74) (xy 139.7 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "18ec199b-e23e-430e-bed5-0a8f0e54ce41")
+	)
+	(wire
+		(pts
+			(xy 116.84 109.22) (xy 111.76 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2f5ac407-8ffd-4c29-b175-0f0fc252ca05")
+	)
+	(wire
+		(pts
+			(xy 116.84 109.22) (xy 142.24 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "33b6892e-3601-41b0-a6e1-7baa28c8e7da")
+	)
+	(wire
+		(pts
+			(xy 116.84 58.42) (xy 142.24 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "487eae12-b54a-4198-b9c1-ab536f5900f6")
+	)
+	(wire
+		(pts
+			(xy 116.84 30.48) (xy 111.76 30.48)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4c43ca0e-3de4-4cd6-b816-8a3a93c3ff3b")
+	)
+	(wire
+		(pts
+			(xy 133.35 27.94) (xy 139.7 27.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4f26de1b-2850-44b3-8d71-78e25864111c")
+	)
+	(wire
+		(pts
+			(xy 116.84 58.42) (xy 111.76 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "551955f4-ee3c-4718-b71b-3b59d71bdc35")
+	)
+	(wire
+		(pts
+			(xy 139.7 55.88) (xy 142.24 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5655ccef-64b6-4f04-a14f-ddec91a1cb4b")
+	)
+	(wire
+		(pts
+			(xy 54.61 77.47) (xy 54.61 80.01)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5b07abf1-ea6f-4501-b5f8-3dd587b5a066")
+	)
+	(wire
+		(pts
+			(xy 116.84 25.4) (xy 116.84 30.48)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "638dfdfe-8d96-4c13-b7d2-49c829b358e7")
+	)
+	(wire
+		(pts
+			(xy 116.84 30.48) (xy 142.24 30.48)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6556c1a2-708f-4839-8ae7-a4564f47c1f6")
+	)
+	(wire
+		(pts
+			(xy 139.7 82.55) (xy 142.24 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "695fe32c-46d6-43f9-ae60-99e24e9f6061")
+	)
+	(wire
+		(pts
+			(xy 116.84 104.14) (xy 116.84 109.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6a6b1fb6-3d3a-4f46-aab2-f9b94ce1b785")
+	)
+	(wire
+		(pts
+			(xy 54.61 74.93) (xy 54.61 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "72dcc587-59f8-41b0-83f5-81061f75e0f2")
+	)
+	(wire
+		(pts
+			(xy 116.84 85.09) (xy 111.76 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7bdc88cb-e745-4734-97f9-2138cfa7045d")
+	)
+	(wire
+		(pts
+			(xy 133.35 106.68) (xy 139.7 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7e112ec2-4dc5-4ae9-9818-185da530a2a7")
+	)
+	(wire
+		(pts
+			(xy 116.84 85.09) (xy 142.24 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7ee14543-e829-44e2-b6a9-6c5a987c7161")
+	)
+	(wire
+		(pts
+			(xy 116.84 80.01) (xy 116.84 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "82b44cca-c979-4025-ba26-73305dd4b16d")
+	)
+	(wire
+		(pts
+			(xy 116.84 138.43) (xy 142.24 138.43)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "91d3d778-5db4-4a47-a9dc-91831d84894d")
+	)
+	(wire
+		(pts
+			(xy 109.22 25.4) (xy 111.76 25.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "92b65946-7204-4429-94ed-9d350f602bb1")
+	)
+	(wire
+		(pts
+			(xy 116.84 133.35) (xy 116.84 138.43)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a767c680-3ec7-4705-afb2-6ad4b4d259d5")
+	)
+	(wire
+		(pts
+			(xy 60.96 77.47) (xy 54.61 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ac4a201d-d77b-4f48-a785-da4303f180c1")
+	)
+	(wire
+		(pts
+			(xy 133.35 135.89) (xy 139.7 135.89)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ac79fc0b-c444-46bc-97fe-b5eb23b5c308")
+	)
+	(wire
+		(pts
+			(xy 139.7 135.89) (xy 142.24 135.89)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b15e4d29-7b7b-4759-bec5-6694a5423ee2")
+	)
+	(wire
+		(pts
+			(xy 139.7 106.68) (xy 142.24 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b2057c23-5046-4cb3-838b-542866ea5dde")
+	)
+	(wire
+		(pts
+			(xy 139.7 52.07) (xy 139.7 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b41a1d98-f933-4241-82e8-b3f3a62c067e")
+	)
+	(wire
+		(pts
+			(xy 139.7 27.94) (xy 142.24 27.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b9bb40b6-62cc-4600-af8d-91c9a880c11e")
+	)
+	(wire
+		(pts
+			(xy 133.35 55.88) (xy 139.7 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bda8afc1-b9e1-41e6-8c13-9bb7e38ee67a")
+	)
+	(wire
+		(pts
+			(xy 116.84 138.43) (xy 111.76 138.43)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c94cc083-eda3-4397-be18-fd0aa535475a")
+	)
+	(wire
+		(pts
+			(xy 139.7 102.87) (xy 139.7 106.68)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cb52acb7-5869-40a7-8f73-bcc507682a56")
+	)
+	(wire
+		(pts
+			(xy 139.7 24.13) (xy 139.7 27.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cef361cb-7b27-44e9-971c-a4a5e001944f")
+	)
+	(wire
+		(pts
+			(xy 40.64 97.79) (xy 44.45 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e1224fc1-cea8-47a4-afe5-fc5c16033874")
+	)
+	(wire
+		(pts
+			(xy 33.02 97.79) (xy 35.56 97.79)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eed49ce8-d7ee-4f03-80d6-72a544d9880c")
+	)
+	(wire
+		(pts
+			(xy 139.7 132.08) (xy 139.7 135.89)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f413daf7-3c29-49b0-85e4-b6f9b9b6cb8b")
+	)
+	(global_label "I2C_SCL"
+		(shape input)
+		(at 111.76 138.43 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "04fd5b7b-6058-4ce2-8846-8149c94b318a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 101.2153 138.43 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS0_SDA"
+		(shape input)
+		(at 111.76 30.48 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "05ff6bf5-91d0-40dd-bbb7-0a8d16e2e866")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 98.1311 30.48 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape input)
+		(at 54.61 128.27 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "06395d6e-cc9b-4964-bcec-b29dbc4356d1")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 54.61 135.1257 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape input)
+		(at 142.24 63.5 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "08143751-dd50-4b48-b995-78824158b061")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 135.3843 63.5 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS3_SDA"
+		(shape input)
+		(at 111.76 109.22 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "0d7e35dc-4186-4241-b3e4-a1cf058ffc81")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 98.1311 109.22 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS0_SCL"
+		(shape input)
+		(at 133.35 27.94 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "11fe1705-e2f2-43b9-b0f3-6e0f74a2cb8a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.7816 27.94 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS2_SCL"
+		(shape input)
+		(at 64.77 95.25 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "13c28645-c420-495f-b9a8-368b60e8374e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 78.3384 95.25 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "SENS1_SDA"
+		(shape input)
+		(at 111.76 58.42 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "261ee213-0f7e-4da2-91f0-e3c4e3db10d6")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 98.1311 58.42 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS3_SCL"
+		(shape input)
+		(at 64.77 100.33 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2c791420-60c1-49f2-99ea-bf6d28eca271")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 78.3384 100.33 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "I2C_SCL"
+		(shape input)
+		(at 44.45 85.09 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "2ea0cf46-df58-4997-923a-0cc1699ce798")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 33.9053 85.09 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 142.24 111.76 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "3569fb35-90f7-4bc1-b071-f7d4c6782cc4")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 135.7472 111.76 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 54.61 74.93 90)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "39051d5b-f355-474b-8359-26979b61d559")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 54.61 68.4372 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 111.76 80.01 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "3bc410f3-f006-47c1-a660-4f96976f78a6")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 105.2672 80.01 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape input)
+		(at 142.24 143.51 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "3d92fe06-d76f-4653-831f-d3cdcfb9205d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 135.3843 143.51 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 134.62 24.13 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "41b5a1e0-d4d3-41e2-a1d5-9becf89c591c")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 128.1272 24.13 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS1_SDA"
+		(shape input)
+		(at 64.77 92.71 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "45774207-fc0b-4666-948a-ac9bb51cbfd0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 78.3989 92.71 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "SENS3_INT"
+		(shape input)
+		(at 142.24 116.84 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "459db793-828c-464c-8fb7-482101d04a7d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 129.2763 116.84 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape input)
+		(at 44.45 115.57 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4cf2715e-fcab-43f4-9443-6e78af628bdd")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 37.5943 115.57 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 142.24 140.97 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4e087413-8bf3-4ce7-9d5b-ca4080d0b7aa")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 135.7472 140.97 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 142.24 87.63 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "562fac56-06d5-41a4-8fc6-b17812c40933")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 135.7472 87.63 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS0_SDA"
+		(shape input)
+		(at 64.77 87.63 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5bf0e05d-7e07-478c-a5f0-3404c5d4f173")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 78.3989 87.63 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "SENS2_SDA"
+		(shape input)
+		(at 111.76 85.09 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "69bf9321-adba-4afc-9db1-59dc0233d885")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 98.1311 85.09 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 134.62 102.87 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "6fa495c9-e857-4e5f-a319-aecb41698e83")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 128.1272 102.87 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 134.62 78.74 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "73839cf7-73ad-4fa7-8b68-27edaa90b878")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 128.1272 78.74 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS3_SCL"
+		(shape input)
+		(at 133.35 106.68 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "74e11683-128d-463b-8c57-a012a0af9f27")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.7816 106.68 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS2_SCL"
+		(shape input)
+		(at 133.35 82.55 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "76b9922f-c998-4b23-a551-1a655745c05f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.7816 82.55 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 111.76 133.35 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "7f7bb579-2a0d-4564-97d8-8c09960f9e01")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 105.2672 133.35 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape input)
+		(at 68.58 77.47 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7f8ff0ab-4596-4015-82b7-5289196ffa14")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 75.4357 77.47 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 142.24 33.02 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "808fd565-4ce6-4217-a779-e6a79a8a1582")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 135.7472 33.02 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS0_INT"
+		(shape input)
+		(at 142.24 38.1 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "8648bca0-0801-466d-87c3-f0f9d2cf6f59")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 129.2763 38.1 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS2_INT"
+		(shape input)
+		(at 142.24 92.71 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "86ff6aba-1f42-4ca9-9cb1-ecbdbd5822bc")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 129.2763 92.71 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 134.62 52.07 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "88d8bfcb-6287-413e-a38b-10c7f3be7e9b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 128.1272 52.07 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 33.02 97.79 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "8f769a13-d811-41d5-be9b-c4c04c5c2638")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 26.5272 97.79 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS1_SCL"
+		(shape input)
+		(at 64.77 90.17 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "90394ca8-fc9e-458a-9bb8-a13acd86cbd2")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 78.3384 90.17 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "I2C_SDA"
+		(shape input)
+		(at 44.45 87.63 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9050ca71-a133-407a-aeff-98d687a2f998")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 33.8448 87.63 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape input)
+		(at 44.45 113.03 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "92f7afd9-6c6b-44f6-a400-0433641e6b0f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 37.5943 113.03 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 111.76 53.34 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9476999c-f607-41e1-bc7c-7b40e3c996d1")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 105.2672 53.34 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "I2C_SCL"
+		(shape input)
+		(at 133.35 135.89 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9862a5a7-b8c3-4046-9ba3-2ae4e99f4d29")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 122.8053 135.89 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape input)
+		(at 44.45 110.49 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9cb23f23-6fa5-4328-9d7f-56139c3fc46e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 37.5943 110.49 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS1_SCL"
+		(shape input)
+		(at 133.35 55.88 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9de29824-39ae-4e20-937b-a359a5c5c8e9")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.7816 55.88 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 134.62 132.08 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "a8da95d1-dc41-47aa-bbd8-69a323a77f97")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 128.1272 132.08 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 109.22 25.4 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ae8d8fe7-cd2d-4aa7-9da4-5eea5da33413")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 102.7272 25.4 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS0_SCL"
+		(shape input)
+		(at 64.77 85.09 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b3788085-98e5-4d98-8a1c-f0f490e9f14e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 78.3384 85.09 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "SENS1_ADDR"
+		(shape input)
+		(at 142.24 68.58 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "baf49b86-92ff-46d3-98bc-ca54a8d9139d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 127.2806 68.58 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape input)
+		(at 142.24 35.56 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c42267d8-e348-4caa-ad19-6fea5d4d893b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 135.3843 35.56 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS2_SDA"
+		(shape input)
+		(at 64.77 97.79 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d0712595-aad2-4ba1-a01f-d945b9650910")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 78.3989 97.79 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape input)
+		(at 142.24 114.3 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d2c6e06a-7b2e-4841-966c-112243f1f014")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 135.3843 114.3 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape input)
+		(at 142.24 90.17 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "da06ee13-7134-4573-a0a2-bcd592a6873a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 135.3843 90.17 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS3_SDA"
+		(shape input)
+		(at 64.77 102.87 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e2f50a2d-ad11-41ed-ba6d-047377523a0e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 78.3989 102.87 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+	)
+	(global_label "SENS1_INT"
+		(shape input)
+		(at 142.24 66.04 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e5b49803-cabe-46af-9cca-68c18ee3859a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 129.2763 66.04 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS0_ADDR"
+		(shape input)
+		(at 142.24 40.64 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f1547c69-d3d0-48ca-8644-57d03ed225e2")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 127.2806 40.64 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 142.24 60.96 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f60cadbd-cceb-4e93-9377-e1b27a4819e4")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 135.7472 60.96 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS2_ADDR"
+		(shape input)
+		(at 142.24 95.25 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f71fb38d-ee08-4416-afd9-9492e716f8c3")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 127.2806 95.25 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "SENS3_ADDR"
+		(shape input)
+		(at 142.24 119.38 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fa0fdb92-b81a-429e-aa3c-88e547b09bc8")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 127.2806 119.38 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
+		(shape input)
+		(at 111.76 104.14 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fe7d8c64-c182-44b0-bc13-d258eb0373ff")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 105.2672 104.14 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-Resistor:10k_0603")
+		(at 114.3 80.01 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "08c4efa8-3122-4e38-bd84-33d4ea0d8cbc")
+		(property "Reference" "R11"
+			(at 114.3 73.66 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 114.3 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+			(at 114.3 84.328 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+			(at 114.3 88.9 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 114.3 91.44 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PROD_ID" "RES-00824"
+			(at 114.3 86.36 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "0171c5df-4078-4a7b-a835-79d1f5938cc0")
+		)
+		(pin "2"
+			(uuid "fd3c9af4-a8da-408c-a7e2-a1767d06e725")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "R11")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-Resistor:10k_0603")
+		(at 137.16 102.87 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "0cdd0cb3-2083-4331-9f6c-cefe4b872a7c")
+		(property "Reference" "R17"
+			(at 138.43 96.52 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 137.16 99.06 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+			(at 137.16 107.188 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+			(at 137.16 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 137.16 114.3 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PROD_ID" "RES-00824"
+			(at 137.16 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "e1ee9cc5-ddef-466f-81f3-d76ad93ff2d4")
+		)
+		(pin "2"
+			(uuid "8cb852da-0997-4747-b3f4-746ec50c0e25")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "R17")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 147.32 111.76 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "18a01ab3-dc6e-4122-a952-770dc9071769")
+		(property "Reference" "J_BMI1"
+			(at 149.86 111.7599 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "BMI160_LANDING"
+			(at 149.86 114.2999 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector:GROVE-HW4-SMD-2.0"
+			(at 147.32 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 147.32 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 147.32 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "3aba15ea-b58c-41a5-8874-e66bc3e816b0")
+		)
+		(pin "1"
+			(uuid "e2600dc5-9f41-44e8-8c38-f5a2ab65a825")
+		)
+		(pin "3"
+			(uuid "9b7f1c7f-0362-4eef-b29c-d46d114e6c75")
+		)
+		(pin "4"
+			(uuid "6027091e-fc6b-4e9d-9f8a-69a4fd1ec8a6")
+		)
+		(pin "5"
+			(uuid "0311a04c-fd78-4b22-ac0f-dd9a386b482e")
+		)
+		(pin "6"
+			(uuid "8bc8aa10-ddea-4595-904f-d36fa52e81dd")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "J_BMI1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-Resistor:10k_0603")
+		(at 137.16 52.07 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "483afeb2-2937-4dcb-884d-cf893175a788")
+		(property "Reference" "R15"
+			(at 137.16 45.72 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 137.16 48.26 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+			(at 137.16 56.388 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+			(at 137.16 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 137.16 63.5 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PROD_ID" "RES-00824"
+			(at 137.16 58.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "03c93d6d-5dfc-450a-a0b1-22fadf855ada")
+		)
+		(pin "2"
+			(uuid "b15adb17-93a9-4676-b335-22b6db2d1220")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "R15")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 147.32 140.97 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "4f79725c-788e-44db-a460-670c47475de4")
+		(property "Reference" "J_AS1"
+			(at 149.86 140.9699 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "AS5600_LANDING"
+			(at 149.86 143.5099 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector:GROVE-HW4-SMD-2.0"
+			(at 147.32 140.97 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 147.32 140.97 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 147.32 140.97 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "7b53872f-0fac-4c29-873c-03a818b027f7")
+		)
+		(pin "1"
+			(uuid "fbf4ccb5-f59d-48a7-8842-a2fdfb4d25aa")
+		)
+		(pin "3"
+			(uuid "beb1be8a-bac3-4654-bc20-25c3f8a0ede8")
+		)
+		(pin "4"
+			(uuid "5a790230-b1c2-4133-b0b2-df09e86336b1")
+		)
+		(pin "5"
+			(uuid "fae18f39-1ffd-4701-a985-b854dd24cdae")
+		)
+		(pin "6"
+			(uuid "ba3b146b-2e5b-4144-8c58-d35e5fbc6532")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "J_AS1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-Resistor:10k_0603")
+		(at 114.3 25.4 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5f84de18-08f6-4e7e-8ecf-dea515b7682f")
+		(property "Reference" "R9"
+			(at 114.3 19.05 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 114.3 21.59 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+			(at 114.3 29.718 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+			(at 114.3 34.29 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 114.3 36.83 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PROD_ID" "RES-00824"
+			(at 114.3 31.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "814b4681-6a98-4df7-aff2-9c9a8d506ea7")
+		)
+		(pin "2"
+			(uuid "375728af-75d4-44ad-b4c0-147398138aa4")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "R9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-Resistor:0_0603")
+		(at 38.1 97.79 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "63ee1eb6-0016-4a1b-8c12-865ca4d5b230")
+		(property "Reference" "R8"
+			(at 38.1 91.44 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "0"
+			(at 38.1 93.98 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+			(at 38.1 102.362 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://industrial.panasonic.com/cdbs/www-data/pdf/RDN0000/AOA0000C313.pdf"
+			(at 38.1 106.68 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 38.1 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PROD_ID" "RES-08609"
+			(at 38.1 104.648 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "073d988b-a00d-4989-a598-522c67b0aa44")
+		)
+		(pin "1"
+			(uuid "fbd4dec5-79b9-43a2-b81f-0ee5f06fc1f2")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "R8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-Resistor:10k_0603")
+		(at 114.3 133.35 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "83d7d174-72fb-4203-8cb7-ea3ebc6ee328")
+		(property "Reference" "R13"
+			(at 114.3 127 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 114.3 129.54 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+			(at 114.3 137.668 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+			(at 114.3 142.24 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 114.3 144.78 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PROD_ID" "RES-00824"
+			(at 114.3 139.7 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "67a7b2ee-e29f-4d43-85a1-f9e5b5da9235")
+		)
+		(pin "2"
+			(uuid "22eeaf9b-cdab-4172-a071-515a473589ca")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "R13")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-Resistor:10k_0603")
+		(at 114.3 53.34 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "894de705-fd67-4c26-a3b3-58d8324aaef0")
+		(property "Reference" "R10"
+			(at 114.3 46.99 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 114.3 49.53 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+			(at 114.3 57.658 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+			(at 114.3 62.23 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 114.3 64.77 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PROD_ID" "RES-00824"
+			(at 114.3 59.69 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "d00e8065-c56c-44ec-9293-f2970c33be12")
+		)
+		(pin "2"
+			(uuid "57e94c60-4a6e-4fe7-ab81-fa2bec49bd70")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "R10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 147.32 87.63 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "8dceacc8-6bb2-4789-af3a-c83d65957fd5")
+		(property "Reference" "J_SHT1"
+			(at 149.86 87.6299 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SHT31_LANDING"
+			(at 149.86 90.1699 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector:GROVE-HW4-SMD-2.0"
+			(at 147.32 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 147.32 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 147.32 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "07965357-eb3f-413f-83ac-706f2150a7e8")
+		)
+		(pin "1"
+			(uuid "d1904fb8-1988-4757-99db-c54c9c33a99b")
+		)
+		(pin "3"
+			(uuid "97a4ecbc-1233-451f-9c07-6777b5844971")
+		)
+		(pin "4"
+			(uuid "2f0d536f-b24c-47d2-b2d7-83850920c73a")
+		)
+		(pin "5"
+			(uuid "e3800a77-5367-4dc2-9f4f-6a3f4e56974b")
+		)
+		(pin "6"
+			(uuid "78407196-8403-4fd8-a35d-59a65422f003")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "J_SHT1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 147.32 33.02 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "91c9d498-b5b4-4739-95bc-4100a10628de")
+		(property "Reference" "J_BMM1"
+			(at 149.86 33.0199 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "BMM150_LANDING"
+			(at 149.86 35.5599 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector:GROVE-HW4-SMD-2.0"
+			(at 147.32 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 147.32 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 147.32 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "2070ba87-3efe-4f04-95d2-f6f949f09e82")
+		)
+		(pin "1"
+			(uuid "537c29c6-5fd4-4fe3-87dd-b770c46511c6")
+		)
+		(pin "3"
+			(uuid "324120f5-70db-4ab3-bbbf-96b8a3076935")
+		)
+		(pin "4"
+			(uuid "e7ef1681-10fc-4b24-b780-8d8146f8819f")
+		)
+		(pin "5"
+			(uuid "7529e941-024c-40eb-9cee-12edab313d51")
+		)
+		(pin "6"
+			(uuid "a6f12e49-b444-4d9a-9996-6fc61d2cecd0")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "J_BMM1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-Resistor:10k_0603")
+		(at 114.3 104.14 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "9a8d3e40-682c-4a12-af6f-6d185cc68c91")
+		(property "Reference" "R12"
+			(at 115.57 97.79 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 114.3 100.33 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+			(at 114.3 108.458 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+			(at 114.3 113.03 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 114.3 115.57 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PROD_ID" "RES-00824"
+			(at 114.3 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "7a17bf09-0b38-46fb-a641-05262d72ede8")
+		)
+		(pin "2"
+			(uuid "f55daabe-6308-4657-b59c-7a1cef6d11ac")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "R12")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-Resistor:10k_0603")
+		(at 137.16 132.08 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b1d2d7ed-d4bc-42a6-908e-2a628d8027ce")
+		(property "Reference" "R18"
+			(at 137.16 125.73 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 137.16 128.27 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+			(at 137.16 136.398 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+			(at 137.16 140.97 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 137.16 143.51 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PROD_ID" "RES-00824"
+			(at 137.16 138.43 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "025d1631-b754-47da-aaa8-0576566a4922")
+		)
+		(pin "2"
+			(uuid "8c8fb53b-6ab3-4b5b-b2bd-c80b838359a5")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "R18")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-Resistor:10k_0603")
+		(at 137.16 78.74 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "bc369d17-25c3-4f04-89a3-5d7d947e127d")
+		(property "Reference" "R16"
+			(at 137.16 72.39 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 137.16 74.93 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+			(at 137.16 83.058 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+			(at 137.16 87.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 137.16 90.17 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PROD_ID" "RES-00824"
+			(at 137.16 85.09 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "4251d655-aa76-4f96-85da-d9b5c004d030")
+		)
+		(pin "2"
+			(uuid "8fccb6ee-3f7e-4421-9a1d-526a0cc5628c")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "R16")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "OPL_Capacitor:CERAMIC-100NF-50V-10%-X7R_0805_")
+		(at 64.77 77.47 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d2166d0b-de8c-4ac5-89e1-8670c002f3c1")
+		(property "Reference" "C7"
+			(at 64.77 71.12 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.143 1.143)
+				)
+			)
+		)
+		(property "Value" "CERAMIC-100NF-50V-10%-X7R_0805_"
+			(at 64.77 73.66 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.143 1.143)
+				)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+			(at 64.77 77.47 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 64.77 77.47 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 64.77 77.47 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "MPN" "CC0805KRX7R9BB104"
+			(at 65.532 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.508 0.508)
+				)
+			)
+		)
+		(property "SKU" "302010165"
+			(at 65.532 73.66 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 0.508 0.508)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "8bff25b1-0ec5-4fa3-a1af-3922d8bc0926")
+		)
+		(pin "2"
+			(uuid "8858c0a8-28f7-4f5e-bf8e-7858f5d38b08")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "C7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x06")
+		(at 147.32 60.96 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d22ff52a-2237-4c10-af70-edf9bd4b2f87")
+		(property "Reference" "J_BMP1"
+			(at 149.86 60.9599 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "BMP280_LANDING"
+			(at 149.86 63.4999 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector:GROVE-HW4-SMD-2.0"
+			(at 147.32 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 147.32 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 147.32 60.96 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "2"
+			(uuid "a31748bb-c220-4c84-b4c1-696235e27443")
+		)
+		(pin "1"
+			(uuid "b11ded6c-dbdc-4a6a-be6a-2a1b09ec61fd")
+		)
+		(pin "3"
+			(uuid "d9a9db13-34b7-4862-a475-4f5734900449")
+		)
+		(pin "4"
+			(uuid "f051423b-62f8-425d-8f04-4f8a68786228")
+		)
+		(pin "5"
+			(uuid "2465b222-9a7f-4294-9a71-5eae54cb23a0")
+		)
+		(pin "6"
+			(uuid "5a64a47c-418a-48e5-8a4d-b952a4d5b52a")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "J_BMP1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-Resistor:10k_0603")
+		(at 137.16 24.13 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d2c069c5-c0da-472f-867c-d94d1574b0ec")
+		(property "Reference" "R14"
+			(at 137.16 17.78 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 137.16 20.32 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+			(at 137.16 28.448 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+			(at 137.16 33.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 137.16 35.56 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PROD_ID" "RES-00824"
+			(at 137.16 30.48 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "e7e80b2c-ab44-4296-915c-348888bbb04f")
+		)
+		(pin "2"
+			(uuid "dfa221fa-a885-44a7-b467-606f6a928996")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "R14")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Interface_Expansion:TCA9548APWR")
+		(at 54.61 102.87 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "e1c4b8b8-bbae-4c92-a51b-0caee3ca67b8")
+		(property "Reference" "U4"
+			(at 56.7533 77.47 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TCA9548APWR"
+			(at 56.7533 80.01 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm"
+			(at 54.61 128.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "http://www.ti.com/lit/ds/symlink/tca9548a.pdf"
+			(at 55.88 96.52 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Low voltage 8-channel I2C switch with reset, TSSOP-24"
+			(at 54.61 102.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "3"
+			(uuid "5a096ec0-7eff-43b9-9966-6df9f32000a6")
+		)
+		(pin "12"
+			(uuid "71a51678-e499-4951-b03f-78ab86dbdc90")
+		)
+		(pin "15"
+			(uuid "8271585d-ae37-4233-a12a-e024ebdf40f0")
+		)
+		(pin "2"
+			(uuid "704bfe30-8330-495b-98b8-61c133f8edb1")
+		)
+		(pin "4"
+			(uuid "6dde61ba-6c24-4730-b27e-16e1a10ec1d5")
+		)
+		(pin "9"
+			(uuid "5149deef-5625-4666-a66d-701803ecbc51")
+		)
+		(pin "5"
+			(uuid "08b41f45-808b-4c07-9371-f41b44dfbb14")
+		)
+		(pin "7"
+			(uuid "81685fe9-d807-4887-a101-a9de420743ec")
+		)
+		(pin "1"
+			(uuid "a0b52a2a-8f83-4bdb-b8d7-56f06609e64c")
+		)
+		(pin "8"
+			(uuid "e33e0498-d879-4508-977e-46b067f18576")
+		)
+		(pin "6"
+			(uuid "51d74d07-a8f7-41c6-bebf-a392be91297d")
+		)
+		(pin "10"
+			(uuid "318d1524-86d8-4233-b33e-d7c6deb820f4")
+		)
+		(pin "11"
+			(uuid "4c0f6c79-be00-4eef-805e-eceea635eadf")
+		)
+		(pin "13"
+			(uuid "0753028a-f04d-43af-a153-77df7ed7ad63")
+		)
+		(pin "14"
+			(uuid "4c2c5446-87e7-4341-9e4d-8e7e1d0fdd49")
+		)
+		(pin "24"
+			(uuid "3b50e592-71cf-46df-bbe7-1064d528a899")
+		)
+		(pin "17"
+			(uuid "06f33188-bf2f-43b6-967b-90910a0bbe9a")
+		)
+		(pin "21"
+			(uuid "d1ad03c6-d81f-4ccd-9665-dc2466b4d35d")
+		)
+		(pin "19"
+			(uuid "1fc2c391-15bb-4dc1-87b6-87d535878c11")
+		)
+		(pin "16"
+			(uuid "144e76f4-8711-4865-8867-e2ec896d8866")
+		)
+		(pin "23"
+			(uuid "003b7f21-1cce-4bdf-95bd-68d8da82d433")
+		)
+		(pin "18"
+			(uuid "f98dcb3b-c78e-4308-b510-3c23a1450ec5")
+		)
+		(pin "22"
+			(uuid "61e4c369-b16c-4704-8680-a63f5896d555")
+		)
+		(pin "20"
+			(uuid "fcf314fd-657d-41ba-b778-2ec3c84d3bdd")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/c011f349-f051-48ad-ab52-c99cab3cfcb2"
+					(reference "U4")
+					(unit 1)
+				)
+			)
+		)
+	)
+)

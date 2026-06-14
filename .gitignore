@@ -2,3 +2,5 @@ backups/
 refs/
 !meshtonic/meshtonic/refs/
 !meshtonic/meshtonic/refs/**
+*.rpt
+*.txt
