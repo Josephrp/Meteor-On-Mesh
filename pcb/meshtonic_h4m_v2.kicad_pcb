@@ -71654,7 +71654,7 @@
 			(justify left bottom)
 		)
 	)
-	(gr_text "MESHTONIC EXPANSION BOARD\nMADE IN \nZIBURU · DONIBANE LOHIZUNE · PAYS BASQUE\n\nFIRMWARE : https://github.com/Meshtonic\nENGINEERING SAMPLE ___ / 5 NOT FOR SALE\n"
+	(gr_text "MESHTONIC EXPANSION BOARD\nMADE IN \nZIBURU · DONIBANE LOHIZUNE · PAYS BASQUE\nFIRMWARE : https://github.com/bxrf"
 		(at 141.39 167.03 0)
 		(layer "B.SilkS")
 		(uuid "23896dc0-e27e-4e9d-87ef-030f9123bd79")

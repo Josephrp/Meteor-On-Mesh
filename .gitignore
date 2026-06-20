@@ -1,6 +1,8 @@
 backups/
 refs/
-!meshtonic/meshtonic/refs/
-!meshtonic/meshtonic/refs/**
+!case/refs/
+!case/refs/**
 *.rpt
 *.txt
+case/refs
+.cursor

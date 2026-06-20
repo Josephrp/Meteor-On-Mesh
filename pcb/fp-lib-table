@@ -19,4 +19,5 @@
 	(lib (name "Seeed_Xiao") (type "KiCad") (uri "${KIPRJMOD}/libs/Seeed_Xiao.pretty") (options "") (descr ""))
 	(lib (name "Wio") (type "KiCad") (uri "${KIPRJMOD}/libs/Wio.pretty") (options "") (descr ""))
 	(lib (name "Module") (type "KiCad") (uri "${KIPRJMOD}/libs/Module.pretty") (options "") (descr ""))
+	(lib (name "TPS63020") (type "KiCad") (uri "${KIPRJMOD}/libs/TPS63020.pretty") (options "") (descr "TPS63020 buck-boost DSJ-14"))
 )
