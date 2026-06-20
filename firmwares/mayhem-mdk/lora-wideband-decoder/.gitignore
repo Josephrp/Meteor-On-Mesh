@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# IQ data (large)
+*.sc16
+*.cf32
+*.fc32
+captures/
+recordings/
+
+# Test data / runtime logs
+*.jsonl
+*.log
+*.npz
+
+# --debug / collect_debug.py output (users run these to file issues)
+lora_debug_*.txt
+
+# User-specific runtime config + autosaved data
+web_settings.json
+lora_web/web_settings.json
+lora_web/lora_autosave.jsonl
+lora_web/lora_unknown.jsonl
+lora_web/lora_packets.jsonl
+lora_web/dec_pkts.jsonl
+
+# Secrets
+*.key
+*.pem
+keys.json
+keystore.json
+# Per-node identity keys (Ed25519 / X25519 scalars for DM decrypt) — NEVER
+# commit; each operator generates their own via the Keys panel.
+lora_web/lora_keys.json
+lora_keys.json
+
+# Local env-var overrides (reference: docs/env-overrides.md)
+.env
+.env.local
+
+# Personal / scratch tooling
+tools/
+
+# Local agent config
+.claude/
+
+# Old baselines / build artifacts
+archive/
+
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Per-deployment classifier state — built from each user's own Meshtastic traffic.
+# Should not be shipped — each user's system bootstraps to their own hardware.
+lora_web/lwbd_model.pkl
+lora_web/lora_node_profiles.json
+lora_web/lora_device_clusters.json

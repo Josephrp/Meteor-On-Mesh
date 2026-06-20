@@ -1,0 +1,52 @@
+menu "ESP32PP"
+
+    config GPSTXPIN
+        int "PIN where you connect the GPS TX part (ESP RX)"
+        range  0 40
+        default 6
+        help
+            PIN where you connect the GPS TX part (ESP RX)
+
+    config IC2SCLPIN
+        int "I2C SCL PIN on ESP"
+        range 0 40
+        default 4
+        help
+            I2C SCL PIN on ESP
+
+    config IC2SDAPIN
+        int "I2C SDA PIN on ESP"
+        range 1 255
+        default 5
+        help
+            I2C SDA PIN on ESP
+
+    config I2C_SLAVE_SCL_IO
+        int "I2C SLAVE SCL PIN on ESP"
+        range 1 255
+        default 10
+        help
+            I2C SLAVE SCL PIN on ESP
+
+    config I2C_SLAVE_SDA_IO
+        int "I2C SLAVE SDA PIN on ESP"
+        range 1 255
+        default 11
+        help
+            I2C SLAVE SDA PIN on ESP
+    
+    config IR_RX_PIN
+        int "IR RX PIN"
+        range 1 255
+        default 12
+        help
+            IR RX PIN on ESP
+    config IR_TX_PIN
+        int "IR TX PIN"
+        range 1 255
+        default 13
+        help
+            IR TX PIN on ESP
+                                                   
+
+endmenu

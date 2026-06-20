@@ -1,0 +1,99 @@
+#include "sensordb.h"
+
+uint8_t BH1750_addr = 0;
+uint8_t HMC5883L_addr = 0;
+uint8_t ADXL345_addr = 0;
+uint8_t MPU925X_addr = 0;
+uint8_t BMx280_addr = 0;
+uint8_t SHT3x_addr = 0;
+uint8_t LSM303_addr_mag = 0;
+uint8_t LSM303_addr_acc = 0;
+uint8_t SHT4x_addr = 0;
+uint8_t SSD1306_addr = 0;
+// Meshtonic
+uint8_t AS5600_addr = 0;
+uint8_t BMI160_addr = 0;
+uint8_t BMM150_addr = 0;
+
+void foundI2CDev(uint8_t addr) {
+    if (addr == 0x23)
+        BH1750_addr = 0x23;  // low
+    if (addr == 0x5c)
+        BH1750_addr = 0x5c;  // high
+    if (addr == 0x76)
+        BMx280_addr = 0x76;  // low
+    if (addr == 0x77)
+        BMx280_addr = 0x77;  // high
+    if (addr == 0x44)
+        SHT3x_addr = 0x44;
+    if (addr == 0x45)
+        SHT3x_addr = 0x45;
+    if (addr == 0x53)
+        ADXL345_addr = 0x53;  // sdo 0
+    if (addr == 0x1D)
+        ADXL345_addr = 0x1D;  // sdo 1
+
+    if (addr == 0x1E)
+        HMC5883L_addr = 0x1E;
+
+    if (addr == 0x68)
+        MPU925X_addr = 0x68;
+
+    if (addr == 0x18)
+        LSM303_addr_acc = 0x18;
+    if (addr == 0x1d)
+        LSM303_addr_mag = 0x1d;
+    if (addr == 0x1e)
+        LSM303_addr_mag = 0x1e;
+
+    if (addr == 0x3c)
+        SSD1306_addr = 0x3c;  // OLED display address
+    if (addr == 0x3d)
+        SSD1306_addr = 0x3d;  // OLED display address
+    if (addr == 0x44)
+        SHT4x_addr = 0x44;
+    if (addr == 0x45)
+        SHT4x_addr = 0x45;
+
+    // Meshtonic H4M (often behind TCA)
+    if (addr == 0x36)
+        AS5600_addr = 0x36;
+    if (addr == 0x68 || addr == 0x69)
+        BMI160_addr = addr;  // will be disambiguated by chip id at higher layer
+    if (addr >= 0x10 && addr <= 0x13)
+        BMM150_addr = addr;
+}
+
+uint8_t getDevAddr(SENSORS sensor) {
+    switch (sensor) {
+        case BH1750:
+            return BH1750_addr;
+        case HMC5883L:
+            return HMC5883L_addr;
+        case ADXL345:
+            return ADXL345_addr;
+        case MPU925X:
+            return MPU925X_addr;
+        case BMx280:
+            return BMx280_addr;
+        case SHT3x:
+            return SHT3x_addr;
+        case LSM303_ACCEL:
+            return LSM303_addr_acc;
+        case LSM303_MAG:
+            return LSM303_addr_mag;
+        case SSD1306:
+            return SSD1306_addr;
+        case SHT4x:
+            return SHT4x_addr;
+        case AS5600:
+            return AS5600_addr;
+        case BMI160:
+            return BMI160_addr;
+        case BMM150:
+            return BMM150_addr;
+        default:
+            return 0;
+            break;
+    }
+}

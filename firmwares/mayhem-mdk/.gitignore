@@ -1,0 +1,7 @@
+Source/build/
+Source/managed_components/
+Source/dependencies.lock
+out/*.bin
+out/*.elf
+out/build-info.txt
+!out/.gitkeep

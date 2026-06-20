@@ -1,0 +1,15 @@
+# Build once:  docker compose -f docker/docker-compose.yml build
+# Run build:   docker compose -f docker/docker-compose.yml run --rm idf-build
+# Or on Windows:  .\docker\build.ps1
+services:
+  idf-build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: meshtonic-mdk-idf:v5.4.1
+    working_dir: /project
+    volumes:
+      - ../Source:/project
+      - ../out:/out
+    environment:
+      - IDF_COMPONENT_MANAGER=1

@@ -1,8 +1,8 @@
 backups/
 refs/
-!case/refs/
-!case/refs/**
+#!case/refs/
+#!case/refs/**
 *.rpt
 *.txt
-case/refs
+#case/refs
 .cursor

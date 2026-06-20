@@ -1,0 +1,246 @@
+#include "wifim.h"
+
+#define TAG "WIFIM"
+
+char WifiM::wifiAPSSID[64] = {0};
+char WifiM::wifiAPPASS[64] = {0};
+char WifiM::wifiStaSSID[64] = {0};
+char WifiM::wifiStaPASS[64] = {0};
+char WifiM::wifiHostName[64] = {0};
+uint8_t WifiM::currIp[4] = {0};
+uint8_t WifiM::mode = 1;  // 1 off, 2 on //airplane mode
+
+int WifiM::ap_client_num = 0;
+esp_netif_t* WifiM::esp_netif_ap = nullptr;
+esp_netif_t* WifiM::esp_netif_sta = nullptr;
+
+uint32_t WifiM::last_wifi_conntry = 0;
+bool WifiM::wifi_sta_ok = false;
+
+bool WifiM::getWifiStaStatus() {
+    return wifi_sta_ok;
+}
+
+int WifiM::getWifiApClientNum() {
+    return ap_client_num;
+}
+
+void WifiM::initialise_mdns(void) {
+    ESP_ERROR_CHECK(mdns_init());
+    ESP_ERROR_CHECK(mdns_hostname_set(wifiHostName));
+    ESP_ERROR_CHECK(mdns_instance_name_set(wifiHostName));
+    ESP_ERROR_CHECK(mdns_service_add(NULL, "_http", "_tcp", 80, NULL, 0));
+    ESP_ERROR_CHECK(mdns_service_subtype_add_for_host(NULL, "_http", "_tcp", NULL, "_server"));
+}
+
+void WifiM::event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
+        ESP_LOGI(TAG, "WIFI_EVENT_STA_DISCONNECTED");
+        if (ap_client_num <= 0) {
+            wifi_sta_ok = false;
+            currIp[0] = 0;
+            currIp[1] = 0;
+            currIp[2] = 0;
+            currIp[3] = 0;
+            // esp_wifi_connect(); // only when no ap clients presents
+        }
+    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_AP_STACONNECTED) {
+        // count ap client number
+        ap_client_num++;
+        currIp[0] = 192;
+        currIp[1] = 168;
+        currIp[2] = 4;
+        currIp[3] = 1;
+        ESP_LOGI(TAG, "WIFI_EVENT_AP_STACONNECTED");
+    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_AP_STADISCONNECTED) {
+        // count ap client number
+        ap_client_num--;
+        ESP_LOGI(TAG, "WIFI_EVENT_AP_STADISCONNECTED");
+        if (ap_client_num <= 0) {
+            last_wifi_conntry = 0;  // do it now!
+            currIp[0] = 0;
+            currIp[1] = 0;
+            currIp[2] = 0;
+            currIp[3] = 0;
+        }
+    }
+
+    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
+        wifi_sta_ok = true;
+        ip_event_got_ip_t* event = (ip_event_got_ip_t*)event_data;
+        esp_netif_ip_info_t* ip_info = &event->ip_info;
+
+        currIp[0] = (ip_info->ip.addr >> 0) & 0xFF;
+        currIp[1] = (ip_info->ip.addr >> 8) & 0xFF;
+        currIp[2] = (ip_info->ip.addr >> 16) & 0xFF;
+        currIp[3] = (ip_info->ip.addr >> 24) & 0xFF;
+
+        ESP_LOGI(TAG, "IP_EVENT_STA_GOT_IP");
+    }
+}
+
+void WifiM::initialise_wifi(void) {
+    static bool initialized = false;
+    if (initialized) {
+        return;
+    }
+    ESP_ERROR_CHECK(esp_netif_init());
+    esp_netif_ap = esp_netif_create_default_wifi_ap();
+    assert(esp_netif_ap);
+    esp_netif_sta = esp_netif_create_default_wifi_sta();
+    assert(esp_netif_sta);
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED, &event_handler, NULL));
+    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_AP_STACONNECTED, &event_handler, NULL));
+    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_AP_STADISCONNECTED, &event_handler, NULL));
+    ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &event_handler, NULL));
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+    ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+    initialise_mdns();
+    initialized = true;
+}
+
+bool WifiM::config_wifi_apsta() {
+    esp_wifi_stop();
+    wifi_config_t ap_config = {};
+    strcpy((char*)ap_config.ap.ssid, wifiAPSSID);
+    strcpy((char*)ap_config.ap.password, wifiAPPASS);
+    ap_config.ap.authmode = WIFI_AUTH_WPA_WPA2_PSK;
+    ap_config.ap.ssid_len = strlen(wifiAPSSID);
+    ap_config.ap.max_connection = CONFIG_AP_MAX_STA_CONN;
+    ap_config.ap.channel = 2;  // CONFIG_AP_WIFI_CHANNEL;
+    if (strlen(wifiAPPASS) == 0) {
+        ap_config.ap.authmode = WIFI_AUTH_OPEN;
+    }
+
+    wifi_config_t sta_config = {};
+    strcpy((char*)sta_config.sta.ssid, wifiStaSSID);
+    strcpy((char*)sta_config.sta.password, wifiStaPASS);
+    sta_config.sta.scan_method = WIFI_FAST_SCAN;
+    sta_config.sta.sort_method = WIFI_CONNECT_AP_BY_SIGNAL;
+    sta_config.sta.failure_retry_cnt = 4;
+    sta_config.sta.sae_pwe_h2e = WPA3_SAE_PWE_BOTH;
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &ap_config));
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &sta_config));
+    ESP_ERROR_CHECK(esp_wifi_start());
+    ESP_LOGI(TAG, "WIFI_MODE_AP started. SSID:%s password:%s", wifiAPSSID, wifiAPPASS);
+    ESP_ERROR_CHECK(esp_wifi_connect());
+    return true;
+}
+
+void WifiM::wifi_loop(uint32_t millis) {
+    if (mode == 2) {
+        return;
+    }
+    if (ap_client_num > 0 || wifi_sta_ok)
+        return;
+    if (millis - last_wifi_conntry > WIFI_CLIENR_RC_TIME) {
+        ESP_LOGI(TAG, "esp_wifi_connect started.");
+        if (!(strcmp(wifiStaSSID, "-") == 0)) esp_wifi_connect();  // just connect if configured
+        last_wifi_conntry = millis;
+    }
+}
+
+void WifiM::load_config_wifi() {
+    ESP_LOGI("CONFIG", "load_config_wifi");
+    nvs_handle_t nvs_handle;
+    esp_err_t err = nvs_open("wifi", NVS_READWRITE, &nvs_handle);  // https://github.com/espressif/esp-idf/blob/v5.1.2/examples/storage/nvs_rw_value/main/nvs_value_example_main.c
+    if (err != ESP_OK) {
+        printf("Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        strcpy(wifiAPSSID, DEFAULT_WIFI_AP);
+        strcpy(wifiAPPASS, DEFAULT_WIFI_PASS);
+        strcpy(wifiStaSSID, DEFAULT_WIFI_STA);
+        strcpy(wifiStaPASS, DEFAULT_WIFI_PASS);
+        strcpy(wifiHostName, DEFAULT_WIFI_HOSTNAME);
+    } else {
+        size_t size = sizeof(wifiAPSSID);
+        nvs_get_str(nvs_handle, "wifiAPSSID", wifiAPSSID, &size);
+        if (strlen(wifiAPSSID) < 1)
+            strcpy(wifiAPSSID, DEFAULT_WIFI_AP);
+        size = sizeof(wifiAPPASS);
+        nvs_get_str(nvs_handle, "wifiAPPASS", wifiAPPASS, &size);
+        if (strlen(wifiAPPASS) < 1)
+            strcpy(wifiAPPASS, DEFAULT_WIFI_PASS);
+
+        size = sizeof(wifiStaSSID);
+        nvs_get_str(nvs_handle, "wifiStaSSID", wifiStaSSID, &size);
+        if (strlen(wifiStaSSID) < 1)
+            strcpy(wifiStaSSID, DEFAULT_WIFI_STA);
+        size = sizeof(wifiStaPASS);
+        nvs_get_str(nvs_handle, "wifiStaPASS", wifiStaPASS, &size);
+        if (strlen(wifiStaPASS) < 1)
+            strcpy(wifiStaPASS, DEFAULT_WIFI_PASS);
+        size = sizeof(wifiHostName);
+        nvs_get_str(nvs_handle, "wifiHostName", wifiHostName, &size);
+        if (strlen(wifiHostName) < 1) {
+            strcpy(wifiHostName, DEFAULT_WIFI_HOSTNAME);
+        }
+        nvs_commit(nvs_handle);  // todo, needed?
+        nvs_close(nvs_handle);
+        ESP_LOGI("CONFIG", "load_config_wifi ok");
+    }
+    // ESP_LOGI("CONFIG", "wifiHostName=[%s] wifiAPSSID=[%s] wifiAPPASS=[%s] wifiStaSSID=[%s] wifiStaPASS=[%s]", wifiHostName, wifiAPSSID, wifiAPPASS, wifiStaSSID, wifiStaPASS);
+}
+
+void WifiM::save_config_wifi() {
+    ESP_LOGI("CONFIG", "save_config_wifi");
+    nvs_handle_t nvs_handle;
+    esp_err_t err = nvs_open("wifi", NVS_READWRITE, &nvs_handle);
+    if (err == ESP_OK) {
+        nvs_set_str(nvs_handle, "wifiHostName", (const char*)wifiHostName);
+        nvs_set_str(nvs_handle, "wifiAPSSID", (const char*)wifiAPSSID);
+        nvs_set_str(nvs_handle, "wifiAPPASS", (const char*)wifiAPPASS);
+        nvs_set_str(nvs_handle, "wifiStaSSID", (const char*)wifiStaSSID);
+        nvs_set_str(nvs_handle, "wifiStaPASS", (const char*)wifiStaPASS);
+        nvs_close(nvs_handle);
+        ESP_LOGI("CONFIG", "save_config_wifi ok");
+    }
+}
+
+std::string WifiM::getStaIp() {
+    esp_netif_t* sta_netif = esp_netif_get_handle_from_ifkey("WIFI_STA_DEF");
+    if (sta_netif) {
+        esp_netif_ip_info_t ipinfo;
+        esp_netif_get_ip_info(sta_netif, &ipinfo);
+        char ip_str[16];
+        snprintf(ip_str, sizeof(ip_str), IPSTR, IP2STR((esp_ip4_addr_t*)&ipinfo.ip));
+        return std::string(ip_str);
+    }
+    return std::string("-");
+}
+
+std::string WifiM::getApIp() {
+    esp_netif_t* ap_netif = esp_netif_get_handle_from_ifkey("WIFI_AP_DEF");
+    if (ap_netif) {
+        esp_netif_ip_info_t ipinfo;
+        esp_netif_get_ip_info(ap_netif, &ipinfo);
+        char ip_str[16];
+        snprintf(ip_str, sizeof(ip_str), IPSTR, IP2STR((esp_ip4_addr_t*)&ipinfo.ip));
+        return std::string(ip_str);
+    }
+    return std::string("-");
+}
+
+void WifiM::copyIpToArray(uint8_t* arr) {
+    arr[0] = currIp[0];
+    arr[1] = currIp[1];
+    arr[2] = currIp[2];
+    arr[3] = currIp[3];
+}
+
+void WifiM::set_airplane_mode(uint8_t mode) {
+    if (mode == 0) return;  // no change
+    if (mode == 2) {
+        // enable airplane mode
+        WifiM::mode = 2;
+        esp_wifi_stop();
+        ESP_LOGI(TAG, "Airplane mode enabled, wifi stopped.");
+    } else if (mode == 1) {
+        // disable airplane mode
+        initialise_wifi();
+        config_wifi_apsta();
+        ESP_LOGI(TAG, "Airplane mode disabled, wifi started.");
+        WifiM::mode = 1;
+    }
+}

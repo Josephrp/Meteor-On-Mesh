@@ -1,0 +1,1025 @@
+/*
+ * Copyright (C) 2025 HTotoo
+ *
+ * This file is part of ESP32-Portapack.
+ *
+ * For additional license information, see the LICENSE file.
+ */
+
+// todo save hmc calibration, and load and use, and recalibrate on the fly
+
+// todo add an option to disable rtc set (bc utc only)
+// todo add +- time (timezones)
+// todo move sattrack to EP_App format
+// todo add application start / stop commands to i2c app manager part
+// todo add custom wifi ap spam options
+// todo add wifispam + app to pp.
+// todo add dyn pin configuration options, and save them to nvs. when not set, show the webpage to set it. allow vendor preset on compile, to default to that, not to not set
+// todo wifi spam rework. send multiple different at once, so it is faster, and needs less frequent caling
+
+#include <inttypes.h>
+#include "pinconfig.h"
+#ifndef HW_VARIANT_SELECTED
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// YOU CAN SET HERE THE DEFAULT PINS FOR YOUR BUILD! IF you don't select any, the pin configiguration webpage will be shown to you. (NIY, SO SELECT ONE!)
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+// select this if you want to let user choose pin config from the web ui
+#define HW_VARIANT_SELECTED HW_VARIANT_CUSTOM
+
+// select this if you have OSDR AI EXTENSION BOARD
+// #define HW_VARIANT_SELECTED HW_VARIANT_PRFAI
+
+// select this if you have built yourself one based on this project's first pinout config (from the wiki)
+// #define HW_VARIANT_SELECTED HW_VARIANT_ESP32PP
+
+// select this, if you have MDK board
+// #define HW_VARIANT_SELECTED HW_VARIANT_MDK_BOARD
+
+// select this for Meshtonic H4M Companion v2 (shared I2C 5/6 + GPS on UART1 RX GPIO7)
+// #define HW_VARIANT_SELECTED HW_VARIANT_MESHTONIC_H4M
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#endif
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include "wifihack.hpp"
+#include "esp_err.h"
+#include "esp_log.h"
+#include "esp_system.h"
+#include "esp_timer.h"
+#include "esp_task_wdt.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
+#include "freertos/task.h"
+#include "configuration.h"
+#include "esp_spiffs.h"
+#include "esp_http_client.h"
+#include "esp_sntp.h"
+
+#include "sensordb.h"
+
+#include <driver/temperature_sensor.h>
+#include "apps/appmanager.hpp"
+
+bool gpsDebug = false;  // set to false, and give it an ui to be able to turn it on / off
+uint8_t gps_debug_limiter = 0;
+#include "webserver.h"
+
+#include "nmea_parser.h"
+#include "wifim.h"
+#include "ppshellcomm.h"
+#include "orientation.h"
+#include "environment.h"
+#include "drivers/tca9548a.h"
+#include "drivers/mcp23017.h"
+#include "meshtonic_board.h"
+#include <driver/i2c.h>
+#include <driver/gpio.h>
+#include "sx_manager.hpp"
+
+#include "tir.h"
+
+#include "ppi2c/pp_handler.hpp"
+#include "pp_commands.hpp"
+
+uint8_t time_method = 0;  // 0 = no valid, 1 = gps, 2 = ntp
+
+uint8_t airplane_mode = 1;      // 1 off, 2 on. 0 query
+uint8_t airplane_mode_new = 0;  // 0 no change, other: new value
+
+uint8_t shutdown_countdown = 0;  // when it is 1, init a shutdown. if >1 decrease it in every loop. if 0, ignore it. when the callback hits, set it to 10, so i2c reply can go through, and then shut down.
+
+#include "sgp4/Sgp4.h"
+#include "../extapps/sattrack.h"
+#include "../extapps/wifisettings.h"
+#include "../extapps/tirapp.h"
+#include "../extapps/espmanager.h"
+#include "../extapps/espapps.h"
+
+#include "display/displaymanager.hpp"
+
+#define TAG "ESP32PP"
+
+#ifndef HW_VARIANT_SELECTED
+#define HW_VARIANT_SELECTED HW_VARIANT_CUSTOM
+#endif
+PinConfig pinConfig(HW_VARIANT_SELECTED);
+
+DisplayManager displayManager;
+
+// Meshtonic H4M board devices (initialized when profile == MESHTONIC_H4M)
+ // (see meshtonic_board.{h,c} for the g_ globals and helpers)
+SXRadioManager sxManager;
+Sgp4 sat;
+
+static void IRAM_ATTR meshtonicMcpIntaIsrThunk(void*) {
+    sxManager.serviceInterruptsFromIsr();
+}
+TIR tir;
+
+typedef enum TimerEntry {
+    TimerEntry_SENSORGET,
+    TimerEntry_REPORTPPGPS,
+    TimerEntry_REPORTPPORI,
+    TimerEntry_REPORTPPENVI,
+    TimerEntry_REPORTPPTIME,
+    TimerEntry_REPORTWEB,
+    TimerEntry_REPORTSTATES,
+    TimerEntry_SATTRACK,
+    TimerEntry_SATDOWN,
+    TimerEntry_MAX
+} TimerEntry;
+uint32_t time_millis = 0;  // current time in millis
+uint32_t last_millis[TimerEntry_MAX] = {0};
+// ______________________________________SEN    GPS  ORI    ENV   TIME        WEB   RGB   SAT    DOWN
+uint32_t timer_millis[TimerEntry_MAX] = {2000, 2000, 1000, 2000, 60000 * 10, 2000, 1000, 2000, 20000};
+
+// default sensor values and declaration
+orientation_t orientation{400.0, 0.0};
+environment_t environment{0.0, 0.0, 0.0};  // temperature, humidity, pressure
+float temperatureEsp = 0.0;
+uint16_t light = 0;
+ppgpssmall_t gpsdata{200, 200, 0, 0, 0, 0, {}, {}};
+ir_data_t last_rcvd_ir{UNK, 0, 0};
+
+bool gotAnyGps = false;
+
+bool downloadedTLE = false;
+uint16_t lastReportedMxS = 0;  // gps last reported gps time mix to see if it is changed. if not changes, it stuck (bad signal, no update), so won't update PP based on it
+uint32_t gps_baud = 9600;
+uint32_t i2c_pp_last_comm_time = 0;  // when is it connected last time (last query from pp).
+bool i2p_pp_conn_state = false;      // to save and check if i need to send a message to web
+
+typedef struct
+{
+    float lat;
+    float lon;
+} sat_mgps_t;
+
+sattrackdata_t sattrackdata;
+uint8_t sattrack_task = 0;  // this will set to the main thread what is the current task. 0 = none, 1 = update db, 2 = change sat. each task needs to reset it.
+uint8_t sattrack_task_last_error = 0;
+std::string sat_to_track = "ISS";
+std::string sat_to_track_new = "";
+bool sat_data_loaded = false;
+
+bool wifi_config_changed = false;  // if wifi config changed from pp. (irq, so need to save and apply elsewhere)
+
+#include "led.h"
+
+void SetDisplayDirtyMain() {
+    displayManager.setDirty();
+}
+
+#include "esp_sleep.h"
+#include "driver/rtc_io.h"
+
+void shutdownme() {
+    ESP_LOGI(TAG, "Shutting down...");
+    LedFeedback::rgb_set(0, 0, 0);  // turn off led
+    // todo power off other pheriphrals.
+    for (int gpio = 0; gpio < GPIO_NUM_MAX; gpio++) {
+        // CRITICAL: Skip internal SPI Flash and PSRAM pins.  Without these, the ESP32-S3 cannot read its own code.
+        if (gpio >= 26 && gpio <= 37) {
+            continue;
+        }
+        // Check if the pin actually exists on this hardware
+        if (GPIO_IS_VALID_GPIO(gpio)) {
+            // Attempt to isolate. Non-RTC pins will return an error, which is safely ignored.
+            rtc_gpio_isolate((gpio_num_t)gpio);
+        }
+    }
+
+    esp_deep_sleep_start();
+}
+
+static void i2c_scan(int sda, int scl) {
+    if (sda < 0 || scl < 0) {
+        ESP_LOGW(TAG, "I2C pins not set. Skipping I2C scan.");
+        return;
+    }
+    vTaskDelay(50 / portTICK_PERIOD_MS);  // wait till devs wake up
+    esp_err_t res;
+    printf("i2c scan: \n");
+    i2c_dev_t dev = {};
+    dev.cfg.sda_io_num = sda;
+    dev.cfg.scl_io_num = scl;
+    dev.cfg.master.clk_speed = 400000;
+    for (uint8_t i = 1; i < 127; i++) {
+        dev.addr = i;
+        res = i2c_dev_probe(&dev, I2C_DEV_WRITE);
+        if (res == 0) {
+            printf("Found device at: 0x%2x\n", i);
+            foundI2CDev(i);
+        }
+    }
+}
+
+ChipFeatures chipFeatures{};
+void update_features() {
+    chipFeatures.reset();
+    if (is_environment_light_sensor_present())
+        chipFeatures.enableFeature(SupportedFeatures::FEAT_LIGHT);
+    if (is_environment_sensor_present())
+        chipFeatures.enableFeature(SupportedFeatures::FEAT_ENVIRONMENT);
+    if (is_orientation_sensor_present())
+        chipFeatures.enableFeature(SupportedFeatures::FEAT_ORIENTATION);
+    if (gotAnyGps || pinConfig.hasGPS())
+        chipFeatures.enableFeature(SupportedFeatures::FEAT_GPS);
+    if (PPHandler::get_appCount() > 0)
+        chipFeatures.enableFeature(SupportedFeatures::FEAT_EXT_APP);
+    // uart is not present
+    if (displayManager.getDisplayCount() > 0)
+        chipFeatures.enableFeature(SupportedFeatures::FEAT_DISPLAY);
+    chipFeatures.enableFeature(SupportedFeatures::FEAT_SHELL);
+
+    if (pinConfig.getProfile() == PinConfig::BoardProfile::MESHTONIC_H4M)
+        chipFeatures.enableFeature(SupportedFeatures::FEAT_MESHTONIC);
+}
+
+esp_err_t init_spiffs(void) {
+    // Configuration settings for SPIFFS
+    esp_vfs_spiffs_conf_t conf = {
+        .base_path = "/spiffs",         // Mount point for the file system
+        .partition_label = NULL,        // Use default partition
+        .max_files = 5,                 // Maximum number of open files
+        .format_if_mount_failed = true  // Don't format on mount failure automatically
+    };
+
+    // Initialize SPIFFS with the configuration
+    esp_err_t ret = esp_vfs_spiffs_register(&conf);
+
+    // Check if SPIFFS was mounted successfully
+    if (ret == ESP_OK) {
+        ESP_LOGI(TAG, "SPIFFS mounted successfully.");
+    } else if (ret == ESP_FAIL) {
+        ESP_LOGE(TAG, "Failed to mount SPIFFS, attempting to format...");
+
+        // Try formatting SPIFFS
+        ret = esp_spiffs_format(NULL);  // Pass partition label if needed
+        if (ret == ESP_OK) {
+            ESP_LOGI(TAG, "SPIFFS formatted successfully, retrying mount...");
+
+            // Retry mounting after format
+            ret = esp_vfs_spiffs_register(&conf);
+            if (ret == ESP_OK) {
+                ESP_LOGI(TAG, "SPIFFS mounted successfully after format.");
+            } else {
+                ESP_LOGE(TAG, "Failed to mount SPIFFS after formatting.");
+            }
+        } else {
+            ESP_LOGE(TAG, "SPIFFS format failed.");
+        }
+    } else {
+        ESP_LOGE(TAG, "Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
+    }
+
+    // Check the SPIFFS partition size and used space
+    size_t total = 0, used = 0;
+    ret = esp_spiffs_info(NULL, &total, &used);
+    if (ret == ESP_OK) {
+        ESP_LOGI(TAG, "SPIFFS: total: %d bytes, used: %d bytes", total, used);
+    } else {
+        ESP_LOGE(TAG, "Failed to get SPIFFS partition information (%s)", esp_err_to_name(ret));
+    }
+
+    return ret;
+}
+
+/**
+ * @brief HTTP event handler to handle HTTP client events during the download.
+ *
+ * @param evt HTTP client event.
+ * @return esp_err_t Returns ESP_OK to continue the operation, or an error code to abort.
+ */
+esp_err_t http_event_handler_tledata(esp_http_client_event_t* evt) {
+    static FILE* file = NULL;
+
+    switch (evt->event_id) {
+        case HTTP_EVENT_ON_DATA:
+            if (!file) {
+                // Open the file for writing when the first data chunk is received
+                file = fopen("/spiffs/mini.tle", "w");
+                if (file == NULL) {
+                    ESP_LOGE(TAG, "Failed to open file for writing");
+                    return ESP_FAIL;
+                }
+            }
+
+            // Write the data chunk to the file
+            if (fwrite(evt->data, 1, evt->data_len, file) != evt->data_len) {
+                ESP_LOGE(TAG, "File write failed!");
+                fclose(file);
+                file = NULL;
+                return ESP_FAIL;
+            }
+            break;
+
+        case HTTP_EVENT_ON_FINISH:
+            if (file) {
+                fclose(file);
+                file = NULL;
+                ESP_LOGI(TAG, "File download completed");
+            }
+            break;
+
+        case HTTP_EVENT_ERROR:
+            ESP_LOGE(TAG, "HTTP event error");
+            if (file) {
+                fclose(file);
+                file = NULL;
+            }
+            break;
+
+        default:
+            break;
+    }
+    return ESP_OK;
+}
+
+esp_err_t load_satellite_tle(const std::string& sat_to_track) {
+    if (sat_to_track.empty()) {
+        ESP_LOGE(TAG, "Satellite name is empty.");
+        return ESP_FAIL;
+    }
+    std::string l1, l2;
+    // Open the TLE file from SPIFFS
+    std::ifstream file("/spiffs/mini.tle");
+    if (!file.is_open()) {
+        ESP_LOGE(TAG, "Failed to open file: /spiffs/mini.tle");
+        return ESP_FAIL;
+    }
+
+    std::string line;
+    bool satellite_found = false;
+
+    // Read the file line by line
+    while (std::getline(file, line)) {
+        // Check if the current line starts with the satellite name
+        if (line.find(sat_to_track) == 0) {
+            ESP_LOGI(TAG, "Found satellite: %s", sat_to_track.c_str());
+
+            // Read the next two lines (the TLE data)
+            if (std::getline(file, l1) && std::getline(file, l2)) {
+                ESP_LOGI(TAG, "TLE Line 1: %s", l1.c_str());
+                ESP_LOGI(TAG, "TLE Line 2: %s", l2.c_str());
+                sat.init(sat_to_track.c_str(), (char*)l1.c_str(), (char*)l2.c_str());
+                double satjs = sat.satrec.jdsatepoch;
+                int y, m, d, h, mi;
+                double s;
+                invjday(satjs, 0, false, y, m, d, h, mi, s);
+                sattrackdata.sat_day = d;
+                sattrackdata.sat_month = m;
+                sattrackdata.sat_year = y;
+                sattrackdata.sat_hour = h;
+                satellite_found = true;
+            } else {
+                ESP_LOGE(TAG, "Failed to read TLE lines after satellite name.");
+                file.close();
+                return ESP_FAIL;
+            }
+            break;
+        }
+    }
+
+    // Close the file
+    file.close();
+
+    // Return status based on whether the satellite was found
+    if (satellite_found) {
+        return ESP_OK;
+    } else {
+        ESP_LOGE(TAG, "Satellite %s not found in TLE file.", sat_to_track.c_str());
+        return ESP_FAIL;
+    }
+}
+
+/**
+ * @brief Downloads the file from the given URL and saves it to SPIFFS.
+ *
+ * @return esp_err_t Returns ESP_OK if the download and save were successful, or an error code otherwise.
+ */
+esp_err_t download_tle_file_to_spiffs(void) {
+    esp_err_t ret;
+
+    // Get the file information
+    struct stat file_stat;
+    if (stat("/spiffs/mini.tle", &file_stat) == 0) {
+        // Get the current time
+        time_t now;
+        time(&now);
+
+        // Check if the file modification time is within the last 2 hours
+        if (difftime(now, file_stat.st_mtime) <= 2 * 3600) {
+            ESP_LOGI(TAG, "File /spiffs/mini.tle is not older than 2 hours.");
+            downloadedTLE = true;
+            return ESP_OK;
+        } else {
+            ESP_LOGI(TAG, "File /spiffs/mini.tle is older than 2 hours.");
+        }
+    } else {
+        ESP_LOGE(TAG, "Failed to get file information for /spiffs/mini.tle");
+    }
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+    // Configure the HTTP client
+    esp_http_client_config_t config = {
+        .url = "http://creativo.hu/sattrack/mini.tle",
+        .event_handler = http_event_handler_tledata,
+    };
+#pragma GCC diagnostic pop
+
+    ESP_LOGI(TAG, "HTTP GET request started");
+    // Initialize the HTTP client
+    esp_http_client_handle_t client = esp_http_client_init(&config);
+
+    // Perform the HTTP GET request to download the file
+    ret = esp_http_client_perform(client);
+    if (ret == ESP_OK) {
+        ESP_LOGI(TAG, "HTTP GET request completed");
+        downloadedTLE = true;
+        sat_to_track_new = sat_to_track;
+    } else {
+        ESP_LOGE(TAG, "HTTP GET request failed: %s", esp_err_to_name(ret));
+    }
+
+    // Clean up
+    esp_http_client_cleanup(client);
+
+    return ret;
+}
+
+static void gps_event_handler(void* event_handler_arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+    gps_t* gps = NULL;
+    char buff[400] = {0};
+    switch (event_id) {
+        case GPS_UPDATE:
+            gotAnyGps = true;
+            gps = (gps_t*)event_data;
+            gpsdata.altitude = gps->altitude;
+            gpsdata.date.day = gps->date.day;
+            gpsdata.date.month = gps->date.month;
+            gpsdata.date.year = gps->date.year;
+            gpsdata.tim.hour = gps->tim.hour;
+            gpsdata.tim.minute = gps->tim.minute;
+            gpsdata.tim.second = gps->tim.second;
+            gpsdata.latitude = gps->latitude;
+            gpsdata.longitude = gps->longitude;
+            gpsdata.speed = gps->speed;
+            gpsdata.sats_in_use = gps->sats_in_use;
+            gpsdata.sats_in_view = gps->sats_in_view;
+
+            break;
+        case GPS_UNKNOWN:
+            // ESP_LOGW(TAG, "Unknown statement:%s", (char*)event_data);
+            break;
+        case GPS_DEBUG:
+            // passing debug dat to web. needs rate limit, so wifi won't die.
+            if (gpsDebug && !PPShellComm::getInCommand()) {
+                // ESP_LOGW(TAG, "NMEA statement:%s", (char*)event_data);
+                gps_debug_limiter++;
+                if (gps_debug_limiter % 5 == 0) {
+                    snprintf(buff, 400, "#$##$$#GOTGPSDEBUG%s\r\n", (char*)event_data);
+                    ws_sendall((uint8_t*)buff, strlen(buff), true);
+                };
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+void time_sync_notification_cb(struct timeval* tv) {
+    ESP_LOGI(TAG, "Time synchronized from SNTP server");
+    if (time_method == 0)
+        time_method = 2;
+}
+
+#if __cplusplus
+extern "C" {
+#endif
+void app_main(void) {
+    esp_err_t err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        err = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(err);
+    // load prev settings
+    WifiM::load_config_wifi();
+
+    ESP_LOGI(TAG, "Loading saved PinConfig.");
+    pinConfig.loadFromNvs();
+
+    // Auto-apply typed Meshtonic H4M profile when pins match the preset (or variant was selected at build)
+    {
+        bool matchesMeshtonic =
+            (pinConfig.I2cSdaPin() == 5 && pinConfig.I2cSclPin() == 6 &&
+             pinConfig.GpsRxPin() == 7 &&
+             pinConfig.I2cSdaSlavePin() == 5 && pinConfig.I2cSclSlavePin() == 6);
+        if (matchesMeshtonic || pinConfig.getProfile() == PinConfig::BoardProfile::MESHTONIC_H4M) {
+            if (pinConfig.getProfile() != PinConfig::BoardProfile::MESHTONIC_H4M) {
+                pinConfig.setProfile(PinConfig::BoardProfile::MESHTONIC_H4M);
+            }
+            if (pinConfig.getRadioCount() <= 0) pinConfig.setRadioCount(1);
+            // sensor mask can be set by sensor init later; default leave as loaded or 0
+        }
+    }
+
+    load_config_misc();
+
+    init_spiffs();
+    sat.site(0, 0, 34);
+    sat_data_loaded = (load_satellite_tle(sat_to_track) == ESP_OK);
+
+    // end config load
+    i2cdev_init();
+    // i2c scanner
+    i2c_scan(pinConfig.I2cSdaPin(), pinConfig.I2cSclPin());
+
+    // Meshtonic H4M specific expanders (TCA + MCP) when profile active
+    if (pinConfig.getProfile() == PinConfig::BoardProfile::MESHTONIC_H4M) {
+        int sda = pinConfig.I2cSdaPin();
+        int scl = pinConfig.I2cSclPin();
+        if (sda >= 0 && scl >= 0) {
+            // TCA9548A at 0x70 (A0..A2 = 0)
+            if (tca9548a_init_desc(&g_tca, TCA9548A_ADDR_BASE, I2C_NUM_0, (gpio_num_t)sda, (gpio_num_t)scl) == ESP_OK) {
+                if (tca9548a_select(&g_tca, 0) == ESP_OK) {
+                    g_tca_ready = true;
+                    ESP_LOGI(TAG, "TCA9548A ready (Meshtonic)");
+                }
+            } else {
+                ESP_LOGW(TAG, "TCA9548A init failed");
+            }
+            // MCP23017 at 0x20
+            if (mcp23017_init_desc(&g_mcp, MCP23017_ADDR_BASE, I2C_NUM_0, (gpio_num_t)sda, (gpio_num_t)scl) == ESP_OK) {
+                // Compute radio count early for pin direction setup
+                int rc = pinConfig.getRadioCount();
+                if (rc <= 0) rc = 1;
+                sxManager.setRadioCount(rc);
+
+                // Set correct per-radio pin directions using the audited WIO MCP map.
+                // CS/RST (if per) = output; DIO1/BUSY = input. Also pullup DIO1 and enable its INT.
+                for (int s = 0; s < rc; s++) {
+                    int cs = sxManager.getCsPin(s);
+                    int di = sxManager.getDio1Pin(s);
+                    int bu = sxManager.getBusyPin(s);
+                    int rp = sxManager.getRstPin(s);
+                    if (cs >= 0 && cs < 16) {
+                        mcp23017_set_pin_direction(&g_mcp, (uint8_t)cs, false); // output
+                        meshtonic_mcp_write_pin((uint8_t)cs, true); // idle high
+                    }
+                    if (di >= 0 && di < 16) {
+                        mcp23017_set_pin_direction(&g_mcp, (uint8_t)di, true); // input
+                        mcp23017_set_pullup(&g_mcp, (uint8_t)di, true);
+                        mcp23017_set_interrupt(&g_mcp, (uint8_t)di, true);
+                    }
+                    if (bu >= 0 && bu < 16) {
+                        mcp23017_set_pin_direction(&g_mcp, (uint8_t)bu, true); // input
+                    }
+                    if (rp >= 0 && rp < 16) {
+                        mcp23017_set_pin_direction(&g_mcp, (uint8_t)rp, false);
+                        meshtonic_mcp_write_pin((uint8_t)rp, true);
+                    }
+                }
+                g_mcp_ready = true;
+                ESP_LOGI(TAG, "MCP23017 ready (Meshtonic, %d radios, directions+INT set)", rc);
+
+                // Prep MCP INTA pin on ESP (GPIO10 per H4M pin audit / variant). Actual ISR attach later.
+                // Configure as input + pullup so MCP interrupt can be sensed.
+                gpio_config_t ina = {};
+                ina.pin_bit_mask = (1ULL << 10);
+                ina.mode = GPIO_MODE_INPUT;
+                ina.pull_up_en = GPIO_PULLUP_ENABLE;
+                ina.pull_down_en = GPIO_PULLDOWN_DISABLE;
+                ina.intr_type = GPIO_INTR_DISABLE; // will be set to edge when ISR registered in phase 2
+                gpio_config(&ina);
+
+                // Install ISR service (idempotent if called multiple) and attach handler for INTA (GPIO10)
+                static bool isrServiceInstalled = false;
+                if (!isrServiceInstalled) {
+                    gpio_install_isr_service(0);
+                    isrServiceInstalled = true;
+                }
+                // Attach falling edge (MCP INTA active low on event)
+                gpio_set_intr_type((gpio_num_t)10, GPIO_INTR_NEGEDGE);
+                gpio_isr_handler_add((gpio_num_t)10, meshtonicMcpIntaIsrThunk, nullptr);
+                ESP_LOGI(TAG, "MCP INTA ISR attached on GPIO10");
+            } else {
+                ESP_LOGW(TAG, "MCP23017 init failed");
+            }
+
+            // Meshtonic TCA discovery pass for full sensor inventory (populates sensordb)
+            if (g_tca_ready) {
+                for (uint8_t ch = 0; ch < 4; ch++) {
+                    if (meshtonic_tca_select(ch) == ESP_OK) {
+                        // probe common Meshtonic addresses on this channel
+                        for (uint8_t a : {0x10u,0x11u,0x12u,0x13u, 0x36u, 0x44u,0x45u, 0x68u,0x69u, 0x76u,0x77u}) {
+                            // reuse the probe logic via a temp dev
+                            i2c_dev_t p = {};
+                            p.port = I2C_NUM_0;
+                            p.addr = a;
+                            p.cfg.sda_io_num = (gpio_num_t)sda;
+                            p.cfg.scl_io_num = (gpio_num_t)scl;
+                            p.cfg.master.clk_speed = 400000;
+                            if (i2c_dev_probe(&p, I2C_DEV_WRITE) == ESP_OK) {
+                                foundI2CDev(a);
+                            }
+                        }
+                    }
+                }
+                meshtonic_tca_select(0xFF);
+                ESP_LOGI(TAG, "Meshtonic TCA sensor discovery done");
+            }
+
+            // Initialize radio slot manager for 1-4 Wio SX1262
+            int rc = pinConfig.getRadioCount();
+            if (rc <= 0) rc = 1;
+            sxManager.init(rc);
+        }
+    }
+
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    PPShellComm::init();
+
+    WifiM::initialise_wifi();
+    WifiM::config_wifi_apsta();
+    esp_sntp_setoperatingmode(ESP_SNTP_OPMODE_POLL);
+    esp_sntp_setservername(0, "pool.ntp.org");
+    esp_sntp_init();
+    sntp_set_time_sync_notification_cb(time_sync_notification_cb);
+
+    init_httpd();
+    nmea_parser_config_t nmeaconfig = NMEA_PARSER_CONFIG_DEFAULT();
+    nmeaconfig.uart.baud_rate = gps_baud;
+    nmeaconfig.uart.rx_pin = pinConfig.GpsRxPin();
+    if (nmeaconfig.uart.rx_pin == 256) {
+        ESP_LOGW(TAG, "GPS Rx pin not set. GPS disabled.");
+    } else {
+        nmea_parser_handle_t nmea_hdl = nmea_parser_init(&nmeaconfig);
+        nmea_parser_add_handler(nmea_hdl, gps_event_handler, NULL);
+    }
+    esp_task_wdt_deinit();
+
+    temperature_sensor_handle_t temp_sensor = NULL;
+    temperature_sensor_config_t temp_sensor_config = {
+        .range_min = -10,
+        .range_max = 80,
+        .clk_src = TEMPERATURE_SENSOR_CLK_SRC_DEFAULT,
+        .flags = {
+            .allow_pd = 0,
+        },
+    };
+    ESP_ERROR_CHECK(temperature_sensor_install(&temp_sensor_config, &temp_sensor));
+    ESP_LOGI(TAG, "Enable temperature sensor");
+    ESP_ERROR_CHECK(temperature_sensor_enable(temp_sensor));
+
+    LedFeedback::init(pinConfig.LedRgbPin());
+    LedFeedback::rgb_set(255, 255, 255);
+
+    tir.init((gpio_num_t)pinConfig.IrTxPin(), (gpio_num_t)pinConfig.IrRxPin());
+    tir.set_on_ir_received([](irproto proto, uint64_t rcode, size_t len) {
+        if (proto == UNK) return;
+        last_rcvd_ir.protocol = proto;
+        last_rcvd_ir.data = rcode;
+        char buff[150] = {0};
+        snprintf(buff, 150,
+                 "#$##$$#GOTIRRX"
+                 "{\"protocol\":%d,\"data\":%" PRIu64
+                 ",\"len\":%d}\r\n",
+                 proto, rcode, len);
+        ws_sendall((uint8_t*)buff, strlen(buff), true);  // todo web handler
+    });
+
+    init_orientation(pinConfig.I2cSdaPin(), pinConfig.I2cSclPin());  // it loads orientation data too
+    init_environment(pinConfig.I2cSdaPin(), pinConfig.I2cSclPin());
+
+    displayManager.init(pinConfig.I2cSdaPin(), pinConfig.I2cSclPin());
+    displayManager.setGpsDataSource(&gpsdata);
+    displayManager.setOrientationDataSource(&orientation);
+    displayManager.setEnvironmentDataSource(&environment);
+    displayManager.setLightDataSource(&light);
+    displayManager.setSatTrackDataSource(&sattrackdata, &sat_to_track);
+    i2c_scan(pinConfig.I2cSdaPin(), pinConfig.I2cSclPin());  // scan again, after sensors initialized
+
+    PPHandler::set_module_name("ESP32PP");
+    PPHandler::set_module_version(1);
+    PPHandler::add_app((uint8_t*)sattrack, sizeof(sattrack));  // no neet to pinfor gps, since it can handle manual input
+    PPHandler::add_app((uint8_t*)wifisettings, sizeof(wifisettings));
+    PPHandler::add_app((uint8_t*)espapps, sizeof(espapps));
+    if (pinConfig.hasIRrx() || pinConfig.hasIRrx()) PPHandler::add_app((uint8_t*)tirapp, sizeof(tirapp));  // only add this app, if the user has ir tx or rx
+    PPHandler::add_app((uint8_t*)espmanager, sizeof(espmanager));
+    PPHandler::set_get_features_CB([](uint64_t& feat) {
+                                        i2c_pp_last_comm_time = time_millis;
+                                    update_features();
+                                    feat = chipFeatures.getFeatures(); });
+
+    PPHandler::set_get_gps_data_CB([](ppgpssmall_t& gpsdata_) { gpsdata_ = gpsdata; i2c_pp_last_comm_time = time_millis; });
+
+    PPHandler::set_get_orientation_data_CB([](orientation_t& ori) {
+                                                ori.angle = orientation.angle;
+                                                ori.tilt = orientation.tilt; i2c_pp_last_comm_time = time_millis; });
+    PPHandler::set_get_environment_data_CB([](environment_t& env) { 
+                                                i2c_pp_last_comm_time = time_millis;
+                                                env.temperature = environment.temperature;
+                                                env.humidity = environment.humidity;
+                                                env.pressure = environment.pressure; });
+    PPHandler::set_get_light_data_CB([](uint16_t& light) { light = light; });
+
+    PPHandler::add_custom_command(PPCMD_SATTRACK_DATA, nullptr, [](pp_command_data_t data) {
+                                        data.data->resize(sizeof(sattrackdata_t));
+                                        *(sattrackdata_t *)(*data.data).data() = sattrackdata; });
+
+    PPHandler::add_custom_command(PPCMD_SATTRACK_SETMGPS, [](pp_command_data_t data) {
+                                        if (data.data->size() != sizeof(sat_mgps_t)) {
+                                            return;
+                                        }
+                                        sat_mgps_t tmp;
+                                        memcpy(&tmp, data.data->data(), sizeof(sat_mgps_t));
+                                        sattrackdata.elevation = 0;
+                                        sattrackdata.azimuth = 0;
+                                        sattrackdata.lat = tmp.lat;
+                                        sattrackdata.lon = tmp.lon; }, nullptr);
+
+    PPHandler::add_custom_command(PPCMD_SATTRACK_SETSAT, [](pp_command_data_t data) {
+                                        std::string str;
+                                        for(size_t i = 0; i < data.data->size(); ++i)
+                                        {
+                                            if (data.data->at(i) == 0) break;
+                                            str += (char)data.data->at(i);
+                                        }
+                                        sat_to_track_new =str; }, nullptr);
+    PPHandler::add_custom_command(PPCMD_IRTX_SENDIR, [](pp_command_data_t data) {
+                                        if (data.data->size() != sizeof(ir_data_t)) {
+                                            return;
+                                        }
+                                        ir_data_t tmp; 
+                                        memcpy(&tmp, data.data->data(), sizeof(ir_data_t)); 
+                                        ESP_DRAM_LOGW(TAG, "irp: %d %d %d", tmp.protocol, tmp.data, tmp.repeat);
+                                        tir.send_from_irq(tmp); }, nullptr);
+
+    PPHandler::add_custom_command(PPCMD_IRTX_GETLASTRCVIR, nullptr, [](pp_command_data_t data) {
+        data.data->resize(sizeof(ir_data_t));
+        *(ir_data_t*)(*data.data).data() = last_rcvd_ir;
+        last_rcvd_ir.protocol = UNK;
+    });
+
+    PPHandler::add_custom_command(PPCMD_WIFI_SET_STA, [](pp_command_data_t data) {
+                                        if (data.data->size() != sizeof(wifi_config_comp_t)) {
+                                            ESP_DRAM_LOGW(TAG, "wifi: wrong size");
+                                            return;
+                                        }
+                                        wifi_config_comp_t tmp;
+                                        memcpy(&tmp, data.data->data(), sizeof(wifi_config_comp_t));
+                                        ESP_DRAM_LOGW(TAG, "wifi: %s %s", tmp.ssid, tmp.password);
+                                        memcpy(WifiM::wifiStaSSID, tmp.ssid, 30);
+                                        memcpy(WifiM::wifiStaPASS, tmp.password, 30);
+                                        WifiM::wifiStaSSID[30] = 0;
+                                        WifiM::wifiStaPASS[30] = 0;
+                                        wifi_config_changed= true; }, nullptr);
+
+    PPHandler::add_custom_command(PPCMD_WIFI_SET_AP, [](pp_command_data_t data) {
+                                        if (data.data->size() != sizeof(wifi_config_comp_t)) {
+                                            ESP_DRAM_LOGW(TAG, "wifi: wrong size");
+                                            return;
+                                        }
+                                        wifi_config_comp_t tmp;
+                                        memcpy(&tmp, data.data->data(), sizeof(wifi_config_comp_t));
+                                        ESP_DRAM_LOGW(TAG, "wifiap: %s %s", tmp.ssid, tmp.password);
+                                        memcpy(WifiM::wifiAPSSID, tmp.ssid, 30);
+                                        memcpy(WifiM::wifiAPPASS, tmp.password, 30);
+                                        WifiM::wifiAPSSID[30] = 0;
+                                        WifiM::wifiAPPASS[30] = 0;
+                                        wifi_config_changed= true; }, nullptr);
+
+    PPHandler::add_custom_command(PPCMD_WIFI_GET_CONFIG, nullptr, [](pp_command_data_t data) {
+        data.data->resize(sizeof(wifi_current_data_t));
+        wifi_current_data_t tmp;
+        memcpy(tmp.sta_ssid, WifiM::wifiStaSSID, 30); 
+        memcpy(tmp.sta_password, WifiM::wifiStaPASS, 30);
+        memcpy(tmp.ap_ssid, WifiM::wifiAPSSID, 30);
+        memcpy(tmp.ap_password, WifiM::wifiAPPASS, 30);
+        WifiM::copyIpToArray(tmp.ip);
+        memcpy((*data.data).data(), &tmp, sizeof(wifi_current_data_t)); });
+
+    PPHandler::add_custom_command(PPCMD_AIRPLANE_MODE, [](pp_command_data_t data) {
+                if (data.data->size() != sizeof(uint8_t)) {
+                    return;
+                }
+                memcpy(&airplane_mode_new, data.data->data(), sizeof(uint8_t));
+                ESP_DRAM_LOGW(TAG, "apmode: %d", airplane_mode_new); }, [](pp_command_data_t data) {
+        data.data->resize(sizeof(uint8_t));
+        memcpy((*data.data).data(), &airplane_mode, sizeof(uint8_t)); });
+
+    PPHandler::set_get_shell_data_size_CB([]() -> uint16_t {i2c_pp_last_comm_time = time_millis; return PPShellComm::get_i2c_tx_queue_size(); });
+
+    PPHandler::set_got_shell_data_CB([](std::vector<uint8_t>& data) { I2CQueueMessage_t msg;
+                                           i2c_pp_last_comm_time = time_millis;
+                                           msg.size = data.size();
+                                           size_t size = data.size();
+                                           if (size > 64)
+                                           {
+                                               size = 64;
+                                           }
+                                           memcpy(msg.data, data.data(), size);
+                                           auto ttt = pdFALSE;
+                                           xQueueSendFromISR(PPShellComm::datain_queue, &msg, &ttt); });
+
+    PPHandler::set_send_shell_data_CB([](std::vector<uint8_t>& data, bool& hasmore) {
+                                            hasmore = false;
+                                            data.resize(64); 
+                                            size_t size = PPShellComm::get_i2c_tx_queue_size();
+                                            if (size>64)
+                                            {
+                                                hasmore = true;
+                                                size = 64;
+                                            }
+                                            memcpy(data.data(), PPShellComm::get_i2c_tx_queue_data(), size);
+                                            PPShellComm::clear_tx_queue(); });
+
+    PPHandler::set_shutdown_command_CB([](std::vector<uint8_t>& data) {
+        data.resize(1);
+        data[0] = 1;
+        shutdown_countdown = 10;  // set to 1, so in the main loop it will trigger the shutdown, and set to 10, so i2c reply can go through
+    });
+
+    // shell helper
+    PPShellComm::set_data_rx_callback([](const uint8_t* data, size_t data_len) -> bool {
+                                                    ws_sendall((uint8_t*)data, data_len);
+                                                    vTaskDelay(1 / portTICK_PERIOD_MS);
+                                                    return true; });
+
+    PPHandler::init((gpio_num_t)pinConfig.I2cSclSlavePin(), (gpio_num_t)pinConfig.I2cSdaSlavePin(), 0x51);
+
+    while (true) {
+        time_millis = esp_timer_get_time() / 1000;
+        if (sat_to_track_new != "") {
+            sat_to_track = sat_to_track_new;
+            sat_data_loaded = (load_satellite_tle(sat_to_track) == ESP_OK);
+            sattrackdata.elevation = 0;
+            sattrackdata.azimuth = 0;
+            last_millis[TimerEntry_SATTRACK] = 10;  // force update
+            sat_to_track_new = "";
+        }
+
+        if (airplane_mode_new != 0) {
+            airplane_mode = airplane_mode_new;
+            airplane_mode_new = 0;
+            WifiM::set_airplane_mode(airplane_mode);
+        }
+
+        // GET ALL SENSOR DATA
+        if (time_millis - last_millis[TimerEntry_SENSORGET] > timer_millis[TimerEntry_SENSORGET]) {
+            // GPS IS AUTO
+            ESP_ERROR_CHECK(temperature_sensor_get_celsius(temp_sensor, &temperatureEsp));                 // TEMPINT
+            orientation.angle = get_heading_degrees();                                                     // ORIENTATION
+            orientation.tilt = get_tilt();                                                                 // TILT
+            get_environment_meas(&environment.temperature, &environment.pressure, &environment.humidity);  // env data
+            get_environment_light(&light);                                                                 // light (lux) data
+            last_millis[TimerEntry_SENSORGET] = time_millis;
+        }
+
+        // REPORT ALL SENSOR DATA TO WEB
+        if (!PPShellComm::getInCommand() && (time_millis - last_millis[TimerEntry_REPORTWEB] > timer_millis[TimerEntry_REPORTWEB])) {
+            char buff[300] = {0};
+            snprintf(buff, 300,
+                     "#$##$$#GOTSENS"
+                     "{\"gps\":{\"y\":%d,\"m\":%d,\"d\":%d,\"h\":%d,\"mi\":%d,\"s\":%d,"
+                     "\"siu\":%d,\"siv\":%d,\"lat\":%.06f,\"lon\":%.06f,\"alt\":%.02f,\"speed\":%f},"
+                     "\"ori\":{\"head\":%.01f, \"tilt\":%.01f },"
+                     "\"env\":{\"tempesp\":%.01f,\"temp\":%.01f,\"humi\":%.01f, \"press\":%.01f, \"light\":%d }"
+                     "}\r\n",
+                     gpsdata.date.year + YEAR_BASE, gpsdata.date.month, gpsdata.date.day, gpsdata.tim.hour + TIME_ZONE, gpsdata.tim.minute, gpsdata.tim.second,
+                     gpsdata.sats_in_use, gpsdata.sats_in_view, gpsdata.latitude, gpsdata.longitude, gpsdata.altitude, gpsdata.speed,
+                     orientation.angle, orientation.tilt,
+                     temperatureEsp, environment.temperature, environment.humidity, environment.pressure, light);
+            ws_sendall((uint8_t*)buff, strlen(buff), true);
+            last_millis[TimerEntry_REPORTWEB] = time_millis;
+        }
+
+        if (time_millis - last_millis[TimerEntry_REPORTSTATES] > timer_millis[TimerEntry_REPORTSTATES]) {
+            LedFeedback::rgb_set_by_status(PPShellComm::getAnyConnected() | i2p_pp_conn_state, WifiM::getWifiStaStatus(), WifiM::getWifiApClientNum() > 0, gpsdata.latitude != 200 && gpsdata.longitude != 200 && gpsdata.sats_in_use > 2);
+            displayManager.setEspState(WifiM::getWifiStaStatus(), WifiM::getWifiApClientNum() > 0, gpsdata.latitude != 200 && gpsdata.longitude != 200 && gpsdata.sats_in_use > 2, PPShellComm::getAnyConnected() | i2p_pp_conn_state);
+            last_millis[TimerEntry_REPORTSTATES] = time_millis;
+        }
+
+        if (time_millis - last_millis[TimerEntry_SATTRACK] > timer_millis[TimerEntry_SATTRACK]) {
+            // check for new gps data
+            // ESP_LOGI(TAG, "qgps: %f  %f", sattrackdata.lat, sattrackdata.lon);
+            if (sat_data_loaded) {
+                if (gpsdata.latitude != 200 || gpsdata.longitude != 200) {
+                    sattrackdata.lat = gpsdata.latitude;
+                    sattrackdata.lon = gpsdata.longitude;
+                }
+                // if only old, or etc use that nvm
+                if (sattrackdata.lat != 0 || sattrackdata.lon != 0) {
+                    struct tm timeinfo;
+                    sat.site(sattrackdata.lat, sattrackdata.lon, gpsdata.altitude);
+                    double jd = 0;
+                    if (gpsdata.date.year < 44 && gpsdata.date.year >= 23)  // has valid gps time
+                    {
+                        time_method = 1;
+                        jday(gpsdata.date.year + YEAR_BASE, gpsdata.date.month, gpsdata.date.day, gpsdata.tim.hour, gpsdata.tim.minute, gpsdata.tim.second, 0, false, jd);
+                    } else {
+                        time_t now;
+                        time(&now);
+                        localtime_r(&now, &timeinfo);
+                        int year = timeinfo.tm_year + 1900;  // Az év 1900-tól számítva
+                        int month = timeinfo.tm_mon + 1;     // A hónap 0-11, ezért +1
+                        int day = timeinfo.tm_mday;
+
+                        int hour = timeinfo.tm_hour;
+                        int minute = timeinfo.tm_min;
+                        int second = timeinfo.tm_sec;
+                        jday(year, month, day, hour, minute, second, 0, false, jd);
+                    }
+                    sat.findsat(jd);
+                    if (time_method == 0) {
+                        sattrackdata.azimuth = 0;
+                        sattrackdata.elevation = 0;
+                    } else {
+                        sattrackdata.azimuth = sat.satAz;
+                        sattrackdata.elevation = sat.satEl;
+                    }
+                    if (time_method == 1) {
+                        sattrackdata.day = gpsdata.date.day;
+                        sattrackdata.month = gpsdata.date.month;
+                        sattrackdata.year = gpsdata.date.year;
+                        sattrackdata.hour = gpsdata.tim.hour;
+                        sattrackdata.minute = gpsdata.tim.minute;
+                        sattrackdata.second = gpsdata.tim.second;
+                    } else {
+                        sattrackdata.day = timeinfo.tm_mday;
+                        sattrackdata.month = timeinfo.tm_mon + 1;
+                        sattrackdata.year = timeinfo.tm_year + 1900;
+                        sattrackdata.hour = timeinfo.tm_hour;
+                        sattrackdata.minute = timeinfo.tm_min;
+                        sattrackdata.second = timeinfo.tm_sec;
+                    }
+                    sattrackdata.time_method = time_method;
+                }
+                last_millis[TimerEntry_SATTRACK] = time_millis;
+                displayManager.setSatTrackDataSource(&sattrackdata, &sat_to_track);  // to update screen is that screen is selected
+            } else {
+                sattrackdata.sat_day = 0;
+                sattrackdata.sat_month = 0;
+                sattrackdata.sat_year = 0;
+                sattrackdata.sat_hour = 0;
+                sattrackdata.azimuth = 0;
+                sattrackdata.elevation = 0;
+                last_millis[TimerEntry_SATTRACK] = time_millis;
+            }
+        }
+
+        if (time_millis - last_millis[TimerEntry_SATDOWN] > timer_millis[TimerEntry_SATDOWN]) {
+            if (!downloadedTLE && time_method && WifiM::getWifiStaStatus())  // not yet downloaded, and has valid time, and has wifi
+                download_tle_file_to_spiffs();
+            last_millis[TimerEntry_SATDOWN] = time_millis;
+        }
+
+        // check if i2c connected or dc
+        if (i2c_pp_last_comm_time != 0 && (time_millis - i2c_pp_last_comm_time > 21000))  // pp query time 5 sec, so 20 is a good timeout
+        {
+            i2c_pp_last_comm_time = 0;  // reset time
+            PPShellComm::set_i2c_connected(false);
+            ws_notify_dc_i2c();  // send to webpage it is dc
+            i2p_pp_conn_state = false;
+        } else if (i2c_pp_last_comm_time != 0)  // no dc, but communication in last 20 sec
+        {
+            if (!i2p_pp_conn_state)  // if it was disconnecdet before, and now it is connected, notify
+            {
+                PPShellComm::set_i2c_connected(true);
+                ws_notify_cc_i2c();
+                i2p_pp_conn_state = true;
+            }
+        }
+
+        if (wifi_config_changed) {
+            wifi_config_changed = false;
+            ESP_LOGI(TAG, "Saving new wifi config, and applying");
+            WifiM::save_config_wifi();
+            WifiM::config_wifi_apsta();
+        }
+        // try wifi client connect
+        WifiM::wifi_loop(time_millis);
+        AppManager::loop(time_millis);
+        displayManager.loop(time_millis);
+        vTaskDelay(15 / portTICK_PERIOD_MS);
+
+        if (shutdown_countdown > 1) {
+            shutdown_countdown--;
+            if (shutdown_countdown == 1) {
+                shutdownme();
+            }
+        }
+    }
+}
+
+#if __cplusplus
+}
+#endif

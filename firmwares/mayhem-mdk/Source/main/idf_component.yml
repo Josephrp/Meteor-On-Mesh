@@ -1,0 +1,6 @@
+## IDF Component Manager Manifest File
+dependencies:
+  idf: ">=4.4"
+  espressif/mdns: "1.*"
+  espressif/led_strip: "2.*"
+  espressif/esp-dsp: "1.*"   # for optimized FFT / dotprod when doing on-device LoRa DSP from HackRF IQ
