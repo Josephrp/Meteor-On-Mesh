@@ -17,7 +17,10 @@
 #include <algorithm>
 
 static const char *TAG = "lora_radio";
-static portMUX_TYPE s_spiMux = portMUX_INITIALIZER_UNLOCKED; // serializes SPI bus ops across radios (shared bus)
+static portMUX_TYPE s_spiMux = portMUX_INITIALIZER_UNLOCKED;
+static bool s_monitorMode = false;
+
+void LoraRadio::setMonitorMode(bool enabled) { s_monitorMode = enabled; }
 
 // SX126x commands (common subset)
 #define SX126X_CMD_SET_SLEEP            0x84
@@ -245,6 +248,10 @@ esp_err_t LoraRadio::setCad() {
 }
 
 esp_err_t LoraRadio::setTx(uint32_t timeout_symbols) {
+    if (s_monitorMode) {
+        ESP_LOGW(TAG, "setTx blocked: LoRa decoder monitor mode (no TX)");
+        return ESP_ERR_NOT_ALLOWED;
+    }
     uint8_t buf[3] = { (uint8_t)(timeout_symbols>>16), (uint8_t)(timeout_symbols>>8), (uint8_t)timeout_symbols };
     return writeCommand(SX126X_CMD_SET_TX, buf, 3);
 }
@@ -357,31 +364,28 @@ esp_err_t LoraRadio::getPacketStatus(int8_t* rssiPkt, int8_t* snrPkt, int8_t* si
 }
 
 esp_err_t LoraRadio::readBuffer(uint8_t* buf, uint8_t* len, uint8_t maxLen) {
-    // SX126x ReadBuffer: cmd 0x1E, offset (1 byte), then status byte + data on MISO
-    // We send cmd + offset, receive status + length? For explicit, length is in header; for variable use first byte or prior.
-    // Common pattern: after RxDone, issue readbuffer(0), read status(1) + payload bytes.
-    if (!select() || !spi_dev) return ESP_ERR_INVALID_STATE;
+    // SX126x ReadBuffer: offset 0 is safe for explicit-header single-packet RX (startPtr ignored).
+    // SPI is serialized via s_spiMux; MCP I2C (DIO1/BUSY) is not — only call from decoder task.
+    portENTER_CRITICAL(&s_spiMux);
+    if (!select() || !spi_dev) { portEXIT_CRITICAL(&s_spiMux); return ESP_ERR_INVALID_STATE; }
 
-    uint8_t tx[3] = { SX126X_CMD_READ_BUFFER, 0 /*offset*/, 0 };
-    uint8_t rx[3 + 255] = {}; // status + up to some
+    uint8_t tx[3] = { SX126X_CMD_READ_BUFFER, 0, 0 };
+    uint8_t rx[3 + 255] = {};
     spi_transaction_t t = {};
-    t.length = 8 * (2 + 1 + maxLen); // rough; we use rx_buffer sized
+    t.length = 8 * (2 + maxLen);
     t.tx_buffer = tx;
     t.rx_buffer = rx;
 
     esp_err_t err = spi_device_transmit(spi_dev, &t);
     sxManager.spiDeselectAll();
     selected = false;
+    portEXIT_CRITICAL(&s_spiMux);
 
     if (err != ESP_OK) return err;
 
-    // rx[0] unused, rx[1] status after cmd, rx[2] often length or first, data starts ~ rx[3]
     uint8_t l = maxLen;
-    // If radio is in explicit header mode the length is received in header; for decoder we often read max or use prior GetRxBufferStatus.
-    // For robustness, try to use first data byte as len if implicit, else trust caller max.
     if (buf) {
-        // copy what we can; start data at rx[2] or rx[3] depending on response framing
-        uint8_t start = 2;
+        const uint8_t start = 2;
         for (uint8_t i = 0; i < l && (start + i) < sizeof(rx); ++i) {
             buf[i] = rx[start + i];
         }
@@ -392,18 +396,19 @@ esp_err_t LoraRadio::readBuffer(uint8_t* buf, uint8_t* len, uint8_t maxLen) {
 
 esp_err_t LoraRadio::configureFor(const LoraConfig& cfg) {
     // Full bring-up per SX126x + Meshtonic H4M variant (TCXO 1.8V, DIO2 as RF switch, sync 0x1424)
-    ESP_ERROR_CHECK(reset());
-    ESP_ERROR_CHECK(setStandby());
-    ESP_ERROR_CHECK(setPacketTypeLoRa());
-    ESP_ERROR_CHECK(setFrequency(cfg.freq_hz));
-    ESP_ERROR_CHECK(setModulationParams(cfg.sf, cfg.bw_hz, cfg.cr, cfg.ldro));
-    ESP_ERROR_CHECK(setPacketParams(cfg.preamble_syms, cfg.explicit_header, 0xFF /*max*/, cfg.crc_on));
-    ESP_ERROR_CHECK(setSyncWord(0x1424)); // Meshtastic / private
-    ESP_ERROR_CHECK(setDio2AsRfSwitch(true));
-    ESP_ERROR_CHECK(setDio3TcxoCtrl(1.8f));
-    ESP_ERROR_CHECK(setRxBoost(true)); // per DS / RadioLib for better CAD/RX on Meshtonic
+    esp_err_t e = ESP_OK;
+    if ((e = reset()) != ESP_OK) return e;
+    if ((e = setStandby()) != ESP_OK) return e;
+    if ((e = setPacketTypeLoRa()) != ESP_OK) return e;
+    if ((e = setFrequency(cfg.freq_hz)) != ESP_OK) return e;
+    if ((e = setModulationParams(cfg.sf, cfg.bw_hz, cfg.cr, cfg.ldro)) != ESP_OK) return e;
+    if ((e = setPacketParams(cfg.preamble_syms, cfg.explicit_header, 0xFF /*max*/, cfg.crc_on)) != ESP_OK) return e;
+    if ((e = setSyncWord(0x1424)) != ESP_OK) return e; // Meshtastic / private
+    if ((e = setDio2AsRfSwitch(true)) != ESP_OK) return e;
+    if ((e = setDio3TcxoCtrl(1.8f)) != ESP_OK) return e;
+    if ((e = setRxBoost(true)) != ESP_OK) return e; // per DS / RadioLib for better CAD/RX on Meshtonic
     // IRQ mask: enable common events on DIO1
-    ESP_ERROR_CHECK(setDioIrqParams(0x03FF, 0x03FF));
+    if ((e = setDioIrqParams(0x03FF, 0x03FF)) != ESP_OK) return e;
     return ESP_OK;
 }
 
@@ -416,30 +421,29 @@ esp_err_t LoraRadio::startRxContinuous() {
 }
 
 bool LoraRadio::checkRxDone(uint8_t* outLen, uint8_t maxLen, uint8_t* outBuf, int8_t* outRssi, int8_t* outSnr) {
-    // After DIO1 or periodic poll: read IRQ, act on RxDone (bit 1), clear, extract payload + metrics.
+    // maxLen must stay <= 255 (SX1262 buffer); caller uses 255 cap proven in production.
     uint16_t irq = 0;
     if (getIrqStatus(&irq) != ESP_OK) return false;
     const uint16_t RX_DONE = (1u << 1);
-    if ((irq & RX_DONE) == 0) {
-        return false;
-    }
-    // Clear at least the RxDone (and optionally others we handle)
+    if ((irq & RX_DONE) == 0) return false;
     clearIrqStatus(RX_DONE | (1u << 0) | (1u << 2) | (1u << 3));
 
     uint8_t actualLen = 0;
-    uint8_t startPtr = 0;
+    uint8_t startPtr = 0; // ignored: explicit-header single-packet case uses offset 0
     getRxBufferStatus(&actualLen, &startPtr);
+    (void)startPtr;
 
     int8_t r = -127, sn = 0, sig = 0;
     getPacketStatus(&r, &sn, &sig);
     if (outRssi) *outRssi = r;
     if (outSnr) *outSnr = sn;
 
-    uint8_t l = (actualLen && actualLen < maxLen) ? actualLen : maxLen;
-    // For now ignore startPtr and read from 0 offset (works for most single-packet cases)
+    uint8_t l = actualLen;
+    if (l == 0 || l > maxLen) l = maxLen;
+
     uint8_t tmpLen = 0;
     if (readBuffer(outBuf, &tmpLen, l) == ESP_OK && outLen) {
-        *outLen = tmpLen ? tmpLen : l;
+        *outLen = (tmpLen > 0 && tmpLen <= l) ? tmpLen : l;
     } else if (outLen) {
         *outLen = l;
     }
@@ -447,11 +451,5 @@ bool LoraRadio::checkRxDone(uint8_t* outLen, uint8_t maxLen, uint8_t* outBuf, in
 }
 
 void LoraRadio::handleDio1Irq() {
-    // Fast path from ISR context or service: read and clear this radio's events.
-    uint16_t irq = 0;
-    if (getIrqStatus(&irq) == ESP_OK) {
-        // Clear RxDone + common; full handling in checkRxDone / upper loop
-        clearIrqStatus(irq & 0x03FF);
-    }
-    // pending mask cleared by caller (sx or app)
+    // Lightweight: IRQ details drained in checkRxDone from the app task (not ISR SPI).
 }

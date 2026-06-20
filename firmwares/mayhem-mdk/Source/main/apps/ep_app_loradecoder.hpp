@@ -3,23 +3,6 @@
 
 /*
  * LoRa Wideband Decoder application for ESP32PP / Mayhem MDK.
- *
- * This app provides the on-device surface for the vendored LoRa Wideband Decoder.
- *
- * Vendored source lives at: ../lora-wideband-decoder/ (relative to Source) or
- * firmwares/mayhem-mdk/lora-wideband-decoder/ from the project root.
- *
- * Responsibilities on the ESP32 (as implemented in Mayhem MDK):
- * - Own configuration for wideband / multi-SF monitoring sessions.
- * - Accept decoded packet events from a host running the vendored Python decoder
- *   (via HTTP POST bridge or future websocket/uart).
- * - Provide local narrowband monitoring using the board's 1-4 WIO SX1262 radios
- *   (MCP23017 routed). Full wideband IQ capture requires external HackRF + host.
- * - Expose recent packets + status to:
- *     * Web UI / websocket (browser on the ESP AP or STA)
- *     * PortaPack over I2C (custom PP commands)
- *     * Display (if present)
- * - Bridge control: start/stop external decoder session hints, arm local radios.
  */
 
 #include "ep_app.hpp"
@@ -28,34 +11,46 @@
 #include "../lora_radio.h"
 #include <vector>
 #include <string>
+#include <cstdint>
 
 struct LoraPacket {
-    uint32_t ts_ms;          // device uptime ms when received
+    uint32_t ts_ms;
     float    freq_mhz;
     uint32_t bw_hz;
-    uint8_t  sf;             // 7-12
+    uint8_t  sf;
     int16_t  rssi;
-    int8_t   snr;            // 0.25 dB units or raw
-    std::string payload_hex; // up to ~256 bytes worth, truncated if needed
-    uint8_t  proto;          // 0=unknown, 1=meshtastic, 2=lorawan, ...
-    std::string info;        // short decoded summary (node ids, etc.)
+    int8_t   snr;
+    std::string payload_hex;
+    uint8_t  proto;
+    std::string info;
+};
+
+enum class RadioRxMode : uint8_t {
+    CAD = 0,
+    CONTINUOUS = 1,
+    AUTO = 2,
 };
 
 struct RadioChannel {
     float freq_mhz = 915.0f;
     uint8_t sf = 12;
     uint32_t bw_hz = 125000;
-    uint8_t cr = 1; // 4/5
+    uint8_t cr = 1;
+    RadioRxMode rx_mode = RadioRxMode::CAD;
+    bool cad_after_rx = true;
 };
 
 struct LoraDecoderConfig {
     float center_mhz = 915.0f;
-    uint32_t bw_mask = 0xFFFF;   // bitmask of enabled BWs (placeholder)
-    uint8_t sf_mask  = 0xFF;     // bits 7-12
-    uint8_t radio_count = 1;     // how many local slots to use
-    uint8_t backend = 0;         // 0=host bridge (Python LWD+HackRF), 1=local SX radios (MCP), 2=embedded DSP (vendored C++ on ESP32 from HackRF IQ)
-    char keys[128] = {0};        // base64 or hex keys for Meshtastic etc. (simplified)
-    RadioChannel channels[4];    // per-slot config; populated from center or NVS/web
+    uint32_t bw_mask = 0xFFFF;
+    uint8_t sf_mask  = 0xFF;
+    uint8_t radio_count = 1;
+    uint8_t backend = 0;
+    char keys[128] = {0}; // legacy single-key string fallback
+    RadioChannel channels[4];
+    RadioRxMode default_rx_mode = RadioRxMode::CAD;
+    bool global_cad_after_rx = true;
+    uint8_t slot_present_mask = 0; // runtime: bit i set if slot i responded at arm
 };
 
 class EPAppLoraDecoder : public EPApp {
@@ -65,25 +60,17 @@ public:
 
     bool OnPPData(uint16_t command, std::vector<uint8_t>& data) override;
     bool OnPPReqData(uint16_t command, std::vector<uint8_t>& data) override;
-
     bool OnWebData(std::string& data) override;
-
     void OnDisplayRequest(DisplayGeneric* display) override;
     void Loop(uint32_t currentMillis) override;
 
-    // Called by webserver POST bridge (or other feeders) to inject a decoded packet (host path)
     void pushPacket(const LoraPacket& pkt);
-
-    // Feed raw IQ (sc16) directly into the embedded DSP backend (2).
-    // This is the path for "ESP32 processes HackRF IQ locally".
     void feedIQ_sc16(const int16_t* iq, size_t count, float fs, float center_mhz);
 
-    // Control
     void startSession();
     void stopSession();
     void setConfig(const LoraDecoderConfig& cfg);
     LoraDecoderConfig getConfig() const { return config; }
-
     std::vector<LoraPacket> getRecentPackets(size_t maxCount = 16) const;
 
 private:
@@ -91,18 +78,30 @@ private:
     void sendPacketsToWeb(size_t count = 8);
     void armLocalRadios();
     void disarmLocalRadios();
+    bool loadConfigFromNvs();
+    void persistConfigToNvs();
+    RadioRxMode resolveRxMode(int slot) const;
+    void startRxForSlot(int slot);
+    void applyRxPolicyAfterPacket(int slot, uint32_t now_ms);
+    static RadioRxMode parseRxModeToken(const char* tok);
+    static const char* rxModeName(RadioRxMode m);
 
     bool running = false;
+    bool rearming = false;
+    uint32_t arm_generation = 0;
     uint32_t lastPushMs = 0;
     LoraDecoderConfig config;
 
     static constexpr size_t MAX_PACKETS = 32;
-    std::vector<LoraPacket> packets;  // ring-like, newest at back
+    std::vector<LoraPacket> packets;
 
-    // Onboard radio support (uses Meshtonic's own SX1262 + antennas, not HackRF)
     static constexpr int MAX_RADIOS = 4;
     LoraRadio* radios[MAX_RADIOS] = {nullptr};
     LoraConfig radioCfgs[MAX_RADIOS];
+    RadioRxMode active_rx_mode[MAX_RADIOS] = {};
+    int8_t last_rssi[MAX_RADIOS] = {};
+    uint32_t last_rx_ms[MAX_RADIOS] = {};
+    char last_key_label[MAX_RADIOS][24] = {};
     int numActiveRadios = 0;
 };
 

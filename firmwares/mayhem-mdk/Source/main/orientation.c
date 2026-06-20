@@ -3,6 +3,7 @@
 #include "nvs_flash.h"
 #include <string.h>
 #include "sensordb.h"
+#include "meshtonic_board.h"
 
 float declinationAngle = 0;  // setup to web interface https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml
 
@@ -32,11 +33,13 @@ void init_accelo(int sda, int scl) {
         ESP_LOGI("Accel", "I2C pins not set, skipping accelerometer init");
         return;
     }
+    uint8_t a = getDevAddr(ADXL345);
+    if (a) meshtonic_select_sensor_channel(a);
     memset(&dev_adxl345, 0, sizeof(dev_adxl345));
-    if (adxl345_init_desc(&dev_adxl345, getDevAddr(ADXL345), 0, sda, scl) == ESP_OK && adxl345_init(&dev_adxl345) == ESP_OK) {
+    if (a && adxl345_init_desc(&dev_adxl345, a, 0, sda, scl) == ESP_OK && adxl345_init(&dev_adxl345) == ESP_OK) {
         accelo_inited |= Accelo_ADXL345;
         ESP_LOGI("Accel", "adxl345 OK");
-    } else {
+    } else if (a) {
         adxl345_free_desc(&dev_adxl345);
     }
 }
@@ -51,38 +54,46 @@ void init_orientation(int sda, int scl) {
     accelo_inited = Accelo_none;
     orientation_inited = Orientation_none;
 
-    // HCM5883l
-    memset(&dev_hmc5883l, 0, sizeof(hmc5883l_dev_t));
+    uint8_t a;
 
-    if (hmc5883l_init_desc(&dev_hmc5883l, 0, sda, scl, getDevAddr(HMC5883L)) == ESP_OK && hmc5883l_init(&dev_hmc5883l) == ESP_OK) {
+    // HCM5883l
+    a = getDevAddr(HMC5883L);
+    if (a) meshtonic_select_sensor_channel(a);
+    memset(&dev_hmc5883l, 0, sizeof(hmc5883l_dev_t));
+    if (a && hmc5883l_init_desc(&dev_hmc5883l, 0, sda, scl, a) == ESP_OK && hmc5883l_init(&dev_hmc5883l) == ESP_OK) {
         hmc5883l_set_opmode(&dev_hmc5883l, HMC5883L_MODE_CONTINUOUS);
         hmc5883l_set_samples_averaged(&dev_hmc5883l, HMC5883L_SAMPLES_8);
         hmc5883l_set_data_rate(&dev_hmc5883l, HMC5883L_DATA_RATE_07_50);
         hmc5883l_set_gain(&dev_hmc5883l, HMC5883L_GAIN_1090);
         ESP_LOGI("Orientation", "hmc5883lTestConnection OK");
         orientation_inited |= Orientation_hmc5883l;
-    } else {
+    } else if (a) {
         hmc5883l_free_desc(&dev_hmc5883l);
     }
 
     // MPU9250
+    a = getDevAddr(MPU925X);
+    if (a) meshtonic_select_sensor_channel(a);
     memset(&dev_mpu925x, 0, sizeof(dev_mpu925x));
-    if (mpu925x_init_desc(&dev_mpu925x, getDevAddr(MPU925X), 0, sda, scl) == ESP_OK && mpu925x_init(&dev_mpu925x) == ESP_OK) {
-        accelo_inited |= Accelo_MPU925x;  // todo check if really available
+    if (a && mpu925x_init_desc(&dev_mpu925x, a, 0, sda, scl) == ESP_OK && mpu925x_init(&dev_mpu925x) == ESP_OK) {
+        accelo_inited |= Accelo_MPU925x;
         orientation_inited |= Orientation_mpu925x;
         ESP_LOGI("Orient", "mpu925x OK");
-    } else {
+    } else if (a) {
         mpu925x_free_desc(&dev_mpu925x);
     }
 
+    a = getDevAddr(LSM303_ACCEL);
+    uint8_t am = getDevAddr(LSM303_MAG);
+    if (a || am) meshtonic_select_sensor_channel(a ? a : am);
     memset(&dev_lsm303, 0, sizeof(dev_lsm303));
-    if (lsm303_init_desc(&dev_lsm303, getDevAddr(LSM303_ACCEL), getDevAddr(LSM303_MAG), 0, sda, scl) == ESP_OK && lsm303_init(&dev_lsm303) == ESP_OK) {
+    if ((a || am) && lsm303_init_desc(&dev_lsm303, a, am, 0, sda, scl) == ESP_OK && lsm303_init(&dev_lsm303) == ESP_OK) {
         accelo_inited |= Accelo_LSM303;
         orientation_inited |= Orientation_lsm303;
         lsm303_acc_set_config(&dev_lsm303, LSM303_ACC_MODE_NORMAL, LSM303_ODR_100_HZ, LSM303_ACC_SCALE_2G);
         lsm303_mag_set_config(&dev_lsm303, LSM303_MAG_MODE_CONT, LSM303_MAG_RATE_15, LSM303_MAG_GAIN_1_3);
         ESP_LOGI("Orient", "LSM303 OK");
-    } else {
+    } else if (a || am) {
         lsm303_free_desc(&dev_lsm303);
         ESP_LOGI("Orient", "LSM303 failed");
     }
@@ -108,7 +119,9 @@ float fix_heading(float heading) {
 void update_gyro_data() {
     if (accelo_inited == Accelo_none)
         return;
+    uint8_t a;
     if ((accelo_inited & Accelo_ADXL345) == Accelo_ADXL345) {
+        a = getDevAddr(ADXL345); if (a) meshtonic_select_sensor_channel(a);
         adxl345_read_x(&dev_adxl345, &accelo_x);
         adxl345_read_y(&dev_adxl345, &accelo_y);
         adxl345_read_z(&dev_adxl345, &accelo_z);
@@ -116,11 +129,13 @@ void update_gyro_data() {
     }
 
     if ((accelo_inited & Accelo_MPU925x) == Accelo_MPU925x) {
+        a = getDevAddr(MPU925X); if (a) meshtonic_select_sensor_channel(a);
         mpu925x_read_accel(&dev_mpu925x, &accelo_x, &accelo_y, &accelo_z);
         ESP_LOGI("accel2", "accel data: %f %f %f", accelo_x, accelo_y, accelo_z);
     }
 
     if ((accelo_inited & Accelo_LSM303) == Accelo_LSM303) {
+        a = getDevAddr(LSM303_ACCEL); if (a) meshtonic_select_sensor_channel(a);
         lsm303_acc_raw_data_t acc_raw;
         lsm303_acc_data_t acc;
 
@@ -139,7 +154,9 @@ float get_heading() {
         return 0;
     float ret = 0.0;
     update_gyro_data();  // update only if orientation needs it.
+    uint8_t a;
     if ((orientation_inited & Orientation_hmc5883l) == Orientation_hmc5883l) {
+        a = getDevAddr(HMC5883L); if (a) meshtonic_select_sensor_channel(a);
         hmc5883l_data_t data;
         if (hmc5883l_get_data(&dev_hmc5883l, &data) == ESP_OK) {
             if (accelo_inited == Accelo_none || (accelo_x == 0 && accelo_y == 0))
@@ -164,6 +181,7 @@ float get_heading() {
         }
     }
     if ((orientation_inited & Orientation_mpu925x) == Orientation_mpu925x) {
+        a = getDevAddr(MPU925X); if (a) meshtonic_select_sensor_channel(a);
         int16_t magX = 0;
         int16_t magY = 0;
         int16_t magZ = 0;
@@ -194,6 +212,7 @@ float get_heading() {
     }
 
     if ((orientation_inited & Orientation_lsm303) == Orientation_lsm303) {
+        a = getDevAddr(LSM303_MAG); if (a) meshtonic_select_sensor_channel(a);
         lsm303_mag_raw_data_t mag_raw;
         lsm303_mag_data_t mag;
 

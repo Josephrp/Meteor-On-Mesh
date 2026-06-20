@@ -90,17 +90,13 @@ int SXRadioManager::getRstPin(int slot) const {
 void SXRadioManager::serviceInterruptsFromIsr() {
     if (!g_mcp_ready) return;
     uint16_t intf = 0, cap = 0;
-    // Best effort; in real ISR consider posting to queue instead of full I2C if timing tight.
+    // Best-effort I2C from ISR: only mark pending slots; SPI/IRQ drain runs in decoder task.
     if (mcp23017_read_interrupt_state(&g_mcp, &intf, &cap) != ESP_OK) return;
 
-    // For each slot, if its DIO1 bit is set in intf, mark pending and dispatch if wired
     for (int s = 0; s < radioCount && s < 4; s++) {
         int d = getDio1Pin(s);
         if (d != 0xFF && (intf & (1u << d))) {
             pendingIrqMask |= (uint8_t)(1u << s);
-            if (radioInst[s]) {
-                radioInst[s]->handleDio1Irq();
-            }
         }
     }
 }

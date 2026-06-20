@@ -79,6 +79,9 @@ public:
     esp_err_t startCad();
     esp_err_t startRxContinuous();
 
+    // Monitor-only guard: blocks setTx when LoRa decoder session is active
+    static void setMonitorMode(bool enabled);
+
     // Returns true if a packet is ready (call after DIO1 or poll)
     bool     checkRxDone(uint8_t* outLen, uint8_t maxLen, uint8_t* outBuf, int8_t* outRssi, int8_t* outSnr);
 
@@ -102,3 +105,6 @@ private:
 #ifdef __cplusplus
 }
 #endif
+
+// C-callable alias for ep_app_loradecoder
+inline void lora_radio_set_monitor_mode(bool enabled) { LoraRadio::setMonitorMode(enabled); }

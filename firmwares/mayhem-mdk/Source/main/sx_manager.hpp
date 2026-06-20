@@ -57,6 +57,7 @@ private:
     // WIO2: CS=GPA4, DIO1=GPA6, BUSY=GPB0
     // WIO3: CS=GPA0, DIO1=GPA1, BUSY=GPA2
     // WIO4: CS/DIO1/BUSY on GPB (assignment requires final hardware audit vs full v2 netlist)
+    // Runtime presence is detected in EPAppLoraDecoder::armLocalRadios via configureFor + status.
     // RST is a shared LORA_RST net (no per-radio MCP drive in reference); getRstPin returns 0xFF to indicate skip.
     static constexpr int MCP_CS[4]   = {3, 4, 0, 9};   // GPA3, GPA4, GPA0, GPB1
     static constexpr int MCP_DIO1[4] = {5, 6, 1, 10};  // GPA5, GPA6, GPA1, GPB2

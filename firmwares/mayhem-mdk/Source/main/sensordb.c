@@ -1,4 +1,5 @@
 #include "sensordb.h"
+#include <stdbool.h>
 
 uint8_t BH1750_addr = 0;
 uint8_t HMC5883L_addr = 0;
@@ -15,7 +16,21 @@ uint8_t AS5600_addr = 0;
 uint8_t BMI160_addr = 0;
 uint8_t BMM150_addr = 0;
 
+// Per-addr TCA channel for Meshtonic H4M (0xFF = not muxed / unknown)
+static uint8_t addrToChannel[256];
+static bool addrChInited = false;
+
+static void ensureAddrChInit() {
+    if (!addrChInited) {
+        for (int i=0; i<256; i++) addrToChannel[i] = 0xFF;
+        addrChInited = true;
+    }
+}
+
 void foundI2CDev(uint8_t addr) {
+    ensureAddrChInit();
+    // default to "direct bus" (no mux) when called without channel info
+    if (addrToChannel[addr] == 0xFF) addrToChannel[addr] = 0xFE; // 0xFE = direct, not muxed
     if (addr == 0x23)
         BH1750_addr = 0x23;  // low
     if (addr == 0x5c)
@@ -62,6 +77,21 @@ void foundI2CDev(uint8_t addr) {
         BMI160_addr = addr;  // will be disambiguated by chip id at higher layer
     if (addr >= 0x10 && addr <= 0x13)
         BMM150_addr = addr;
+}
+
+void foundI2CDevOnChannel(uint8_t addr, uint8_t ch) {
+    ensureAddrChInit();
+    if (ch <= 7) {
+        addrToChannel[addr] = ch;
+    } else {
+        addrToChannel[addr] = 0xFE;
+    }
+    foundI2CDev(addr);
+}
+
+uint8_t getSensorChannel(uint8_t addr) {
+    ensureAddrChInit();
+    return addrToChannel[addr];
 }
 
 uint8_t getDevAddr(SENSORS sensor) {

@@ -17,7 +17,7 @@ It is vendored here so that the **entire Meshtonic H4M + HackRF + PortaPack** st
   - Display (title + last packet summary).
 - Three backends (config.backend):
   1. **Host bridge (recommended for true wideband at 20 Msps)**: Run the vendored decoder on a Linux host with HackRF. The host POSTs normalized packet events to `/lwd/packet` (or `/meshtonic/packet`). The ESP32 LoraDecoder app receives them.
-  2. **Local SX1262 radios** (1–4 WIO on Meshtonic H4M): `SXRadioManager` + MCP23017 arming. Full RX needs SX126x driver work on top.
+  2. **Local SX1262 radios** (1–4 WIO on Meshtonic H4M): fully on-device via `SXRadioManager` + MCP23017 + `LoraRadio` driver (SPI shared with display). `EPAppLoraDecoder` with `backend=1` does CAD or continuous RX (tunable per slot), IRQ fan-in (pending mask from ISR, SPI drain in task), buffer read with 255-byte cap, and **production Meshtastic decrypt** via `lora_decode.*` (mbedtls AES-CTR, exact nonce, multi-key NVS, protobuf validation gates). Packets surface to web / PP I2C / display with per-slot `rx_mode`, key label, and enriched `info`.
   3. **Embedded DSP (new)**: The heavy DSP (Schmidl-Cox detection, downchirp generation, dechirp+FFT CFO/symbol decision, basic packetization) has been comprehensively vendored into `main/lora_dsp/` as C/C++. Call `feedIQ_sc16(...)` (or the burst API) with samples originating from a HackRF and the ESP32 performs the processing locally. A test feeder (`LORA:FEED_TEST`) and a HackRF USB sampler stub (`hackrf_sampler.h`) are provided. Real sustained 20 Msps is bandwidth-limited on ESP32-S3; use bursts at 1-2 Msps or pre-channelized data from the HackRF/PP side.
 
 ## Running the vendored decoder against HackRF
@@ -44,12 +44,19 @@ The ESP32 will forward received events into the running LoraDecoder app instance
 
 - `LORA:START`
 - `LORA:STOP`
-- `LORA:CONFIG:center=915.0,backend=0,radio_count=2`
+- `LORA:CONFIG:center=915.0,backend=1,radio_count=2,rx_mode=cad,cad_after=1`
+- `LORA:CHLIST:0=915.0,12,125000,1,cad;1=915.2,11,250000,1,cont`
+- `LORA:POLICY:global=cad,cad_after=1` or `LORA:POLICY:0=cont,1=auto`
+- `LORA:KEYS:label=mine,key=base64...,scope=all,priority=10` (structured; persisted to NVS `lora_keys`)
 - `LORA:PACKETS`
 - `LORA:INJECT:p=cafebabe...` (test injection)
-- `LORA:STATUS`
+- `LORA:STATUS` (per-slot rx_mode, present mask, last key label)
 
-The app pushes JSON: `{"type":"loradec_status", ...}` and `{"type":"loradec_packets", "packets":[...]}`.
+The app pushes JSON: `{"type":"loradec_status", ...}` with `slots[]` and `{"type":"loradec_packets", "packets":[...]}`.
+
+**Monitor mode safety**: LoRa decoder session enables `lora_radio_set_monitor_mode(true)` which blocks `setTx` on SX1262 (RX-only monitor path).
+
+**Validation**: run `python firmwares/mayhem-mdk/tools/lora_decode_vectors.py` for host reference vectors; on-device soak: switch `LORA:POLICY` CAD↔continuous with 1–4 radios.
 
 ## PortaPack / I2C surface
 

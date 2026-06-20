@@ -614,13 +614,12 @@ void app_main(void) {
                 ESP_LOGW(TAG, "MCP23017 init failed");
             }
 
-            // Meshtonic TCA discovery pass for full sensor inventory (populates sensordb)
+            // Meshtonic TCA discovery pass for full sensor inventory (populates sensordb + channel map)
             if (g_tca_ready) {
                 for (uint8_t ch = 0; ch < 4; ch++) {
                     if (meshtonic_tca_select(ch) == ESP_OK) {
                         // probe common Meshtonic addresses on this channel
                         for (uint8_t a : {0x10u,0x11u,0x12u,0x13u, 0x36u, 0x44u,0x45u, 0x68u,0x69u, 0x76u,0x77u}) {
-                            // reuse the probe logic via a temp dev
                             i2c_dev_t p = {};
                             p.port = I2C_NUM_0;
                             p.addr = a;
@@ -628,7 +627,7 @@ void app_main(void) {
                             p.cfg.scl_io_num = (gpio_num_t)scl;
                             p.cfg.master.clk_speed = 400000;
                             if (i2c_dev_probe(&p, I2C_DEV_WRITE) == ESP_OK) {
-                                foundI2CDev(a);
+                                foundI2CDevOnChannel(a, ch);
                             }
                         }
                     }

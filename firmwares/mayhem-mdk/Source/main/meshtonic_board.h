@@ -23,6 +23,9 @@ esp_err_t meshtonic_tca_select(uint8_t ch);
 /** Write a single MCP pin (for radio CS etc). Safe no-op if not ready. */
 esp_err_t meshtonic_mcp_write_pin(uint8_t pin, bool level);
 
+/** For H4M sensors behind TCA: select the recorded channel for a given I2C addr (no-op if not muxed/unknown). */
+esp_err_t meshtonic_select_sensor_channel(uint8_t addr);
+
 #ifdef __cplusplus
 }
 #endif

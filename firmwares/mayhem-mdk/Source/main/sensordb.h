@@ -43,7 +43,9 @@ extern "C" {
 #endif
 
 void foundI2CDev(uint8_t addr);
+void foundI2CDevOnChannel(uint8_t addr, uint8_t ch); // for muxed buses (H4M TCA)
 uint8_t getDevAddr(SENSORS sensor);
+uint8_t getSensorChannel(uint8_t addr); // 0-7 = TCA ch, 0xFE=direct, 0xFF=unknown
 
 #if __cplusplus
 }
