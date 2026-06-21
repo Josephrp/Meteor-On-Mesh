@@ -1,0 +1,145 @@
+/*
+ * Copyright 2012-2026 Great Scott Gadgets <info@greatscottgadgets.com>
+ * Copyright 2012 Will Code <willcode4@gmail.com>
+ * Copyright 2014 Jared Boone <jared@sharebrained.com>
+ *
+ * This file is part of HackRF.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "fixed_point.h"
+#include "spi_ssp.h"
+
+#ifdef IS_PRALINE
+	#include "max2831.h"
+#endif
+#ifdef IS_NOT_PRALINE
+	#include "max2837.h"
+#endif
+#ifdef IS_H1_R9
+	#include "max2839.h"
+#endif
+
+typedef enum {
+	MAX283x_MODE_SHUTDOWN,
+	MAX283x_MODE_STANDBY,
+	MAX283x_MODE_TX,
+	MAX283x_MODE_RX,
+	MAX283x_MODE_RX_CAL,
+	MAX283x_MODE_TX_CAL,
+	MAX283x_MODE_CLKOUT,
+} max283x_mode_t;
+
+typedef enum {
+	MAX283x_RX_HPF_100_HZ = 0,
+	MAX283x_RX_HPF_4_KHZ = 1,
+	MAX283x_RX_HPF_30_KHZ = 2,
+	MAX283x_RX_HPF_600_KHZ = 3,
+} max283x_rx_hpf_freq_t;
+
+typedef enum {
+#ifdef IS_PRALINE
+	MAX2831_VARIANT,
+#endif
+#ifdef IS_NOT_PRALINE
+	MAX2837_VARIANT,
+#endif
+#ifdef IS_H1_R9
+	MAX2839_VARIANT,
+#endif
+} max283x_variant_t;
+
+typedef struct {
+	max283x_variant_t type;
+
+	union {
+#ifdef IS_PRALINE
+		max2831_driver_t max2831;
+#endif
+#ifdef IS_NOT_PRALINE
+		max2837_driver_t max2837;
+#endif
+#ifdef IS_H1_R9
+		max2839_driver_t max2839;
+#endif
+	} drv;
+} max283x_driver_t;
+
+/* Initialize chip. */
+void max283x_setup(max283x_driver_t* const drv);
+
+/* Returns the number of registers supported by the driver. */
+uint16_t max283x_num_regs(max283x_driver_t* const drv);
+
+/* Returns the maximum data register value supported by the driver. */
+uint16_t max283x_data_regs_max_value(max283x_driver_t* const drv);
+
+/* Read a register via SPI. Save a copy to memory and return
+ * value. Mark clean. */
+uint16_t max283x_reg_read(max283x_driver_t* const drv, uint8_t r);
+
+/* Write value to register via SPI and save a copy to memory. Mark
+ * clean. */
+void max283x_reg_write(max283x_driver_t* const drv, uint8_t r, uint16_t v);
+
+/* Write all dirty registers via SPI from memory. Mark all clean. Some
+ * operations require registers to be written in a certain order. Use
+ * provided routines for those operations. */
+void max283x_regs_commit(max283x_driver_t* const drv);
+
+max283x_mode_t max283x_mode(max283x_driver_t* const drv);
+void max283x_set_mode(max283x_driver_t* const drv, const max283x_mode_t new_mode);
+
+/* Turn on/off all chip functions. Does not control oscillator and CLKOUT */
+void max283x_start(max283x_driver_t* const drv);
+void max283x_stop(max283x_driver_t* const drv);
+
+/* Set frequency in 1/(2**24) Hz. */
+fp_40_24_t max283x_set_frequency(
+	max283x_driver_t* const drv,
+	fp_40_24_t freq,
+	bool program);
+uint32_t max283x_set_lpf_bandwidth(
+	max283x_driver_t* const drv,
+	const max283x_mode_t mode,
+	const uint32_t bandwidth_hz);
+
+bool max283x_set_lna_gain(max283x_driver_t* const drv, const uint32_t gain_db);
+
+bool max283x_set_vga_gain(max283x_driver_t* const drv, const uint32_t gain_db);
+bool max283x_set_txvga_gain(max283x_driver_t* const drv, const uint32_t gain_db);
+
+void max283x_tx(max283x_driver_t* const drv);
+void max283x_rx(max283x_driver_t* const drv);
+
+/* Set MAX2831 receiver high-pass filter corner frequency in Hz */
+void max283x_set_rx_hpf_frequency(
+	max283x_driver_t* const drv,
+	const max283x_rx_hpf_freq_t freq);
+
+/* Perform MAX2831 TX and RX calibration. */
+void max283x_tx_calibration(max283x_driver_t* const drv);
+void max283x_rx_calibration(max283x_driver_t* const drv);
+
+/* Driver instance. */
+extern ssp_config_t ssp_config_max283x;
+extern max283x_driver_t max283x;

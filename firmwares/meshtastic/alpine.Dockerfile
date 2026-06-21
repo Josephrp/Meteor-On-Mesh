@@ -1,0 +1,70 @@
+# trunk-ignore-all(trivy/DS002): We must run as root for this container
+# trunk-ignore-all(hadolint/DL3002): We must run as root for this container
+# trunk-ignore-all(hadolint/DL3018): Do not pin apk package versions
+# trunk-ignore-all(hadolint/DL3013): Do not pin pip package versions
+
+# Ensure the Alpine version is updated in both stages of the container!
+FROM alpine:3.23 AS builder
+ARG PIO_ENV=native
+
+# Enable Alpine community repository (for 'py3-grpcio-tools')
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d. -f1,2 /etc/alpine-release)/community" >> /etc/apk/repositories
+
+# Install Dependencies
+ENV PIP_ROOT_USER_ACTION=ignore
+ENV PIP_BREAK_SYSTEM_PACKAGES=1
+RUN apk --no-cache add \
+        bash g++ libstdc++-dev linux-headers zip git ca-certificates libbsd-dev \
+        py3-pip py3-grpcio-tools \
+        libgpiod-dev yaml-cpp-dev jsoncpp-dev bluez-dev \
+        libusb-dev i2c-tools-dev libuv-dev openssl-dev pkgconf argp-standalone \
+        libx11-dev libinput-dev libxkbcommon-dev sqlite-dev sdl2-dev \
+    && rm -rf /var/cache/apk/* \
+    && pip install --no-cache-dir -U platformio \
+    && mkdir /tmp/firmware
+
+WORKDIR /tmp/firmware
+COPY . /tmp/firmware
+
+# Create small package (no debugging symbols)
+# Add `argp` for musl
+ENV PLATFORMIO_BUILD_FLAGS="-Os -ffunction-sections -fdata-sections -Wl,--gc-sections -largp"
+
+RUN bash ./bin/build-native.sh "$PIO_ENV" && \
+    cp "/tmp/firmware/release/meshtasticd_linux_$(uname -m)" "/tmp/firmware/release/meshtasticd"
+
+# ##### PRODUCTION BUILD #############
+
+FROM alpine:3.23
+LABEL org.opencontainers.image.title="Meshtastic" \
+      org.opencontainers.image.description="Alpine Meshtastic daemon" \
+      org.opencontainers.image.url="https://meshtastic.org" \
+      org.opencontainers.image.documentation="https://meshtastic.org/docs/" \
+      org.opencontainers.image.authors="Meshtastic" \
+      org.opencontainers.image.licenses="GPL-3.0-or-later" \
+      org.opencontainers.image.source="https://github.com/meshtastic/firmware/"
+
+# nosemgrep: dockerfile.security.last-user-is-root.last-user-is-root
+USER root
+
+RUN apk --no-cache add \
+        shadow libstdc++ libbsd libgpiod yaml-cpp jsoncpp libusb \
+        i2c-tools libuv libx11 libinput libxkbcommon sdl2 \
+    && rm -rf /var/cache/apk/* \
+    && mkdir -p /var/lib/meshtasticd \
+    && mkdir -p /etc/meshtasticd/config.d \
+    && mkdir -p /etc/meshtasticd/ssl
+
+# Fetch compiled binary from the builder
+COPY --from=builder /tmp/firmware/release/meshtasticd /usr/bin/
+# Copy config templates
+COPY ./bin/config.d /etc/meshtasticd/available.d
+
+WORKDIR /var/lib/meshtasticd
+VOLUME /var/lib/meshtasticd
+
+EXPOSE 4403
+
+CMD [ "sh",  "-cx", "meshtasticd --fsdir=/var/lib/meshtasticd" ]
+
+HEALTHCHECK NONE

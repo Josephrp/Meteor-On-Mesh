@@ -1,0 +1,32 @@
+name: Check formatting
+
+on: [pull_request]
+
+jobs:
+  check_format:
+    runs-on: ubuntu-latest
+    name: Check formatting
+    strategy:
+      matrix:
+        path:
+          - "firmware/common"
+          - "firmware/application"
+          - "firmware/baseband"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: clang-format check (repo pinned)
+        run: |
+          set -euo pipefail
+
+          CF="./tools/clang-format.sh"
+          chmod +x "$CF" || true
+
+          "$CF" --version
+
+          ROOT="${{ matrix.path }}"
+          find "$ROOT" -type f \( \
+              -name '*.c' -o -name '*.cpp' -o \
+              -name '*.h' -o -name '*.hpp' \
+            \) -print0 \
+            | xargs -0 -r "$CF" --dry-run --Werror --style=file

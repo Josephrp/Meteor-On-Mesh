@@ -1,0 +1,1170 @@
+/*
+ * Copyright 2012-2026 Great Scott Gadgets <info@greatscottgadgets.com>
+ * Copyright 2012 Jared Boone <jared@sharebrained.com>
+ * Copyright 2013 Benjamin Vernoux <titanmkd@gmail.com>
+ * Copyright 2017 Dominic Spill <dominicgs@gmail.com>
+ *
+ * This file is part of HackRF.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include <hackrf.h>
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <getopt.h>
+#include <inttypes.h>
+
+#define REGISTER_INVALID 32767
+
+enum parts {
+	PART_NONE = 0,
+	PART_MAX2837 = 1,
+	PART_SI5351C = 2,
+	PART_RFFC5072 = 3,
+	PART_MAX2831 = 4,
+	PART_GATEWARE = 5,
+	PART_RADIO = 6,
+};
+
+int parse_int(char* s, uint64_t* const value)
+{
+	uint_fast8_t base = 10;
+	char* s_end;
+	long long ll_value;
+
+	if (strlen(s) > 2) {
+		if (s[0] == '0') {
+			if ((s[1] == 'x') || (s[1] == 'X')) {
+				base = 16;
+				s += 2;
+			} else if ((s[1] == 'b') || (s[1] == 'B')) {
+				base = 2;
+				s += 2;
+			}
+		}
+	}
+
+	s_end = s;
+	ll_value = strtoull(s, &s_end, base);
+	if ((s != s_end) && (*s_end == 0)) {
+		*value = (uint64_t) ll_value;
+		return HACKRF_SUCCESS;
+	} else {
+		return HACKRF_ERROR_INVALID_PARAM;
+	}
+}
+
+int max283x_read_register(
+	hackrf_device* device,
+	const uint16_t register_number,
+	uint8_t part)
+{
+	uint16_t register_value;
+	int result = HACKRF_SUCCESS;
+
+	switch (part) {
+	case PART_MAX2837:
+		result = hackrf_max2837_read(
+			device,
+			(uint8_t) register_number,
+			&register_value);
+		break;
+	case PART_MAX2831:
+		result = hackrf_max2831_read(
+			device,
+			(uint8_t) register_number,
+			&register_value);
+		break;
+	default:
+		return HACKRF_ERROR_INVALID_PARAM;
+	}
+
+	if (result == HACKRF_SUCCESS) {
+		printf("[%2d] -> 0x%03x\n", register_number, register_value);
+	} else {
+		printf("hackrf_max2837_read() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+	}
+	return result;
+}
+
+int max283x_read_registers(hackrf_device* device, uint8_t part)
+{
+	uint16_t register_number;
+	uint16_t register_count;
+	int result = HACKRF_SUCCESS;
+
+	switch (part) {
+	case PART_MAX2837:
+		register_count = 32;
+		break;
+	case PART_MAX2831:
+		register_count = 16;
+		break;
+	default:
+		return HACKRF_ERROR_INVALID_PARAM;
+	}
+
+	for (register_number = 0; register_number < register_count; register_number++) {
+		result = max283x_read_register(device, register_number, part);
+		if (result != HACKRF_SUCCESS) {
+			break;
+		}
+	}
+	return result;
+}
+
+int max283x_write_register(
+	hackrf_device* device,
+	const uint16_t register_number,
+	const uint16_t register_value,
+	uint8_t part)
+{
+	int result = HACKRF_SUCCESS;
+
+	switch (part) {
+	case PART_MAX2837:
+		result = hackrf_max2837_write(
+			device,
+			(uint8_t) register_number,
+			register_value);
+		break;
+	case PART_MAX2831:
+		result = hackrf_max2831_write(
+			device,
+			(uint8_t) register_number,
+			register_value);
+		break;
+	default:
+		return HACKRF_ERROR_INVALID_PARAM;
+	}
+
+	if (result == HACKRF_SUCCESS) {
+		printf("0x%03x -> [%2d]\n", register_value, register_number);
+	} else {
+		printf("hackrf_max2837_write() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+	}
+	return result;
+}
+
+int si5351c_read_register(hackrf_device* device, const uint16_t register_number)
+{
+	uint16_t register_value;
+	int result = hackrf_si5351c_read(device, register_number, &register_value);
+
+	if (result == HACKRF_SUCCESS) {
+		printf("[%3d] -> 0x%02x\n", register_number, register_value);
+	} else {
+		printf("hackrf_si5351c_read() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+	}
+
+	return result;
+}
+
+int si5351c_read_registers(hackrf_device* device)
+{
+	uint16_t register_number;
+	int result = HACKRF_SUCCESS;
+
+	for (register_number = 0; register_number < 256; register_number++) {
+		result = si5351c_read_register(device, register_number);
+		if (result != HACKRF_SUCCESS) {
+			break;
+		}
+	}
+
+	return result;
+}
+
+int si5351c_write_register(
+	hackrf_device* device,
+	const uint16_t register_number,
+	const uint16_t register_value)
+{
+	int result = HACKRF_SUCCESS;
+	result = hackrf_si5351c_write(device, register_number, register_value);
+
+	if (result == HACKRF_SUCCESS) {
+		printf("0x%2x -> [%3d]\n", register_value, register_number);
+	} else {
+		printf("hackrf_si5351c_write() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+	}
+
+	return result;
+}
+
+#define SI5351C_CLK_POWERDOWN           (1 << 7)
+#define SI5351C_CLK_INT_MODE            (1 << 6)
+#define SI5351C_CLK_PLL_SRC             (1 << 5)
+#define SI5351C_CLK_INV                 (1 << 4)
+#define SI5351C_CLK_SRC_XTAL            0
+#define SI5351C_CLK_SRC_CLKIN           1
+#define SI5351C_CLK_SRC_MULTISYNTH_0_4  2
+#define SI5351C_CLK_SRC_MULTISYNTH_SELF 3
+
+void print_clk_control(uint16_t clk_ctrl)
+{
+	uint8_t clk_src, clk_pwr;
+	printf("\tclock control = \n");
+	if (clk_ctrl & SI5351C_CLK_POWERDOWN) {
+		printf("\t\tPower Down\n");
+	} else {
+		printf("\t\tPower Up\n");
+	}
+	if (clk_ctrl & SI5351C_CLK_INT_MODE) {
+		printf("\t\tInt Mode\n");
+	} else {
+		printf("\t\tFrac Mode\n");
+	}
+	if (clk_ctrl & SI5351C_CLK_PLL_SRC) {
+		printf("\t\tPLL src B\n");
+	} else {
+		printf("\t\tPLL src A\n");
+	}
+	if (clk_ctrl & SI5351C_CLK_INV) {
+		printf("\t\tInverted\n");
+	}
+	clk_src = (clk_ctrl >> 2) & 0x3;
+	switch (clk_src) {
+	case 0:
+		printf("\t\tXTAL\n");
+		break;
+	case 1:
+		printf("\t\tCLKIN\n");
+		break;
+	case 2:
+		printf("\t\tMULTISYNTH 0 4\n");
+		break;
+	case 3:
+		printf("\t\tMULTISYNTH SELF\n");
+		break;
+	}
+	clk_pwr = clk_ctrl & 0x3;
+	switch (clk_pwr) {
+	case 0:
+		printf("\t\t2 mA\n");
+		break;
+	case 1:
+		printf("\t\t4 mA\n");
+		break;
+	case 2:
+		printf("\t\t6 mA\n");
+		break;
+	case 3:
+		printf("\t\t8 mA\n");
+		break;
+	}
+}
+
+int si5351c_read_multisynth_config(hackrf_device* device, const uint_fast8_t ms_number)
+{
+	uint_fast8_t i, reg_base, reg_number;
+	uint16_t parameters[8], clk_control;
+	uint32_t p1, p2, p3, r_div;
+	uint_fast8_t div_lut[] = {1, 2, 4, 8, 16, 32, 64, 128};
+	int result;
+
+	printf("MS%d:", ms_number);
+	result = hackrf_si5351c_read(device, 16 + ms_number, &clk_control);
+	if (result != HACKRF_SUCCESS) {
+		return result;
+	}
+	print_clk_control(clk_control);
+	if (ms_number < 6) {
+		reg_base = 42 + (ms_number * 8);
+		for (i = 0; i < 8; i++) {
+			reg_number = reg_base + i;
+			result = hackrf_si5351c_read(device, reg_number, &parameters[i]);
+			if (result != HACKRF_SUCCESS) {
+				return result;
+			}
+		}
+
+		p1 = ((parameters[2] & 0x03) << 16) | (parameters[3] << 8) |
+			parameters[4];
+		p2 = ((parameters[5] & 0x0F) << 16) | (parameters[6] << 8) |
+			parameters[7];
+		p3 = ((parameters[5] & 0xF0) << 12) | (parameters[0] << 8) |
+			parameters[1];
+		r_div = (parameters[2] >> 4) & 0x7;
+
+		printf("\tp1 = %u\n", p1);
+		printf("\tp2 = %u\n", p2);
+		printf("\tp3 = %u\n", p3);
+		if (p3) {
+			printf("\tOutput (800Mhz PLL): %#.10f Mhz\n",
+			       ((double) 800 /
+				(double) (((double) p1 * p3 + p2 + 512 * p3) /
+					  (double) (128 * p3))) /
+				       div_lut[r_div]);
+		}
+	} else {
+		// MS6 and 7 are integer only
+		unsigned int parms;
+		reg_base = 90;
+
+		for (i = 0; i < 3; i++) {
+			uint_fast8_t reg_number = reg_base + i;
+			int result =
+				hackrf_si5351c_read(device, reg_number, &parameters[i]);
+			if (result != HACKRF_SUCCESS) {
+				return result;
+			}
+		}
+		r_div = (ms_number == 6) ? parameters[2] & 0x7 :
+					   (parameters[2] & 0x70) >> 4;
+		parms = (ms_number == 6) ? parameters[0] : parameters[1];
+		printf("\tp1_int = %u\n", parms);
+		if (parms) {
+			printf("\tOutput (800Mhz PLL): %#.10f Mhz\n",
+			       (800.0f / parms) / div_lut[r_div]);
+		}
+	}
+	printf("\toutput divider = %u\n", div_lut[r_div]);
+	return HACKRF_SUCCESS;
+}
+
+int si5351c_read_configuration(hackrf_device* device)
+{
+	uint_fast8_t ms_number;
+	int result;
+
+	for (ms_number = 0; ms_number < 8; ms_number++) {
+		result = si5351c_read_multisynth_config(device, ms_number);
+		if (result != HACKRF_SUCCESS) {
+			return result;
+		}
+	}
+	return HACKRF_SUCCESS;
+}
+
+/*
+ * RFFC5071 and RFFC5072 are similar components with a compatible control
+ * interface.  RFFC5071 was used on some early prototypes, so the libhackrf API
+ * calls are named that way.  Because we use RFFC5072 on production hardware,
+ * we use that name here and present it to the user.
+ */
+
+int rffc5072_read_register(hackrf_device* device, const uint16_t register_number)
+{
+	uint16_t register_value;
+	int result =
+		hackrf_rffc5071_read(device, (uint8_t) register_number, &register_value);
+
+	if (result == HACKRF_SUCCESS) {
+		printf("[%2d] -> 0x%03x\n", register_number, register_value);
+	} else {
+		printf("hackrf_rffc5071_read() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+	}
+
+	return result;
+}
+
+int rffc5072_read_registers(hackrf_device* device)
+{
+	uint16_t register_number;
+	int result = HACKRF_SUCCESS;
+
+	for (register_number = 0; register_number < 31; register_number++) {
+		result = rffc5072_read_register(device, register_number);
+		if (result != HACKRF_SUCCESS) {
+			break;
+		}
+	}
+
+	return result;
+}
+
+int rffc5072_write_register(
+	hackrf_device* device,
+	const uint16_t register_number,
+	const uint16_t register_value)
+{
+	int result = HACKRF_SUCCESS;
+	result = hackrf_rffc5071_write(device, (uint8_t) register_number, register_value);
+
+	if (result == HACKRF_SUCCESS) {
+		printf("0x%03x -> [%2d]\n", register_value, register_number);
+	} else {
+		printf("hackrf_rffc5071_write() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+	}
+
+	return result;
+}
+
+int fpga_read_register(hackrf_device* device, const uint16_t register_number)
+{
+	uint8_t register_value;
+	int result = hackrf_fpga_read_register(
+		device,
+		(uint8_t) register_number,
+		&register_value);
+
+	if (result == HACKRF_SUCCESS) {
+		printf("[%2d] -> 0x%02x\n", register_number, register_value);
+	} else {
+		printf("hackrf_fpga_read_register() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+	}
+
+	return result;
+}
+
+int fpga_read_registers(hackrf_device* device)
+{
+	uint16_t register_number;
+	int result = HACKRF_SUCCESS;
+
+	for (register_number = 1; register_number <= 5; register_number++) {
+		result = fpga_read_register(device, register_number);
+		if (result != HACKRF_SUCCESS) {
+			break;
+		}
+	}
+
+	return result;
+}
+
+int fpga_write_register(
+	hackrf_device* device,
+	const uint16_t register_number,
+	const uint16_t register_value)
+{
+	int result = HACKRF_SUCCESS;
+	result = hackrf_fpga_write_register(
+		device,
+		(uint8_t) register_number,
+		register_value);
+
+	if (result == HACKRF_SUCCESS) {
+		printf("0x%02x -> [%2d]\n", register_value, register_number);
+	} else {
+		printf("hackrf_fpga_write_register() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+	}
+
+	return result;
+}
+
+int radio_read_register(
+	hackrf_device* device,
+	const uint8_t bank,
+	const uint16_t register_number)
+{
+	uint64_t register_value;
+	int result = hackrf_radio_read_register(
+		device,
+		bank,
+		(uint8_t) register_number,
+		&register_value);
+
+	if (result == HACKRF_SUCCESS) {
+		printf("bank %d register [%2d] -> 0x%016" PRIx64 "\n",
+		       bank,
+		       register_number,
+		       register_value);
+	} else {
+		printf("hackrf_radio_read_register() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+	}
+
+	return result;
+}
+
+#define RADIO_NUM_REGS (23)
+
+int radio_read_registers(hackrf_device* device, const uint8_t bank)
+{
+	uint16_t register_number;
+	int result = HACKRF_SUCCESS;
+
+	for (register_number = 0; register_number < RADIO_NUM_REGS; register_number++) {
+		result = radio_read_register(device, bank, register_number);
+		if (result != HACKRF_SUCCESS) {
+			break;
+		}
+	}
+
+	return result;
+}
+
+int radio_write_register(
+	hackrf_device* device,
+	const uint8_t bank,
+	const uint16_t register_number,
+	const uint64_t register_value)
+{
+	int result = HACKRF_SUCCESS;
+	result = hackrf_radio_write_register(
+		device,
+		bank,
+		(uint8_t) register_number,
+		register_value);
+
+	if (result == HACKRF_SUCCESS) {
+		printf("bank %d 0x%016" PRIx64 " -> [%2d]\n",
+		       bank,
+		       register_value,
+		       register_number);
+	} else {
+		printf("hackrf_radio_write_register() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+	}
+
+	return result;
+}
+
+int read_register(
+	hackrf_device* device,
+	uint8_t part,
+	const uint8_t bank,
+	const uint16_t register_number)
+{
+	switch (part) {
+	case PART_MAX2837:
+	case PART_MAX2831:
+		return max283x_read_register(device, register_number, part);
+	case PART_SI5351C:
+		return si5351c_read_register(device, register_number);
+	case PART_RFFC5072:
+		return rffc5072_read_register(device, register_number);
+	case PART_GATEWARE:
+		return fpga_read_register(device, register_number);
+	case PART_RADIO:
+		return radio_read_register(device, bank, register_number);
+	}
+	return HACKRF_ERROR_INVALID_PARAM;
+}
+
+int read_registers(hackrf_device* device, uint8_t part, const uint8_t bank)
+{
+	switch (part) {
+	case PART_MAX2837:
+	case PART_MAX2831:
+		return max283x_read_registers(device, part);
+	case PART_SI5351C:
+		return si5351c_read_registers(device);
+	case PART_RFFC5072:
+		return rffc5072_read_registers(device);
+	case PART_GATEWARE:
+		return fpga_read_registers(device);
+	case PART_RADIO:
+		return radio_read_registers(device, bank);
+	}
+	return HACKRF_ERROR_INVALID_PARAM;
+}
+
+int write_register(
+	hackrf_device* device,
+	uint8_t part,
+	const uint8_t bank,
+	const uint16_t register_number,
+	const uint64_t register_value)
+{
+	switch (part) {
+	case PART_MAX2837:
+	case PART_MAX2831:
+		return max283x_write_register(
+			device,
+			register_number,
+			(uint16_t) register_value,
+			part);
+	case PART_SI5351C:
+		return si5351c_write_register(
+			device,
+			register_number,
+			(uint16_t) register_value);
+	case PART_RFFC5072:
+		return rffc5072_write_register(
+			device,
+			register_number,
+			(uint16_t) register_value);
+	case PART_GATEWARE:
+		return fpga_write_register(
+			device,
+			register_number,
+			(uint16_t) register_value);
+	case PART_RADIO:
+		return radio_write_register(device, bank, register_number, register_value);
+	}
+	return HACKRF_ERROR_INVALID_PARAM;
+}
+
+static const char* mode_name(uint32_t mode)
+{
+	const char* mode_names[] = {"IDLE", "WAIT", "RX", "TX_START", "TX_RUN"};
+	const uint32_t num_modes = sizeof(mode_names) / sizeof(mode_names[0]);
+	if (mode < num_modes) {
+		return mode_names[mode];
+	} else {
+		return "UNKNOWN";
+	}
+}
+
+static const char* error_name(uint32_t error)
+{
+	const char* error_names[] = {
+		"NONE",
+		"RX_TIMEOUT",
+		"TX_TIMEOUT",
+		"MISSED_DEADLINE"};
+	const uint32_t num_errors = sizeof(error_names) / sizeof(error_names[0]);
+	if (error < num_errors) {
+		return error_names[error];
+	} else {
+		return "UNKNOWN";
+	}
+}
+
+static void print_state(hackrf_m0_state* state)
+{
+	printf("M0 state:\n");
+	printf("Requested mode: %u (%s) [%s]\n",
+	       state->requested_mode,
+	       mode_name(state->requested_mode),
+	       state->request_flag ? "pending" : "complete");
+	printf("Active mode: %u (%s)\n",
+	       state->active_mode,
+	       mode_name(state->active_mode));
+	printf("M0 count: %u bytes\n", state->m0_count);
+	printf("M4 count: %u bytes\n", state->m4_count);
+	printf("Number of shortfalls: %u\n", state->num_shortfalls);
+	printf("Longest shortfall: %u bytes\n", state->longest_shortfall);
+	printf("Shortfall limit: %u bytes\n", state->shortfall_limit);
+	printf("Mode change threshold: %u bytes\n", state->threshold);
+	printf("Next mode: %u (%s)\n", state->next_mode, mode_name(state->next_mode));
+	printf("Error: %u (%s)\n", state->error, error_name(state->error));
+}
+
+static void usage()
+{
+	printf("\nUsage:\n");
+	printf("\t-h, --help: this help\n");
+	printf("\t-b, --bank <n>: set register bank for read/write operations (default 0)\n");
+	printf("\t-n, --register <n>: set register number for read/write operations\n");
+	printf("\t-r, --read: read register specified by last -n argument, or all registers\n");
+	printf("\t-w, --write <v>: write register specified by last -n argument with value <v>\n");
+	printf("\t-c, --config: print SI5351C multisynth configuration information\n");
+	printf("\t-d, --device <s>: specify a particular device by serial number\n");
+	printf("\t-m, --max283x: target MAX283x\n");
+	printf("\t-s, --si5351c: target SI5351C\n");
+	printf("\t-f, --rffc5072: target RFFC5072\n");
+	printf("\t-g, --gateware: target gateware registers\n");
+	printf("\t-i, --radio: target radio registers\n");
+	printf("\t-P, --fpga <n>: load the n-th bitstream to the FPGA\n");
+	printf("\t-1, --p1 <n>: P1 control\n");
+	printf("\t-2, --p2 <n>: P2 control\n");
+	printf("\t-C, --clkin <0/1>: CLKIN control (0 for P1_CLKIN, 1 for P22_CLKIN)\n");
+	printf("\t-N, --narrowband <0/1>: narrowband filter disable/enable\n");
+	printf("\t-S, --state: display M0 state\n");
+	printf("\t-T, --tx-underrun-limit <n>: set TX underrun limit in bytes (0 for no limit)\n");
+	printf("\t-R, --rx-overrun-limit <n>: set RX overrun limit in bytes (0 for no limit)\n");
+	printf("\t-u, --ui <1/0>: enable/disable UI\n");
+	printf("\t-l, --leds <state>: configure LED state (0 for all off, 1 for default)\n");
+	printf("\t-t, --selftest: read self-test report\n");
+	printf("\t-o, --rtc-osc: test 32.768kHz RTC oscillator\n");
+	printf("\t-a, --adc <channel>: read value from an ADC channel. Add 0x80 for alternate pin\n");
+	printf("\nExamples:\n");
+	printf("\thackrf_debug --si5351c -n 0 -r     # reads from si5351c register 0\n");
+	printf("\thackrf_debug --si5351c -c          # displays si5351c multisynth configuration\n");
+	printf("\thackrf_debug --rffc5072 -r         # reads all rffc5072 registers\n");
+	printf("\thackrf_debug --max283x -n 10 -w 22 # writes max283x register 10 with 22 decimal\n");
+	printf("\thackrf_debug --state               # displays M0 state\n");
+}
+
+static struct option long_options[] = {
+	{"config", no_argument, 0, 'c'},
+	{"bank", required_argument, 0, 'b'},
+	{"register", required_argument, 0, 'n'},
+	{"write", required_argument, 0, 'w'},
+	{"read", no_argument, 0, 'r'},
+	{"device", required_argument, 0, 'd'},
+	{"help", no_argument, 0, 'h'},
+	{"max2837", no_argument, 0, 'm'},
+	{"max283x", no_argument, 0, 'm'},
+	{"si5351c", no_argument, 0, 's'},
+	{"rffc5072", no_argument, 0, 'f'},
+	{"gateware", no_argument, 0, 'g'},
+	{"radio", no_argument, 0, 'i'},
+	{"fpga", required_argument, 0, 'P'},
+	{"p1", required_argument, 0, '1'},
+	{"p2", required_argument, 0, '2'},
+	{"clkin", required_argument, 0, 'C'},
+	{"narrowband", required_argument, 0, 'N'},
+	{"state", no_argument, 0, 'S'},
+	{"tx-underrun-limit", required_argument, 0, 'T'},
+	{"rx-overrun-limit", required_argument, 0, 'R'},
+	{"ui", required_argument, 0, 'u'},
+	{"leds", required_argument, 0, 'l'},
+	{"selftest", no_argument, 0, 't'},
+	{"rtc-osc", no_argument, 0, 'o'},
+	{"adc", required_argument, 0, 'a'},
+	{0, 0, 0, 0},
+};
+
+int main(int argc, char** argv)
+{
+	int opt;
+	uint8_t board_id = BOARD_ID_UNDETECTED;
+	int bank = -1;
+	uint64_t register_number = REGISTER_INVALID;
+	uint64_t register_value;
+	hackrf_device* device = NULL;
+	int option_index = 0;
+	bool read = false;
+	bool write = false;
+	bool dump_config = false;
+	bool dump_state = false;
+	uint8_t part = PART_NONE;
+	const char* serial_number = NULL;
+	bool set_ui = false;
+	uint64_t ui_enable;
+	bool set_leds = false;
+	uint64_t led_state;
+	uint64_t tx_limit;
+	uint64_t rx_limit;
+	uint64_t p1_state;
+	uint64_t p2_state;
+	uint64_t clkin_state;
+	uint64_t narrowband_state;
+	uint64_t bitstream_index;
+	uint64_t adc_channel;
+	bool set_tx_limit = false;
+	bool set_rx_limit = false;
+	bool set_p1 = false;
+	bool set_p2 = false;
+	bool set_clkin = false;
+	bool set_narrowband = false;
+	bool set_fpga_bitstream = false;
+	bool read_selftest = false;
+	bool test_rtc_osc = false;
+	bool read_adc = false;
+
+	int result = hackrf_init();
+	if (result) {
+		printf("hackrf_init() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+		return EXIT_FAILURE;
+	}
+
+	while ((opt = getopt_long(
+			argc,
+			argv,
+			"b:n:rw:d:cmsfgi1:2:C:N:P:ST:R:h?u:l:ta:o",
+			long_options,
+			&option_index)) != EOF) {
+		switch (opt) {
+		case 'b':
+			uint64_t bank_arg;
+			result = parse_int(optarg, &bank_arg);
+			bank = (int) bank_arg;
+			break;
+
+		case 'n':
+			result = parse_int(optarg, &register_number);
+			break;
+
+		case 'w':
+			write = true;
+			result = parse_int(optarg, &register_value);
+			break;
+
+		case 'r':
+			read = true;
+			break;
+
+		case 'c':
+			dump_config = true;
+			break;
+
+		case 'S':
+			dump_state = true;
+			break;
+
+		case 'T':
+			set_tx_limit = true;
+			result = parse_int(optarg, &tx_limit);
+			break;
+		case 'R':
+			set_rx_limit = true;
+			result = parse_int(optarg, &rx_limit);
+			break;
+
+		case 'd':
+			serial_number = optarg;
+			break;
+
+		case 'm':
+			if (part != PART_NONE) {
+				fprintf(stderr, "Only one part can be specified.'\n");
+				return EXIT_FAILURE;
+			}
+			part = PART_MAX2837;
+			break;
+
+		case 's':
+			if (part != PART_NONE) {
+				fprintf(stderr, "Only one part can be specified.'\n");
+				return EXIT_FAILURE;
+			}
+			part = PART_SI5351C;
+			break;
+
+		case 'f':
+			if (part != PART_NONE) {
+				fprintf(stderr, "Only one part can be specified.'\n");
+				return EXIT_FAILURE;
+			}
+			part = PART_RFFC5072;
+			break;
+
+		case 'g':
+			if (part != PART_NONE) {
+				fprintf(stderr, "Only one part can be specified.'\n");
+				return EXIT_FAILURE;
+			}
+			part = PART_GATEWARE;
+			break;
+
+		case 'i':
+			if (part != PART_NONE) {
+				fprintf(stderr, "Only one part can be specified.'\n");
+				return EXIT_FAILURE;
+			}
+			part = PART_RADIO;
+			break;
+
+		case '1':
+			set_p1 = true;
+			result = parse_int(optarg, &p1_state);
+			break;
+
+		case '2':
+			set_p2 = true;
+			result = parse_int(optarg, &p2_state);
+			break;
+
+		case 'C':
+			set_clkin = true;
+			result = parse_int(optarg, &clkin_state);
+			break;
+
+		case 'N':
+			set_narrowband = true;
+			result = parse_int(optarg, &narrowband_state);
+			break;
+
+		case 'P':
+			set_fpga_bitstream = true;
+			result = parse_int(optarg, &bitstream_index);
+			break;
+
+		case 'u':
+			set_ui = true;
+			result = parse_int(optarg, &ui_enable);
+			break;
+
+		case 'l':
+			set_leds = true;
+			result = parse_int(optarg, &led_state);
+			break;
+		case 't':
+			read_selftest = true;
+			break;
+		case 'o':
+			test_rtc_osc = true;
+			break;
+
+		case 'a':
+			read_adc = true;
+			result = parse_int(optarg, &adc_channel);
+			break;
+
+		case 'h':
+		case '?':
+			usage();
+			return EXIT_SUCCESS;
+		default:
+			fprintf(stderr, "unknown argument '-%c %s'\n", opt, optarg);
+			usage();
+			return EXIT_FAILURE;
+		}
+
+		if (result != HACKRF_SUCCESS) {
+			printf("argument error: %s (%d)\n",
+			       hackrf_error_name(result),
+			       result);
+			usage();
+			return EXIT_FAILURE;
+		}
+	}
+
+	if (write && read) {
+		fprintf(stderr, "Read and write options are mutually exclusive.\n");
+		usage();
+		return EXIT_FAILURE;
+	}
+
+	if (write && dump_config) {
+		fprintf(stderr, "Config and write options are mutually exclusive.\n");
+		usage();
+		return EXIT_FAILURE;
+	}
+
+	if (dump_config && part != PART_SI5351C) {
+		fprintf(stderr, "Config option is only valid for SI5351C.\n");
+		usage();
+		return EXIT_FAILURE;
+	}
+
+	if ((bank > -1) && (part != PART_RADIO)) {
+		fprintf(stderr, "Bank valid only for radio.\n");
+		usage();
+		return EXIT_FAILURE;
+	}
+
+	if ((bank == -1) && (part == PART_RADIO)) {
+		bank = 0;
+	}
+
+	if (!(write || read || dump_config || dump_state || set_tx_limit ||
+	      set_rx_limit || set_ui || set_leds || set_p1 || set_p2 || set_clkin ||
+	      set_narrowband || set_fpga_bitstream || read_selftest || test_rtc_osc ||
+	      read_adc)) {
+		fprintf(stderr, "Specify read, write, or config option.\n");
+		usage();
+		return EXIT_FAILURE;
+	}
+
+	if (part == PART_NONE && !set_ui && !dump_state && !set_tx_limit &&
+	    !set_rx_limit && !set_leds && !set_p1 && !set_p2 && !set_clkin &&
+	    !set_narrowband && !set_fpga_bitstream && !read_selftest && !test_rtc_osc &&
+	    !read_adc) {
+		fprintf(stderr, "Specify a part to read, write, or print config from.\n");
+		usage();
+		return EXIT_FAILURE;
+	}
+
+	result = hackrf_open_by_serial(serial_number, &device);
+	if (result) {
+		printf("hackrf_open() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+		return EXIT_FAILURE;
+	}
+
+	if (part == PART_MAX2837) {
+		result = hackrf_board_id_read(device, &board_id);
+		if (result != HACKRF_SUCCESS) {
+			fprintf(stderr,
+				"hackrf_board_id_read() failed: %s (%d)\n",
+				hackrf_error_name(result),
+				result);
+			return EXIT_FAILURE;
+		}
+		if (board_id == BOARD_ID_PRALINE) {
+			part = PART_MAX2831;
+		}
+	}
+
+	if (write) {
+		result = write_register(
+			device,
+			part,
+			bank,
+			register_number,
+			register_value);
+	}
+
+	if (read) {
+		if (register_number == REGISTER_INVALID) {
+			result = read_registers(device, part, bank);
+		} else {
+			result = read_register(device, part, bank, register_number);
+		}
+	}
+
+	if (dump_config) {
+		si5351c_read_configuration(device);
+	}
+
+	if (set_tx_limit) {
+		result = hackrf_set_tx_underrun_limit(device, tx_limit);
+		if (result != HACKRF_SUCCESS) {
+			printf("hackrf_set_tx_underrun_limit() failed: %s (%d)\n",
+			       hackrf_error_name(result),
+			       result);
+			return EXIT_FAILURE;
+		}
+	}
+
+	if (set_rx_limit) {
+		result = hackrf_set_rx_overrun_limit(device, rx_limit);
+		if (result != HACKRF_SUCCESS) {
+			printf("hackrf_set_rx_overrun_limit() failed: %s (%d)\n",
+			       hackrf_error_name(result),
+			       result);
+			return EXIT_FAILURE;
+		}
+	}
+
+	if (set_p1) {
+		result = hackrf_set_p1_ctrl(device, p1_state);
+		if (result != HACKRF_SUCCESS) {
+			printf("hackrf_set_p1_ctrl() failed: %s (%d)\n",
+			       hackrf_error_name(result),
+			       result);
+			return EXIT_FAILURE;
+		}
+	}
+
+	if (set_p2) {
+		result = hackrf_set_p2_ctrl(device, p2_state);
+		if (result != HACKRF_SUCCESS) {
+			printf("hackrf_set_p2_ctrl() failed: %s (%d)\n",
+			       hackrf_error_name(result),
+			       result);
+			return EXIT_FAILURE;
+		}
+	}
+
+	if (set_clkin) {
+		result = hackrf_set_clkin_ctrl(device, clkin_state);
+		if (result != HACKRF_SUCCESS) {
+			printf("hackrf_set_clkin_ctrl() failed: %s (%d)\n",
+			       hackrf_error_name(result),
+			       result);
+			return EXIT_FAILURE;
+		}
+	}
+
+	if (set_narrowband) {
+		result = hackrf_set_narrowband_filter(device, narrowband_state);
+		if (result != HACKRF_SUCCESS) {
+			printf("hackrf_set_narrowband_filter() failed: %s (%d)\n",
+			       hackrf_error_name(result),
+			       result);
+			return EXIT_FAILURE;
+		}
+	}
+
+	if (set_fpga_bitstream) {
+		result = hackrf_set_fpga_bitstream(device, bitstream_index);
+		if (result != HACKRF_SUCCESS) {
+			printf("hackrf_set_fpga_bitstream() failed: %s (%d)\n",
+			       hackrf_error_name(result),
+			       result);
+			return EXIT_FAILURE;
+		}
+	}
+
+	if (dump_state) {
+		hackrf_m0_state state;
+		result = hackrf_get_m0_state(device, &state);
+		if (result != HACKRF_SUCCESS) {
+			printf("hackrf_get_m0_state() failed: %s (%d)\n",
+			       hackrf_error_name(result),
+			       result);
+			return EXIT_FAILURE;
+		}
+		print_state(&state);
+	}
+
+	if (set_ui) {
+		result = hackrf_set_ui_enable(device, ui_enable);
+	}
+
+	if (set_leds) {
+		if (led_state > 0xf) {
+			fprintf(stderr,
+				"Specify LED state bit field (0 for all off, 1 for default).\n");
+			usage();
+			return EXIT_FAILURE;
+		}
+		result = hackrf_set_leds(device, led_state);
+	}
+
+	if (read_selftest) {
+		hackrf_selftest selftest;
+		result = hackrf_read_selftest(device, &selftest);
+		if (result != HACKRF_SUCCESS) {
+			printf("hackrf_read_selftest() failed: %s (%d)\n",
+			       hackrf_error_name(result),
+			       result);
+			return EXIT_FAILURE;
+		}
+		printf("Self-test result: %s\n", selftest.pass ? "PASS" : "FAIL");
+		printf("%s", selftest.msg);
+	}
+
+	if (test_rtc_osc) {
+		bool pass;
+		result = hackrf_test_rtc_osc(device, &pass);
+		if (result != HACKRF_SUCCESS) {
+			printf("hackrf_test_rtc_osc() failed: %s (%d)\n",
+			       hackrf_error_name(result),
+			       result);
+			return EXIT_FAILURE;
+		}
+		printf("RTC test result: %s\n", pass ? "PASS" : "FAIL");
+	}
+
+	if (read_adc) {
+		uint16_t value;
+		result = hackrf_read_adc(device, adc_channel, &value);
+		if (result != HACKRF_SUCCESS) {
+			printf("hackrf_read_adc() failed: %s (%d)\n",
+			       hackrf_error_name(result),
+			       result);
+			return EXIT_FAILURE;
+		}
+		printf("ADC0_%d (%s pin): %d\n",
+		       ((uint8_t) adc_channel) & 0x7,
+		       ((uint8_t) adc_channel) & 0x80 ? "alternate" : "dedicated",
+		       value);
+	}
+
+	result = hackrf_close(device);
+	if (result) {
+		printf("hackrf_close() failed: %s (%d)\n",
+		       hackrf_error_name(result),
+		       result);
+		return EXIT_FAILURE;
+	}
+
+	hackrf_exit();
+	return EXIT_SUCCESS;
+}

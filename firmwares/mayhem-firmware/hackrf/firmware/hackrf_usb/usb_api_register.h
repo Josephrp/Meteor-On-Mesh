@@ -1,0 +1,72 @@
+/*
+ * Copyright 2012-2026 Great Scott Gadgets <info@greatscottgadgets.com>
+ * Copyright 2012 Jared Boone
+ * Copyright 2013 Benjamin Vernoux
+ *
+ * This file is part of HackRF.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include <usb_request.h>
+#include <usb_type.h>
+
+usb_request_status_t usb_vendor_request_write_max283x(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+usb_request_status_t usb_vendor_request_read_max283x(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+usb_request_status_t usb_vendor_request_write_si5351c(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+usb_request_status_t usb_vendor_request_read_si5351c(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+usb_request_status_t usb_vendor_request_write_rffc5071(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+usb_request_status_t usb_vendor_request_read_rffc5071(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+usb_request_status_t usb_vendor_request_set_clkout_enable(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+usb_request_status_t usb_vendor_request_get_clkin_status(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+usb_request_status_t usb_vendor_request_set_leds(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+usb_request_status_t usb_vendor_request_user_config_set_bias_t_opts(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+#ifdef IS_PRALINE
+usb_request_status_t usb_vendor_request_write_fpga_reg(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+usb_request_status_t usb_vendor_request_read_fpga_reg(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+#endif
+usb_request_status_t usb_vendor_request_write_radio_reg(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);
+usb_request_status_t usb_vendor_request_read_radio_reg(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage);

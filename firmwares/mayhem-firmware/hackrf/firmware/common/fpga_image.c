@@ -1,0 +1,219 @@
+/*
+ * Copyright 2025 Great Scott Gadgets <info@greatscottgadgets.com>
+ *
+ * This file is part of HackRF.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+#include "fpga.h"
+#include "ice40_spi.h"
+#include "lz4_blk.h"
+#include "selftest.h"
+#include "delay.h"
+#include "spi_bus.h"
+#include "w25q80bv.h"
+#include "platform_gpio.h"
+
+struct fpga_image_read_ctx {
+	struct fpga_loader_t* loader;
+	uint32_t addr;
+	size_t next_block_sz;
+	uint8_t init_flag;
+	uint8_t buffer[4096 + 2];
+};
+
+static size_t fpga_image_read_block_cb(void* _ctx)
+{
+	// Assume out_buffer is 4KB
+	struct fpga_image_read_ctx* ctx = _ctx;
+	struct fpga_loader_t* loader = ctx->loader;
+	size_t block_sz = ctx->next_block_sz;
+
+	uint8_t block_sz_buf[2];
+
+	// first iteration: read first block size
+	if (ctx->init_flag == 0) {
+		loader->read(ctx->addr, 2, block_sz_buf);
+		block_sz = block_sz_buf[0] | block_sz_buf[1] << 8;
+		ctx->addr += 2;
+		ctx->init_flag = 1;
+	}
+
+	// finish at end marker
+	if (block_sz == 0)
+		return 0;
+
+	// Read compressed block (and the next block size) from flash.
+	loader->read(ctx->addr, block_sz, loader->in_buffer);
+	ctx->addr += block_sz;
+	loader->read(ctx->addr, 2, block_sz_buf);
+	ctx->next_block_sz = block_sz_buf[0] | block_sz_buf[1] << 8;
+	ctx->addr += 2;
+
+	// Decompress block.
+	return lz4_blk_decompress(loader->in_buffer, loader->out_buffer, block_sz);
+}
+
+// SPIFI direct read callback for PortaPack
+static uint8_t spifi_out_buffer[4096];
+
+static size_t fpga_image_read_block_cb_spifi(void* _ctx)
+{
+	struct fpga_image_read_ctx* ctx = _ctx;
+	size_t block_sz = ctx->next_block_sz;
+
+	// first iteration: read first block size
+	if (ctx->init_flag == 0) {
+		w25q80bv_read(&spi_flash, ctx->addr, 2, ctx->buffer);
+		block_sz = ctx->buffer[0] | (ctx->buffer[1] << 8);
+		ctx->addr += 2;
+		ctx->init_flag = 1;
+	}
+
+	// finish at end marker
+	if (block_sz == 0)
+		return 0;
+
+	// Read compressed block (and the next block size) from flash.
+	w25q80bv_read(&spi_flash, ctx->addr, block_sz + 2, ctx->buffer);
+	ctx->addr += block_sz + 2;
+	ctx->next_block_sz = ctx->buffer[block_sz] | (ctx->buffer[block_sz + 1] << 8);
+
+	// Decompress block.
+	return lz4_blk_decompress(ctx->buffer, spifi_out_buffer, block_sz);
+}
+
+// @brief Load FPGA bitstream from SPIFI flash memory and program the FPGA.
+// @param index Index of the FPGA bitstream to load from flash.
+// @return true on success, false on failure.
+static bool fpga_image_load_from_spifi(unsigned int index)
+{
+// PRALINE: FPGA bitstream is in flash at 0x380000 (SPIFI mapped at 0x14380000)
+#define FPGA_BITSTREAM_FLASH_ADDR 0x380000
+
+	/*
+	 * Fork RAM-mode loader: w25q80bv_setup() initializes the flash CS/HOLD/WP
+	 * GPIOs, but it runs AFTER spi_bus_start() below, and spi_bus_start() ->
+	 * spi_ssp_start() configures SSP0 chip-select from ssp_config_w25q80bv.gpio_select.
+	 * If unset, the flash CS never drives and reads hang forever in w25q80bv_setup
+	 * device-ID loop. Initialize the flash GPIOs here first.
+	 */
+	const platform_gpio_t* gpio = platform_gpio();
+	ssp_config_w25q80bv.gpio_select = gpio->w25q80bv_select;
+	spi_flash.gpio_hold = gpio->w25q80bv_hold;
+	spi_flash.gpio_wp = gpio->w25q80bv_wp;
+	spi_bus_start(spi_flash.bus, &ssp_config_w25q80bv);
+	w25q80bv_setup(&spi_flash);
+
+	uint32_t num_bitstreams;
+	w25q80bv_read(
+		&spi_flash,
+		FPGA_BITSTREAM_FLASH_ADDR,
+		4,
+		(uint8_t*) &num_bitstreams);
+
+	// Check if header looks valid
+	if (num_bitstreams == 0 || num_bitstreams > 16 || num_bitstreams == 0xFFFFFFFF ||
+	    index >= num_bitstreams) {
+		return false;
+	}
+
+	uint32_t bitstream_offset;
+	w25q80bv_read(
+		&spi_flash,
+		FPGA_BITSTREAM_FLASH_ADDR + 4 + index * 4,
+		4,
+		(uint8_t*) &bitstream_offset);
+
+	// Initialize SSP1 for iCE40 programming
+	ice40_spi_target_init(&ice40);
+
+	delay_us(2000);
+
+	// Calculate start address of bitstream in flash
+	uint32_t bitstream_addr = FPGA_BITSTREAM_FLASH_ADDR + bitstream_offset;
+
+	struct fpga_image_read_ctx fpga_image_ctx = {
+		.addr = bitstream_addr,
+	};
+
+	const bool success = ice40_spi_syscfg_program(
+		&ice40,
+		spifi_out_buffer,
+		fpga_image_read_block_cb_spifi,
+		&fpga_image_ctx);
+
+	return success;
+}
+
+bool fpga_image_load(struct fpga_loader_t* loader, unsigned int index)
+{
+	// TODO: do SPI setup and read number of bitstreams once!
+	if (loader->setup != NULL)
+		loader->setup();
+
+	// Read number of bitstreams from flash.
+	// Check the bitstream exists, and extract its offset.
+	uint32_t addr = loader->start_addr;
+	uint32_t num_bitstreams, bitstream_offset;
+	loader->read(addr, 4, (uint8_t*) &num_bitstreams);
+	if (index >= num_bitstreams)
+		return false;
+	loader->read(addr + 4 * (index + 1), 4, (uint8_t*) &bitstream_offset);
+
+	// A callback function is used by the FPGA programmer
+	// to obtain consecutive gateware chunks.
+	ice40_spi_target_init(&ice40);
+	struct fpga_image_read_ctx fpga_image_ctx = {
+		.loader = loader,
+		.addr = loader->start_addr + bitstream_offset,
+	};
+	const bool success = ice40_spi_syscfg_program(
+		&ice40,
+		loader->out_buffer,
+		fpga_image_read_block_cb,
+		&fpga_image_ctx);
+
+	// Update selftest result.
+	selftest.fpga_image_load = success ? PASSED : FAILED;
+	if (selftest.fpga_image_load != PASSED) {
+		selftest.report.pass = false;
+	}
+
+	return success;
+}
+
+// @brief Interface used by PP to load the HACKRF FPGA image
+// @param index Index of the FPGA bitstream to load
+// @return True on success, false on failure
+bool fpga_image_load_for_pp(unsigned int index)
+{
+	// Updated to return the correct result
+	bool success = fpga_image_load_from_spifi(index);
+
+	selftest.fpga_image_load = success ? PASSED : FAILED;
+
+	if (selftest.fpga_image_load != PASSED) {
+		selftest.report.pass = false;
+	}
+
+	return success;
+}

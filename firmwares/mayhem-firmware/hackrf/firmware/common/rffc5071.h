@@ -1,0 +1,76 @@
+/*
+ * Copyright 2012-2026 Great Scott Gadgets <info@greatscottgadgets.com>
+ * Copyright 2014 Jared Boone <jared@sharebrained.com>
+ *
+ * This file is part of HackRF.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "fixed_point.h"
+#include "gpio.h"
+#include "spi_bus.h"
+
+/* 31 registers, each containing 16 bits of data. */
+#define RFFC5071_NUM_REGS 31
+
+typedef struct {
+	spi_bus_t* const bus;
+	gpio_t gpio_reset;
+#ifdef IS_PRALINE
+	gpio_t gpio_ld;
+#endif
+	uint16_t regs[RFFC5071_NUM_REGS];
+	uint32_t regs_dirty;
+} rffc5071_driver_t;
+
+/* Initialize chip. Call _setup() externally, as it calls _init(). */
+extern void rffc5071_init(rffc5071_driver_t* const drv);
+extern void rffc5071_setup(rffc5071_driver_t* const drv);
+extern void rffc5071_lock_test(rffc5071_driver_t* const drv);
+
+/* Read a register via SPI. Save a copy to memory and return
+ * value. Discard any uncommited changes and mark CLEAN. */
+extern uint16_t rffc5071_reg_read(rffc5071_driver_t* const drv, uint8_t r);
+
+/* Write value to register via SPI and save a copy to memory. Mark
+ * CLEAN. */
+extern void rffc5071_reg_write(rffc5071_driver_t* const drv, uint8_t r, uint16_t v);
+
+/* Write all dirty registers via SPI from memory. Mark all clean. Some
+ * operations require registers to be written in a certain order. Use
+ * provided routines for those operations. */
+extern void rffc5071_regs_commit(rffc5071_driver_t* const drv);
+
+/* Set frequency in 1/(2**24) Hz. */
+extern fp_40_24_t rffc5071_set_frequency(
+	rffc5071_driver_t* const drv,
+	fp_40_24_t lo,
+	bool program);
+
+extern void rffc5071_enable(rffc5071_driver_t* const drv);
+extern void rffc5071_disable(rffc5071_driver_t* const drv);
+
+extern void rffc5071_set_gpo(rffc5071_driver_t* const drv, uint8_t);
+#ifdef IS_PRALINE
+extern bool rffc5071_poll_ld(rffc5071_driver_t* const drv, uint8_t* prelock_state);
+#endif
+extern bool rffc5071_check_lock(rffc5071_driver_t* const drv);
