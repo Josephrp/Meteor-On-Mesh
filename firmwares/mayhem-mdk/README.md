@@ -24,7 +24,8 @@ For detailed info check Wiki
   - To add IR remote functions to PP. May be available only over I2C connection. Now only experimental RX.
 
 - **LoRa**
-  - Meshtastic support. (functions not yet decided for it)
+  - Multi-protocol listener/decoder (Meshtastic, MeshCore, LoRaWAN, ...) using Meshtonic H4M 4x WIO SX1262 shields.
+  - Rich native UI on HackRF/PortaPack screen via "Apps over I2C" (see docs/PORTAPACK_LORADEC.md). All RF on the WIO modules; the HackRF is used only for its screen + controls.
 
 ### Standalone apps
 The module will supply additional apps for PortaX devices. Check the list in the [Wiki](https://github.com/htotoo/ESP32-Portapack/wiki/Apps-over-I2C)

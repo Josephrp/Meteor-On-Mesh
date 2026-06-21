@@ -124,6 +124,11 @@ public:
     LoraDecoderConfig getConfig() const { return config; }
     std::vector<LoraPacket> getRecentPackets(size_t maxCount = 16) const;
 
+    bool applyPresetId(const char* preset_id);
+    bool applyPresetToSlot(int slot, const char* preset_id);
+
+    bool isRunning() const { return running; }
+
 private:
     void sendStatusToWeb();
     void sendPacketsToWeb(size_t count = 8);
@@ -137,8 +142,6 @@ private:
     void tagPacketFromSlot(LoraPacket& p, int slot);
     void updateBandAgg(const LoraPacket& p);
     void resetBandAgg();
-    bool applyPresetId(const char* preset_id);
-    bool applyPresetToSlot(int slot, const char* preset_id);
     void handleFeedIq(const std::vector<uint8_t>& data);
     void processIqBuffer();
     void maybeUpgradeHybridBackend();

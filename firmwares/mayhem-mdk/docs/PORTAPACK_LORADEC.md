@@ -84,13 +84,56 @@ Max burst: **4096** complex samples per transaction (~8 ms @ 2 Msps). PortaPack 
 
 ESP web/serial: `LORA:BACKEND:hybrid`, `LORA:PRESET:US915-meshtastic`, `LORA:START`.
 
-## PortaPack app TODO (upstream PP firmware)
+## Rich Native "Apps over I2C" UI (SatTrack pattern) — Recommended
 
-Implement a Mayhem/PortaPack app that:
+For the best experience on the HackRF color screen:
 
-- Shows GETUI lines on the HackRF screen (title, preset, last packet).
-- Draws a simple spectrum/waterfall from HackRF baseband.
-- On energy trigger, ships IQ via FEEDIQ.
-- Maps encoder buttons to CONTROL ops (preset cycle, start/stop).
+- The ESP32PP registers a **MeshtonicLoRa** app via `PPHandler::add_app(...)` (binary starts with `standalone_app_info` header).
+- PP discovers it via the standard module protocol (`I2cDev_PPmod` → device_info + getStandaloneAppInfo).
+- User taps the icon (placed under RX); PP downloads the UI binary over the standard APP_TRANSFER path and runs it natively.
+- While running, the PP-side UI uses the high-level custom commands below to fetch live data and send controls.
+- All actual RF and decode happens on the Meshtonic 4× WIO SX1262 shields (WIO backend preferred). HackRF is used only for its screen + controls.
 
-Reference: `Source/main/apps/ep_app_loradecoder.cpp`, `pp_commands.hpp`.
+### New high-level custom commands for the rich UI (0xa02x range)
+
+| CMD                  | Dir         | Purpose |
+|----------------------|-------------|---------|
+| `PPCMD_LORADEC_STATUS`  (0xa020) | PP req → ESP | Returns `lora_rich_status_t` (running, backend, radio_count, active_preset, total, mask) |
+| `PPCMD_LORADEC_PACKETS` (0xa021) | PP req → ESP | Returns array of `lora_packet_compact_t` (slot/region/preset/proto/rssi/info + preview) |
+| `PPCMD_LORADEC_PRESETS` (0xa022) | PP req → ESP | Returns list of `lora_preset_entry_t` from the generated presets (presets.toml is the source) |
+| `PPCMD_LORADEC_APPLY`   (0xa023) | PP → ESP     | Send preset id (null-terminated) to apply immediately on the WIO radios |
+| `PPCMD_LORADEC_CONTROL` (0xa024) | PP → ESP     | start/stop, clear, backend hints, etc. (byte 0 = op) |
+
+These coexist with the older basic LORADEC commands (0xa00e–0xa013) and GETUI.
+
+### Fallback / coexistence
+
+- The basic EPApp commands (`GETSTATUS`, `GETPACKETS`, `CONTROL`, `GETUI`, `FEEDIQ`) continue to work for simple views and the on-ESP OLED.
+- The rich app uses the new 0xa02x commands for full packet lists, preset browsing, and live status.
+- When the rich app is active on the PP screen, the ESP should be in WIO (or hybrid-as-appropriate) backend and must **not** arm the HackRF RF path for LoRa demod.
+
+## Legacy / simple PortaPack integration (still supported)
+
+The older flow (launch EPApp 04, poll GETUI, optionally FEEDIQ) remains for basic LCD status or when no rich binary is registered.
+
+## Implementation notes (this repo)
+
+- `pp_commands.hpp` — command IDs
+- `ppi2c/pp_structures.hpp` — `standalone_app_info`, `lora_*_t` compact records
+- `main.cpp` — registration of app binary + `add_custom_command` send/got callbacks
+- `apps/ep_app_loradecoder.*` + `lora_decoder_feed.h` — data providers and `lora_rich_apply_preset`
+- `extapps/meshtonic_lora.h` — placeholder binary (header + tiny body). Replace with a real built image from the Mayhem firmware tree following the SatTrack example.
+
+Reference real pattern: `extapps/sattrack.h`, registration + callbacks in `main.cpp`, `I2cDev_PPmod` on the PP side.
+
+## Building the real rich UI binary (PortaPack Mayhem firmware side)
+
+1. In the Mayhem repo, create `firmware/standalone/meshtonic_lora/` (or a minimal module app) that:
+   - Begins with a correct `standalone_app_info` at the image front.
+   - Uses the PP UI framework (Painter, widgets, encoder) to render packet list / slot bars / preset picker.
+   - On a timer or button, issues the 0xa02x custom commands via the module I2C path to fetch data from the ESP.
+   - On user action (choose preset, start/stop) sends APPLY / CONTROL.
+2. Build the image, convert to C array (e.g. `xxd -i meshtonic_lora.bin > meshtonic_lora.h`), and drop into this repo's `Source/extapps/`.
+3. Rebuild the ESP firmware — the app will now appear and run as a first-class citizen on the HackRF screen.
+
+All RF work stays on the WIO shields. The onboard HackRF RF is not used for LoRa in this app.

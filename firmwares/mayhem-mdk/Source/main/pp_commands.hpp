@@ -26,3 +26,11 @@
 #define PPCMD_LORADEC_CONTROL     0xa011   // start/stop, arm local radios, etc. (payload byte 0 = cmd)
 #define PPCMD_LORADEC_FEEDIQ      0xa012   // HackRF IQ burst chunks from PortaPack (see docs/PORTAPACK_LORADEC.md)
 #define PPCMD_LORADEC_GETUI       0xa013   // Multi-line UI text for PortaPack LCD
+
+// Meshtonic / WIO LoRa — rich native "Apps over I2C" UI on HackRF/PortaPack screen (SatTrack pattern)
+// These are high-level custom commands for the full color app (separate from the basic LORADEC EPApp commands).
+#define PPCMD_LORADEC_STATUS      0xa020   // PP requests → ESP sends bands_in_use, active preset, backend, radio status summary
+#define PPCMD_LORADEC_PACKETS     0xa021   // PP requests N → ESP sends recent full tagged LoraPacket records (slot/region/profile/proto/confidence/etc.)
+#define PPCMD_LORADEC_PRESETS     0xa022   // PP requests → ESP sends list of available presets (id, region, profile, freq/sf/bw)
+#define PPCMD_LORADEC_APPLY       0xa023   // PP sends preset_id (or slot overrides) to apply on the 4 WIOs
+#define PPCMD_LORADEC_CONTROL     0xa024   // start/stop, clear, key sync hints, backend hints, etc. (payload-driven)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include "ppi2c/pp_structures.hpp"  // brings in lora_packet_compact_t, lora_rich_status_t for rich UI accessors
 
 struct LoraDecodedRecord {
     uint32_t ts_ms;
@@ -34,3 +35,14 @@ void lora_decoder_push_packet(uint32_t ts_ms,
                               const char* payload_hex,
                               uint8_t proto,
                               const char* info);
+
+// Rich UI ("apps over I2C") accessors — used by custom command handlers for the native PP screen app.
+// These return data from the active decoder (WIO or hybrid). Implemented in ep_app_loradecoder.cpp.
+size_t lora_get_recent_compact(lora_packet_compact_t* out, size_t max_count);
+void   lora_get_rich_status(lora_rich_status_t* out);
+
+// Apply preset coming from the rich PP screen UI (apps over I2C). Returns true on success.
+bool lora_rich_apply_preset(const char* preset_id);
+
+// Start/stop decoder session from rich PP UI (0xa024 control op: 0=stop, 1=start).
+bool lora_rich_control(uint8_t op);

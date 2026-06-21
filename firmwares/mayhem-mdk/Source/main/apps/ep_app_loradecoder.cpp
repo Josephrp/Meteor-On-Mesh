@@ -17,8 +17,11 @@
 #include "../lora_decode.h"
 #include "../lora_bands.h"
 #include "driver/spi_master.h"
+#include "apps/appmanager.hpp"   // for getCurrentApp in rich UI accessors
+#include "../ppi2c/pp_structures.hpp" // lora_* compact types (already re-included in accessor section)
 
 static std::vector<LoraPacket> g_global_lora_packets;
+static EPAppLoraDecoder* g_active_lora_app = nullptr;  // for rich I2C / apps-over-I2C control path (no RTTI)
 static constexpr size_t GLOBAL_MAX = 32;
 
 static const char *TAG = "LoraDecApp";
@@ -89,6 +92,7 @@ EPAppLoraDecoder::EPAppLoraDecoder() {
     if (config.radio_count < 1) config.radio_count = 1;
     if (config.radio_count > 4) config.radio_count = 4;
     config.backend = LORA_BACKEND_WIO;
+    g_active_lora_app = this;
     config.default_rx_mode = RadioRxMode::CAD;
     config.global_cad_after_rx = true;
     config.decode_mode = LORA_DECODE_AUTO;
@@ -102,7 +106,9 @@ EPAppLoraDecoder::EPAppLoraDecoder() {
     }
 
     if (pinConfig.getProfile() == PinConfig::BoardProfile::MESHTONIC_H4M) {
-        if (i2p_pp_conn_state) config.backend = LORA_BACKEND_HYBRID;
+        // For the rich "Meshtonic LoRa" app on the HackRF screen (apps over I2C), we keep RF on the WIO shields.
+        // Hybrid is only entered if IQ bursts are actually fed (wideband assist). Default to WIO here.
+        config.backend = LORA_BACKEND_WIO;
         startSession();
     }
 }
@@ -113,10 +119,12 @@ const char* EPAppLoraDecoder::backendName(uint8_t backend) {
 
 void EPAppLoraDecoder::maybeUpgradeHybridBackend() {
     if (!running) return;
-    if (i2p_pp_conn_state && config.backend == LORA_BACKEND_WIO) {
+    // Only upgrade to hybrid on actual IQ activity from the PP (FEEDIQ path).
+    // For the native rich UI app ("apps over I2C"), the primary/only RF remains the WIO shields.
+    if (i2p_pp_conn_state && config.backend == LORA_BACKEND_WIO && iq_active) {
         config.backend = LORA_BACKEND_HYBRID;
         lora_dsp_init();
-        ESP_LOGI(TAG, "PortaPack linked — hybrid WIO+HackRF");
+        ESP_LOGI(TAG, "PortaPack linked + IQ active — hybrid WIO+HackRF");
         sendStatusToWeb();
     }
 }
@@ -980,15 +988,17 @@ void EPAppLoraDecoder::sendStatusToWeb() {
     const char* dm = (config.decode_mode == LORA_DECODE_PYTHON) ? "python"
                      : (config.decode_mode == LORA_DECODE_AUTO) ? "auto" : "cpp";
     const char* hw = backendName(config.backend);
+    extern bool i2p_pp_conn_state;
     int off = snprintf(buf, sizeof(buf),
         "{\"type\":\"loradec_status\",\"running\":%s,\"backend\":%u,\"radio_count\":%u,"
         "\"center\":%.3f,\"hw\":\"%s\",\"onboard_ants\":%d,\"def_rx_mode\":\"%s\","
         "\"cad_after\":%s,\"slot_present_mask\":%u,\"decode_mode\":\"%s\","
-        "\"active_preset\":\"%s\",\"presets_available\":%s,\"slots\":[",
+        "\"active_preset\":\"%s\",\"presets_available\":%s,\"pp_connected\":%s,\"slots\":[",
         running ? "true" : "false", config.backend, config.radio_count, config.center_mhz,
         hw, numActiveRadios, rxModeName(config.default_rx_mode),
         config.global_cad_after_rx ? "true" : "false", config.slot_present_mask, dm,
-        config.active_preset_id, presets);
+        config.active_preset_id, presets,
+        i2p_pp_conn_state ? "true" : "false");
 
     for (int i = 0; i < MAX_RADIOS; i++) {
         if (i >= config.radio_count) break;
@@ -1057,6 +1067,9 @@ void EPAppLoraDecoder::OnDisplayRequest(DisplayGeneric* display) {
              i2p_pp_conn_state ? "on" : "off", (unsigned)hackrf_burst_count);
     text += "\n";
     text += line;
+    if (i2p_pp_conn_state) {
+        text += "\nPP screen active (rich UI)";
+    }
 
     for (int i = 0; i < numActiveRadios && i < 2; i++) {
         snprintf(line, sizeof(line), "S%d %s %.1f SF%u", i, config.channels[i].region,
@@ -1240,4 +1253,97 @@ void lora_decoder_push_packet(uint32_t ts_ms,
     }
 
     lora_decoder_push_record(rec);
+}
+
+// === Rich UI accessors for "Apps over I2C" (SatTrack-style native PP screen app) ===
+
+size_t lora_get_recent_compact(lora_packet_compact_t* out, size_t max_count) {
+    if (!out || max_count == 0) return 0;
+    // Source of truth: the global packet ring (fed by push* and web ingest + WIO decodes)
+    std::vector<LoraPacket> src = g_global_lora_packets;
+    if (src.size() > max_count) src.erase(src.begin(), src.end() - max_count);
+    size_t n = std::min(src.size(), max_count);
+    for (size_t i = 0; i < n; ++i) {
+        const auto& s = src[i];
+        lora_packet_compact_t& c = out[i];
+        memset(&c, 0, sizeof(c));
+        c.ts_ms = s.ts_ms;
+        c.freq_mhz = s.freq_mhz;
+        c.bw_hz = s.bw_hz;
+        c.sf = s.sf;
+        c.rssi = s.rssi;
+        c.snr = s.snr;
+        c.proto = s.proto;
+        c.slot = s.slot;
+        c.decrypted = s.decrypted ? 1 : 0;
+        strncpy((char*)c.confidence, s.confidence, sizeof(c.confidence) - 1);
+        strncpy(c.region, s.region, sizeof(c.region) - 1);
+        strncpy(c.preset_id, s.preset_id, sizeof(c.preset_id) - 1);
+        // preview from payload_hex (raw bytes)
+        size_t hlen = s.payload_hex.size() / 2;
+        size_t plen = std::min(hlen, sizeof(c.payload_preview));
+        for (size_t k = 0; k < plen; ++k) {
+            unsigned v = 0;
+            sscanf(s.payload_hex.c_str() + k * 2, "%02x", &v);
+            c.payload_preview[k] = (uint8_t)v;
+        }
+        c.payload_preview_len = (uint8_t)plen;
+        strncpy(c.info, s.info.c_str(), sizeof(c.info) - 1);
+    }
+    return n;
+}
+
+void lora_get_rich_status(lora_rich_status_t* out) {
+    if (!out) return;
+    memset(out, 0, sizeof(*out));
+    if (g_active_lora_app) {
+        out->running = g_active_lora_app->isRunning() ? 1 : 0;
+        auto cfg = g_active_lora_app->getConfig();
+        out->backend = cfg.backend;
+        out->radio_count = cfg.radio_count ? cfg.radio_count : 4;
+        out->slot_present_mask = cfg.slot_present_mask;
+        if (cfg.active_preset_id[0]) {
+            strncpy(out->active_preset, cfg.active_preset_id, sizeof(out->active_preset) - 1);
+        }
+    } else {
+        out->running = 1;
+        out->backend = LORA_BACKEND_WIO;
+        out->radio_count = 4;
+        out->slot_present_mask = 0x0F;
+        strncpy(out->active_preset, "US915-meshtastic", sizeof(out->active_preset) - 1);
+    }
+    out->total_packets = (uint32_t)g_global_lora_packets.size();
+    out->num_recent = (uint8_t)std::min<size_t>(g_global_lora_packets.size(), 8);
+    extern bool i2p_pp_conn_state;
+    out->pp_connected = i2p_pp_conn_state ? 1 : 0;
+}
+
+bool lora_rich_apply_preset(const char* preset_id) {
+    if (!preset_id || !preset_id[0]) return false;
+    ESP_LOGI("LORA_RICH", "apply preset via rich I2C: %s", preset_id);
+    if (g_active_lora_app) {
+        bool ok = g_active_lora_app->applyPresetId(preset_id);
+        if (ok) {
+            // re-arm radios with new preset immediately for WIO backend
+            g_active_lora_app->startSession();
+        }
+        return ok;
+    }
+    // Fallback (no active app pointer)
+    return lora_apply_preset_to_config(nullptr, preset_id);
+}
+
+bool lora_rich_control(uint8_t op) {
+    if (!g_active_lora_app) {
+        return false;
+    }
+    if (op == 0) {
+        g_active_lora_app->stopSession();
+        return true;
+    }
+    if (op == 1) {
+        g_active_lora_app->startSession();
+        return true;
+    }
+    return false;
 }

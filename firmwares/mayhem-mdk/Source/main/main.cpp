@@ -99,6 +99,9 @@ uint8_t shutdown_countdown = 0;  // when it is 1, init a shutdown. if >1 decreas
 #include "../extapps/tirapp.h"
 #include "../extapps/espmanager.h"
 #include "../extapps/espapps.h"
+#include "../extapps/meshtonic_lora.h"  // Meshtonic LoRa rich UI binary placeholder (apps over I2C)
+#include "lora_bands.h"  // for LoraBandPreset + g_lora_presets in rich I2C PRESETS handler
+#include "lora_decoder_feed.h"  // rich I2C accessors (packets, status, apply) for apps-over-I2C UI
 
 #include "display/displaymanager.hpp"
 
@@ -717,6 +720,11 @@ void app_main(void) {
     PPHandler::add_app((uint8_t*)espapps, sizeof(espapps));
     if (pinConfig.hasIRrx() || pinConfig.hasIRrx()) PPHandler::add_app((uint8_t*)tirapp, sizeof(tirapp));  // only add this app, if the user has ir tx or rx
     PPHandler::add_app((uint8_t*)espmanager, sizeof(espmanager));
+
+    // Meshtonic LoRa rich native app over I2C (SatTrack pattern).
+    // Placeholder binary (with valid standalone_app_info header) so it appears in the module menu.
+    // Real rich UI binary (built in Mayhem firmware) will replace the placeholder content.
+    PPHandler::add_app((uint8_t*)meshtonic_lora, sizeof(meshtonic_lora));
     PPHandler::set_get_features_CB([](uint64_t& feat) {
                                         i2c_pp_last_comm_time = time_millis;
                                     update_features();
@@ -757,6 +765,71 @@ void app_main(void) {
                                             str += (char)data.data->at(i);
                                         }
                                         sat_to_track_new =str; }, nullptr);
+
+    // === Meshtonic LoRa rich "Apps over I2C" (SatTrack pattern) ===
+    // These allow a full native color app on the HackRF screen to get live WIO packets/status
+    // and send controls (preset apply, start/stop), while all RF stays on the 4x WIO shields.
+    PPHandler::add_custom_command(PPCMD_LORADEC_STATUS, nullptr, [](pp_command_data_t data) {
+        data.data->resize(sizeof(lora_rich_status_t));
+        lora_rich_status_t st{};
+        lora_get_rich_status(&st);
+        memcpy(data.data->data(), &st, sizeof(st));
+    });
+
+    static uint8_t g_lora_packets_want = 8;
+    PPHandler::add_custom_command(PPCMD_LORADEC_PACKETS, [](pp_command_data_t data) {
+        if (!data.data->empty()) {
+            uint8_t c = (*data.data)[0];
+            if (c >= 1 && c <= 16) g_lora_packets_want = c;
+        }
+    }, [](pp_command_data_t data) {
+        size_t want = g_lora_packets_want;
+        lora_packet_compact_t buf[16];
+        size_t n = lora_get_recent_compact(buf, want);
+        data.data->resize(n * sizeof(lora_packet_compact_t));
+        if (n > 0) {
+            memcpy(data.data->data(), buf, n * sizeof(lora_packet_compact_t));
+        }
+    });
+
+    PPHandler::add_custom_command(PPCMD_LORADEC_PRESETS, nullptr, [](pp_command_data_t data) {
+        // Export the real generated preset list from lora_bands (single source of truth).
+        extern const LoraBandPreset g_lora_presets[];
+        extern const int LORA_MAX_PRESETS;
+        int maxn = LORA_MAX_PRESETS;
+        // Bound the response size reasonably for I2C
+        int n = (maxn > 16) ? 16 : maxn;
+        data.data->resize(n * sizeof(lora_preset_entry_t));
+        auto* e = reinterpret_cast<lora_preset_entry_t*>(data.data->data());
+        for (int i = 0; i < n; ++i) {
+            const auto& src = g_lora_presets[i];
+            memset(&e[i], 0, sizeof(lora_preset_entry_t));
+            if (src.id) strncpy(e[i].id, src.id, sizeof(e[i].id)-1);
+            if (src.region) strncpy(e[i].region, src.region, sizeof(e[i].region)-1);
+            if (src.profile) strncpy(e[i].profile, src.profile, sizeof(e[i].profile)-1);
+            e[i].freq_mhz = (src.slot_count > 0) ? src.slot_freqs_mhz[0] : src.sdr_center_mhz;
+            e[i].sf = src.sf;
+            e[i].bw_hz = src.bw_hz;
+        }
+    });
+
+    PPHandler::add_custom_command(PPCMD_LORADEC_APPLY, [](pp_command_data_t data) {
+        // Expect payload starts with null-terminated preset id (or slot overrides later)
+        if (data.data->empty()) return;
+        std::string pid;
+        for (auto b : *data.data) { if (b==0) break; pid += (char)b; }
+        if (!pid.empty()) {
+            ESP_LOGI("LORA_I2C", "Rich UI requested preset apply: %s", pid.c_str());
+            (void)lora_rich_apply_preset(pid.c_str());
+        }
+    }, nullptr);
+
+    PPHandler::add_custom_command(PPCMD_LORADEC_CONTROL, [](pp_command_data_t data) {
+        if (data.data->empty()) return;
+        uint8_t op = (*data.data)[0];
+        ESP_LOGI("LORA_I2C", "Rich UI control op=%u", op);
+        (void)lora_rich_control(op);
+    }, nullptr);
     PPHandler::add_custom_command(PPCMD_IRTX_SENDIR, [](pp_command_data_t data) {
                                         if (data.data->size() != sizeof(ir_data_t)) {
                                             return;

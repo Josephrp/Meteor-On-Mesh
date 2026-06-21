@@ -138,6 +138,50 @@ typedef struct
     uint8_t preview[8]; // first bytes of last packet
 } radio_status_t;
 
+// === Meshtonic LoRa rich "Apps over I2C" structures (SatTrack-style custom commands) ===
+// Compact fixed-size for efficient I2C transfer of live decoded packets.
+#pragma pack(push, 1)
+typedef struct {
+    uint32_t ts_ms;
+    float    freq_mhz;
+    uint32_t bw_hz;
+    uint8_t  sf;
+    int16_t  rssi;
+    int8_t   snr;
+    uint8_t  proto;
+    uint8_t  slot;
+    uint8_t  decrypted;           // 0/1
+    uint8_t  confidence[8];       // e.g. "high\0" or "candidate"
+    char     region[8];
+    char     preset_id[20];
+    uint8_t  payload_preview[16]; // first raw bytes (or hex nibbles if preferred)
+    uint8_t  payload_preview_len;
+    char     info[32];            // short decoded text / port / type
+} lora_packet_compact_t;
+
+// Preset entry (for preset list command)
+typedef struct {
+    char     id[32];
+    char     region[8];
+    char     profile[16];
+    float    freq_mhz;
+    uint8_t  sf;
+    uint32_t bw_hz;
+} lora_preset_entry_t;
+
+// Rich status blob for the native PP screen app
+typedef struct {
+    uint8_t  running;
+    uint8_t  backend;             // see LoraBackend in ep_app_loradecoder.hpp
+    uint8_t  radio_count;
+    uint8_t  slot_present_mask;
+    char     active_preset[32];
+    uint32_t total_packets;       // since start or last clear (mod 2^32 is fine)
+    uint8_t  num_recent;          // how many compact packets follow in the response (or separate PACKETS cmd)
+    uint8_t  pp_connected;        // 1 when a PortaPack is attached over I2C (rich UI likely active)
+} lora_rich_status_t;
+#pragma pack(pop)
+
 typedef struct
 {
     uint32_t api_version;
