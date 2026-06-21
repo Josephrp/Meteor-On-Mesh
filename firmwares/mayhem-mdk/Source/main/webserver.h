@@ -27,6 +27,8 @@
 #include "pinconfig.h"
 #include "pinconfig_html.h"
 #include "lora_decoder_feed.h"
+#include "lora_bridge_json.h"
+#include "lora_bands.h"
 #include "esp_timer.h"
 
 static httpd_handle_t server = NULL;
@@ -407,62 +409,112 @@ static esp_err_t post_req_handler_pinconfig(httpd_req_t* req) {
 // The host (running firmwares/mayhem-mdk/lora-wideband-decoder/ + HackRF) POSTs normalized JSONL-style events here.
 // The ESP32 LoraDecoder app (and global feed) makes them available to web and PortaPack.
 static esp_err_t post_req_handler_meshtonic_packet(httpd_req_t* req) {
-    // Read body (expect small JSON or form)
-    char buf[512];
+    char buf[1024];
     int total = 0;
-    while (total < (int)sizeof(buf)-1) {
-        int r = httpd_req_recv(req, buf + total, sizeof(buf)-1 - total);
+    while (total < (int)sizeof(buf) - 1) {
+        int r = httpd_req_recv(req, buf + total, sizeof(buf) - 1 - total);
         if (r <= 0) break;
         total += r;
     }
     buf[total] = 0;
 
-    // Very lightweight parse for the fields the bridge sends.
-    // Expected keys (best effort): ts, freq, bw, sf, rssi, snr, payload, type
+    LoraDecodedRecord rec{};
     float freq = 0, rssi_f = -90;
+    int snr = 0, slot = 0, proto = 0;
     uint32_t bw = 125000;
-    uint8_t sf = 12, proto = 0;
-    int snr = 0;
-    char payload[129] = {0};
-    char info[64] = {0};
+    uint8_t sf = 12;
+    char payload[257] = {0};
 
-    unsigned long bw_ul = 125000;
-    // naive sscanf helpers
-    sscanf(buf, "%*[^f]freq\":%f", &freq);
-    sscanf(buf, "%*[^s]sf\":%hhu", &sf);
-    sscanf(buf, "%*[^b]bw\":%lu", &bw_ul);
-    bw = (uint32_t)bw_ul;
-    sscanf(buf, "%*[^r]rssi\":%f", &rssi_f);
-    sscanf(buf, "%*[^s]snr\":%d", &snr);
-    // payload may be "payload":"hex..." or "payload_hex"
-    const char* pkey = strstr(buf, "\"payload");
-    if (pkey) {
-        const char* colon = strchr(pkey, ':');
-        if (colon) {
-            const char* start = strchr(colon, '"');
-            if (start) {
-                start++;
-                const char* end = strchr(start, '"');
-                if (end) {
-                    size_t n = (size_t)(end - start);
-                    if (n > sizeof(payload)-1) n = sizeof(payload)-1;
-                    memcpy(payload, start, n);
-                    payload[n] = 0;
-                }
-            }
-        }
+    lora_json_get_float(buf, "freq", &freq);
+    if (!freq) lora_json_get_float(buf, "freq_mhz", &freq);
+    int bw_i = 0;
+    if (lora_json_get_int(buf, "bw", &bw_i)) bw = (uint32_t)bw_i;
+    if (!bw_i && lora_json_get_int(buf, "bw_hz", &bw_i)) bw = (uint32_t)bw_i;
+    int sf_i = 0;
+    if (lora_json_get_int(buf, "sf", &sf_i)) sf = (uint8_t)sf_i;
+    lora_json_get_float(buf, "rssi", &rssi_f);
+    lora_json_get_int(buf, "snr", &snr);
+    lora_json_get_int(buf, "slot", &slot);
+    lora_json_get_int(buf, "proto", &proto);
+    lora_json_get_string(buf, "payload_hex", payload, sizeof(payload));
+    if (!payload[0]) lora_json_get_string(buf, "payload", payload, sizeof(payload));
+    lora_json_get_string(buf, "region", rec.region, sizeof(rec.region));
+    lora_json_get_string(buf, "profile", rec.profile, sizeof(rec.profile));
+    lora_json_get_string(buf, "preset_id", rec.preset_id, sizeof(rec.preset_id));
+    lora_json_get_string(buf, "band", rec.band, sizeof(rec.band));
+    lora_json_get_string(buf, "confidence", rec.confidence, sizeof(rec.confidence));
+    lora_json_get_string(buf, "info", rec.info, sizeof(rec.info));
+    lora_json_get_string(buf, "key_label", rec.key_label, sizeof(rec.key_label));
+    lora_json_get_string(buf, "decode_backend", rec.decode_backend, sizeof(rec.decode_backend));
+    lora_json_get_bool(buf, "decrypted", &rec.decrypted);
+    int ts_i = 0;
+    if (lora_json_get_int(buf, "ts", &ts_i)) rec.ts_ms = (uint32_t)ts_i;
+
+    rec.freq_mhz = freq ? freq : 915.0f;
+    rec.bw_hz = bw;
+    rec.sf = sf;
+    rec.rssi = (int16_t)rssi_f;
+    rec.snr = (int8_t)snr;
+    rec.slot = (uint8_t)slot;
+    rec.proto = (uint8_t)proto;
+    strncpy(rec.payload_hex, payload[0] ? payload : "00", sizeof(rec.payload_hex) - 1);
+    if (!rec.region[0]) strncpy(rec.region, "US915", sizeof(rec.region) - 1);
+    if (!rec.band[0]) strncpy(rec.band, rec.region, sizeof(rec.band) - 1);
+    if (!rec.confidence[0]) strncpy(rec.confidence, "candidate", sizeof(rec.confidence) - 1);
+    if (!rec.decode_backend[0]) strncpy(rec.decode_backend, "bridge", sizeof(rec.decode_backend) - 1);
+    if (!rec.info[0]) strncpy(rec.info, "host-lwd", sizeof(rec.info) - 1);
+    if (!rec.ts_ms) rec.ts_ms = (uint32_t)(esp_timer_get_time() / 1000ULL);
+
+    lora_decoder_push_record(rec);
+    ESP_LOGI("LWD", "bridge f=%.3f sf=%u proto=%u %s", rec.freq_mhz, rec.sf, rec.proto, rec.region);
+    httpd_resp_sendstr(req, "ok");
+    return ESP_OK;
+}
+
+static esp_err_t get_req_handler_lwd_presets(httpd_req_t* req) {
+    char buf[2048];
+    lora_list_presets_json(buf, sizeof(buf));
+    char out[2200];
+    snprintf(out, sizeof(out), "{\"presets\":%s}", buf);
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_sendstr(req, out);
+    return ESP_OK;
+}
+
+// HTTP command proxy for host Meshtonic app (preset / start without WebSocket).
+static esp_err_t post_req_handler_lwd_cmd(httpd_req_t* req) {
+    char buf[384];
+    int total = 0;
+    while (total < (int)sizeof(buf) - 1) {
+        int r = httpd_req_recv(req, buf + total, sizeof(buf) - 1 - total);
+        if (r <= 0) break;
+        total += r;
     }
-    // optional info / type
-    const char* tkey = strstr(buf, "\"type\"");
-    if (tkey) {
-        strncpy(info, "host-lwd", sizeof(info)-1);
+    buf[total] = 0;
+
+    char cmd[160] = {0};
+    bool start_app = true;
+    lora_json_get_string(buf, "cmd", cmd, sizeof(cmd));
+    lora_json_get_bool(buf, "start_app", &start_app);
+    if (!cmd[0] && total > 0) {
+        strncpy(cmd, buf, sizeof(cmd) - 1);
+        char* nl = strchr(cmd, '\n');
+        if (nl) *nl = 0;
+        char* cr = strchr(cmd, '\r');
+        if (cr) *cr = 0;
+    }
+    if (!cmd[0]) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "missing cmd");
+        return ESP_FAIL;
     }
 
-    uint32_t now = (uint32_t)(esp_timer_get_time() / 1000ULL);
-    lora_decoder_push_packet(now, freq ? freq : 915.0f, bw, sf, (int16_t)rssi_f, (int8_t)snr,
-                             payload[0] ? payload : "00", proto, info[0] ? info : "bridge");
-
-    ESP_LOGI("LWD", "bridge packet f=%.3f sf=%u rssi=%.0f", freq, sf, rssi_f);
+    if (start_app) {
+        const char* appstart = "#$##$$$04\r\n";
+        AppManager::handleWebData(appstart, strlen(appstart));
+    }
+    char line[192];
+    snprintf(line, sizeof(line), "%s\r\n", cmd);
+    AppManager::handleWebData(line, strlen(line));
 
     httpd_resp_sendstr(req, "ok");
     return ESP_OK;
@@ -715,6 +767,22 @@ static httpd_handle_t setup_websocket_server(void) {
                                   .handle_ws_control_frames = false,
                                   .supported_subprotocol = NULL};
 
+    httpd_uri_t uri_lwd_presets = {.uri = "/lwd/presets",
+                                   .method = HTTP_GET,
+                                   .handler = get_req_handler_lwd_presets,
+                                   .user_ctx = NULL,
+                                   .is_websocket = false,
+                                   .handle_ws_control_frames = false,
+                                   .supported_subprotocol = NULL};
+
+    httpd_uri_t uri_lwd_cmd = {.uri = "/lwd/cmd",
+                               .method = HTTP_POST,
+                               .handler = post_req_handler_lwd_cmd,
+                               .user_ctx = NULL,
+                               .is_websocket = false,
+                               .handle_ws_control_frames = false,
+                               .supported_subprotocol = NULL};
+
     // Back-compat alias for older bridge scripts
     httpd_uri_t uri_meshtonic_packet = {.uri = "/meshtonic/packet",
                                         .method = HTTP_POST,
@@ -735,6 +803,8 @@ static httpd_handle_t setup_websocket_server(void) {
         httpd_register_uri_handler(server, &update_post);
         httpd_register_uri_handler(server, &ws);
         httpd_register_uri_handler(server, &uri_lwd_packet);
+        httpd_register_uri_handler(server, &uri_lwd_presets);
+        httpd_register_uri_handler(server, &uri_lwd_cmd);
         httpd_register_uri_handler(server, &uri_meshtonic_packet);
     }
 

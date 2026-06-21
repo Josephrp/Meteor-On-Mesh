@@ -829,6 +829,11 @@ def ingest(rec):
         # sightings instead of N isolated 'unknown' rows.
         if rec.get('proto') == 'unknown':
             _bump_unknown_fp(rec)
+    try:
+        import meshtonic_pp
+        meshtonic_pp.maybe_forward_packet(rec, _DATA_DIR)
+    except Exception:
+        pass
     return rec
 
 
@@ -1761,6 +1766,17 @@ def start_pipeline():
         return {'ok': False, 'error': str(e)}
     PIPELINE.update(proc=proc, running=True, started_at=time.time(), err=None)
     _broadcast({'type': 'stats', 'data': _stats()})
+    try:
+        import meshtonic_pp as mpp
+        mcfg = mpp.load_settings(_DATA_DIR)
+        if mcfg.get('apply_preset_on_start'):
+            esp = (mcfg.get('esp_url') or '').strip()
+            preset = (mcfg.get('preset_id') or '').strip()
+            if esp and preset:
+                threading.Thread(target=mpp.apply_preset_to_esp,
+                                 args=(esp, preset), daemon=True).start()
+    except Exception:
+        pass
     return {'ok': True}
 
 
@@ -2630,6 +2646,93 @@ def api_start():
 @app.route('/api/pipeline/stop', methods=['POST'])
 def api_stop():
     return jsonify(stop_pipeline())
+
+
+# ---------------------------------------------------------------- meshtonic / ESP32PP
+@app.route('/api/meshtonic/settings')
+def api_meshtonic_settings_get():
+    try:
+        import meshtonic_pp as mpp
+        return jsonify(mpp.load_settings(_DATA_DIR))
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/meshtonic/settings', methods=['POST'])
+def api_meshtonic_settings_post():
+    try:
+        import meshtonic_pp as mpp
+        patch = request.get_json(force=True, silent=True) or {}
+        return jsonify(mpp.save_settings(_DATA_DIR, patch))
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/meshtonic/presets')
+def api_meshtonic_presets():
+    try:
+        import meshtonic_pp as mpp
+        host = (request.args.get('esp') or '').strip()
+        if host:
+            esp = mpp.esp_fetch_presets(host)
+            if esp:
+                return jsonify(esp)
+        return jsonify({'presets': mpp.list_presets(), 'source': 'host'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/meshtonic/esp/status')
+def api_meshtonic_esp_status():
+    try:
+        import meshtonic_pp as mpp
+        cfg = mpp.load_settings(_DATA_DIR)
+        esp = (request.args.get('esp') or cfg.get('esp_url') or '').strip()
+        if not esp:
+            return jsonify({'ok': False, 'error': 'no esp_url'})
+        ok = mpp.esp_reachable(esp)
+        presets = mpp.esp_fetch_presets(esp) if ok else None
+        return jsonify({
+            'ok': ok,
+            'esp_url': esp,
+            'esp_ui': mpp.esp_web_ui_url(esp),
+            'presets': presets,
+        })
+    except Exception as e:
+        return jsonify({'ok': False, 'error': str(e)})
+
+
+@app.route('/api/meshtonic/esp/cmd', methods=['POST'])
+def api_meshtonic_esp_cmd():
+    try:
+        import meshtonic_pp as mpp
+        body = request.get_json(force=True, silent=True) or {}
+        cfg = mpp.load_settings(_DATA_DIR)
+        esp = (body.get('esp_url') or cfg.get('esp_url') or '').strip()
+        cmd = (body.get('cmd') or '').strip()
+        if not esp or not cmd:
+            return jsonify({'ok': False, 'error': 'esp_url and cmd required'})
+        return jsonify(mpp.esp_send_cmd(esp, cmd, start_app=body.get('start_app', True)))
+    except Exception as e:
+        return jsonify({'ok': False, 'error': str(e)})
+
+
+@app.route('/api/meshtonic/esp/apply', methods=['POST'])
+def api_meshtonic_esp_apply():
+    try:
+        import meshtonic_pp as mpp
+        body = request.get_json(force=True, silent=True) or {}
+        cfg = mpp.load_settings(_DATA_DIR)
+        esp = (body.get('esp_url') or cfg.get('esp_url') or '').strip()
+        preset = (body.get('preset_id') or cfg.get('preset_id') or '').strip()
+        if not esp or not preset:
+            return jsonify({'ok': False, 'error': 'esp_url and preset_id required'})
+        res = mpp.apply_preset_to_esp(esp, preset)
+        if res.get('ok'):
+            mpp.save_settings(_DATA_DIR, {'esp_url': esp, 'preset_id': preset})
+        return jsonify(res)
+    except Exception as e:
+        return jsonify({'ok': False, 'error': str(e)})
 
 
 @app.route('/api/clear', methods=['POST'])

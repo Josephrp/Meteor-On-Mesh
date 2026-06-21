@@ -1,0 +1,34 @@
+# Meshtonic MDK standalone defaults — HackRF wideband + ESP32PP bridge.
+# Used automatically by: python run/meshtonic_app.py
+
+[radio]
+rate_hz       = 20000000
+bandwidth_hz  = 20000000
+center_mhz    = 915.0
+format        = "cs8"
+gain          = 40
+
+[detect]
+threshold        = 0.55
+energy_threshold = 12.0
+overlap          = 0.5
+detect_workers   = -1
+buf_seconds      = 16
+commit_lag       = 4
+
+[decode]
+budget_s    = 10.0
+workers     = -1
+export_dir  = "/tmp/live_caps"
+packet_log  = "/tmp/lora_packets.jsonl"
+key         = "default"
+export_dec  = 8
+
+[web]
+host = "127.0.0.1"
+port = 5000
+
+[meshtonic]
+esp_url = "http://192.168.4.1"
+preset_id = "US915-meshtastic"
+bridge_enabled = true

@@ -7,6 +7,7 @@
 #include <cctype>
 #include <algorithm>
 #include <strings.h>
+#include <cmath>
 
 #if defined(ESP_PLATFORM)
 #include "mbedtls/aes.h"
@@ -128,6 +129,20 @@ bool lora_decode_keys_load_nvs() {
     return true;
 }
 
+bool lora_decode_keys_export_json(char* buf, size_t cap) {
+    if (!buf || cap < 8) return false;
+    size_t off = 0;
+    off += (size_t)snprintf(buf + off, cap - off, "{\"keys\":[");
+    for (uint8_t i = 0; i < g_key_cfg.entry_count && off < cap - 4; i++) {
+        const auto& e = g_key_cfg.entries[i];
+        off += (size_t)snprintf(buf + off, cap - off,
+            "%s{\"label\":\"%s\",\"protocol\":\"%s\",\"priority\":%u}",
+            (i ? "," : ""), e.label, e.protocol[0] ? e.protocol : "meshtastic", (unsigned)e.priority);
+    }
+    snprintf(buf + off, cap - off, "]}");
+    return true;
+}
+
 void lora_decode_keys_set_legacy_string(const char* keys) {
     if (!keys) {
         g_legacy_keys[0] = '\0';
@@ -198,6 +213,8 @@ static bool parse_key_entry_kv(const char* segment, LoraDecodeKeyEntry& e) {
             e.scope = (strcmp(val, "nodes") == 0) ? LORA_KEY_SCOPE_NODES : LORA_KEY_SCOPE_ALL;
         } else if (strcmp(key, "priority") == 0) {
             e.priority = (uint8_t)atoi(val);
+        } else if (strcmp(key, "protocol") == 0) {
+            strncpy(e.protocol, val, sizeof(e.protocol) - 1);
         } else if (strcmp(key, "enabled") == 0) {
             e.enabled = (val[0] == '1' || val[0] == 't' || val[0] == 'T' || val[0] == 'y');
         } else if (strcmp(key, "nodes") == 0) {
@@ -593,7 +610,216 @@ static bool try_decrypt_validate(const uint8_t* enc, size_t enc_len,
     return false;
 }
 
-LoraDecodeOutcome lora_decode_process_air(const uint8_t* raw, size_t rawLen, LoraPacket& pkt) {
+const char* lora_proto_name(uint8_t proto) {
+    switch (proto) {
+        case 1: return "meshtastic";
+        case 2: return "meshcore";
+        case 3: return "lorawan";
+        case 4: return "loramesher";
+        case 5: return "lora_aprs";
+        case 6: return "reticulum";
+        case 7: return "disaster_radio";
+        case 8: return "radiohead";
+        case 9: return "ebyte_lora";
+        default: return "unknown";
+    }
+}
+
+static bool meshcore_payload_type_ok(uint8_t pt) {
+    return pt <= 0x0A || pt == 0x0D;
+}
+
+static bool sniff_meshcore(const uint8_t* raw, size_t len, char* info, size_t cap) {
+    if (!raw || len < 2 || !info || cap == 0) return false;
+    uint8_t header = raw[0];
+    uint8_t payload_type = (header >> 2) & 0x0F;
+    uint8_t version = (header >> 6) & 0x03;
+    if (version != 0 || !meshcore_payload_type_ok(payload_type)) return false;
+    size_t off = 1;
+    uint8_t route = header & 0x03;
+    if (route == 0x00 || route == 0x03) {
+        if (len < off + 4) return false;
+        off += 4;
+    }
+    if (len <= off) return false;
+    uint8_t path_byte = raw[off];
+    if (((path_byte >> 6) & 0x03) == 3) return false;
+    uint8_t hop_count = path_byte & 0x3F;
+    if (hop_count > 16) return false;
+    snprintf(info, cap, "MC type=%u hops=%u", (unsigned)payload_type, (unsigned)hop_count);
+    return true;
+}
+
+static bool sniff_lorawan(const uint8_t* raw, size_t len, char* info, size_t cap) {
+    if (!raw || len < 1 || !info || cap == 0) return false;
+    uint8_t mhdr = raw[0];
+    uint8_t mtype = (mhdr >> 5) & 0x07;
+    if ((mhdr & 0x1F) != 0) return false;
+    const char* names[] = {"JoinReq", "JoinAcc", "DataUp", "DataDown", "DataUpC", "DataDownC", "RFU", "Proprietary"};
+    if (mtype > 7) return false;
+    if (mtype == 0 && len != 23) return false;
+    if (mtype == 1 && len < 12) return false;
+    if (mtype >= 2 && mtype <= 5 && len < 8) return false;
+    snprintf(info, cap, "LoRaWAN %s", names[mtype]);
+    return true;
+}
+
+static bool sniff_lora_aprs(const uint8_t* raw, size_t len, char* info, size_t cap) {
+    if (!raw || len < 3 || !info || cap == 0) return false;
+    if (raw[0] == 0x3c && raw[1] == 0xff && raw[2] == 0x01) {
+        snprintf(info, cap, "LoRa APRS");
+        return true;
+    }
+    return false;
+}
+
+static bool sniff_loramesher(const uint8_t* raw, size_t len, char* info, size_t cap) {
+    if (!raw || len < 6 || !info || cap == 0) return false;
+    if (raw[0] == 0x4D && raw[1] == 0x4D) {
+        snprintf(info, cap, "LoRaMesher");
+        return true;
+    }
+    return false;
+}
+
+static bool sniff_disaster_radio(const uint8_t* raw, size_t len, char* info, size_t cap) {
+    if (!raw || len < 2 || !info || cap == 0) return false;
+    uint8_t total = raw[0];
+    if (total > 0 && total + 1 <= len && total <= 200) {
+        snprintf(info, cap, "disaster.radio");
+        return true;
+    }
+    return false;
+}
+
+static bool sniff_reticulum(const uint8_t* raw, size_t len, char* info, size_t cap) {
+    if (!raw || len < 2 || !info || cap == 0) return false;
+    if (raw[0] == 0x00 && raw[1] <= 0x40) {
+        snprintf(info, cap, "Reticulum");
+        return true;
+    }
+    return false;
+}
+
+static bool sniff_radiohead(const uint8_t* raw, size_t len, char* info, size_t cap) {
+    if (!raw || len < 4 || !info || cap == 0) return false;
+    snprintf(info, cap, "RadioHead");
+    return len >= 4 && len <= 255;
+}
+
+static bool sniff_ebyte_lora(const uint8_t* raw, size_t len, char* info, size_t cap) {
+    if (!raw || len < 3 || !info || cap == 0) return false;
+    if (raw[0] == 0x68) {
+        snprintf(info, cap, "EByte LoRa");
+        return true;
+    }
+    return false;
+}
+
+bool lora_on_lorawan_grid(float freq_mhz, uint8_t sf, uint32_t bw_hz, const char* region) {
+    if (!region) return false;
+    float tol = 0.06f;
+    float bw_khz = bw_hz / 1000.0f;
+    auto near = [&](float f) -> bool {
+        return fabsf(freq_mhz - f) <= tol;
+    };
+    if (strcasecmp(region, "US915") == 0 || strcasecmp(region, "ANZ") == 0) {
+        if (fabsf(bw_khz - 125.0f) < 30 && sf >= 7 && sf <= 10) {
+            for (int n = 0; n < 64; n++) if (near(902.3f + 0.2f * n)) return true;
+        }
+        return false;
+    }
+    if (strcasecmp(region, "EU868") == 0) {
+        const float ch[] = {868.1f, 868.3f, 868.5f, 867.1f, 867.3f, 867.5f, 867.7f, 867.9f};
+        for (float c : ch) if (near(c)) return true;
+        return false;
+    }
+    if (strcasecmp(region, "CN470") == 0) {
+        for (int n = 0; n < 96; n++) if (near(470.3f + 0.2f * n)) return true;
+        return false;
+    }
+    if (strcasecmp(region, "IN865") == 0) {
+        for (int n = 0; n < 4; n++) if (near(865.0625f + 0.18f * n)) return true;
+        return false;
+    }
+    if (strncasecmp(region, "AS923", 5) == 0) {
+        const float ch[] = {923.2f, 923.4f, 922.2f, 922.4f, 923.6f, 923.8f};
+        for (float c : ch) if (near(c)) return true;
+        return false;
+    }
+    return false;
+}
+
+static LoraDecodeOutcome lora_decode_process_air_meshtastic_only(const uint8_t* raw, size_t rawLen, LoraPacket& pkt);
+
+static LoraDecodeOutcome try_meshtastic(const uint8_t* raw, size_t rawLen, LoraPacket& pkt) {
+    return lora_decode_process_air_meshtastic_only(raw, rawLen, pkt);
+}
+
+static LoraDecodeOutcome dispatch_non_meshtastic(const uint8_t* raw, size_t rawLen, LoraPacket& pkt,
+                                                 const LoraDecodeContext* ctx) {
+    LoraDecodeOutcome out{};
+    char info[128] = {};
+    uint8_t proto = 0;
+
+    if (sniff_lora_aprs(raw, rawLen, info, sizeof(info))) proto = 5;
+    else if (sniff_lorawan(raw, rawLen, info, sizeof(info))) proto = 3;
+    else if (sniff_meshcore(raw, rawLen, info, sizeof(info))) proto = 2;
+    else if (sniff_loramesher(raw, rawLen, info, sizeof(info))) proto = 4;
+    else if (sniff_reticulum(raw, rawLen, info, sizeof(info))) proto = 6;
+    else if (sniff_disaster_radio(raw, rawLen, info, sizeof(info))) proto = 7;
+    else if (sniff_ebyte_lora(raw, rawLen, info, sizeof(info))) proto = 9;
+    else if (sniff_radiohead(raw, rawLen, info, sizeof(info))) proto = 8;
+
+    if (!proto) return out;
+
+    out.header_ok = true;
+    out.proto = proto;
+    strncpy(out.confidence, "candidate", sizeof(out.confidence) - 1);
+    if (proto == 3 && ctx && ctx->region[0]) {
+        if (lora_on_lorawan_grid(ctx->freq_mhz, ctx->sf, ctx->bw_hz, ctx->region)) {
+            strncpy(out.confidence, "confirmed", sizeof(out.confidence) - 1);
+        }
+    }
+    pkt.proto = proto;
+    pkt.info = info;
+    strncpy(pkt.confidence, out.confidence, sizeof(pkt.confidence) - 1);
+    pkt.decrypted = false;
+    return out;
+}
+
+LoraDecodeOutcome lora_decode_process_air_ex(const uint8_t* raw, size_t rawLen, LoraPacket& pkt,
+                                             const LoraDecodeContext* ctx) {
+    if (!raw || rawLen < 4) return LoraDecodeOutcome{};
+
+    if (rawLen >= 16) {
+        auto mt = try_meshtastic(raw, rawLen, pkt);
+        if (mt.valid || mt.decrypted || mt.encrypted_only) {
+            mt.proto = 1;
+            pkt.proto = 1;
+            strncpy(pkt.confidence, mt.valid ? "verified" : "candidate", sizeof(pkt.confidence) - 1);
+            pkt.decrypted = mt.decrypted;
+            if (mt.key_label[0]) strncpy(pkt.key_label, mt.key_label, sizeof(pkt.key_label) - 1);
+            strncpy(pkt.decode_backend, "cpp", sizeof(pkt.decode_backend) - 1);
+            return mt;
+        }
+    }
+
+    auto other = dispatch_non_meshtastic(raw, rawLen, pkt, ctx);
+    if (other.proto) {
+        strncpy(pkt.decode_backend, "cpp", sizeof(pkt.decode_backend) - 1);
+        return other;
+    }
+
+    pkt.proto = 0;
+    pkt.info = "raw";
+    strncpy(pkt.confidence, "candidate", sizeof(pkt.confidence) - 1);
+    LoraDecodeOutcome out{};
+    out.header_ok = true;
+    return out;
+}
+
+static LoraDecodeOutcome lora_decode_process_air_meshtastic_only(const uint8_t* raw, size_t rawLen, LoraPacket& pkt) {
     LoraDecodeOutcome out{};
     if (!raw || rawLen < 16) return out;
 
@@ -664,11 +890,17 @@ LoraDecodeOutcome lora_decode_process_air(const uint8_t* raw, size_t rawLen, Lor
 
     pkt.info = info;
     pkt.proto = 1;
+    out.proto = 1;
     return out;
 }
 
+LoraDecodeOutcome lora_decode_process_air(const uint8_t* raw, size_t rawLen, LoraPacket& pkt) {
+    LoraDecodeContext ctx{};
+    return lora_decode_process_air_ex(raw, rawLen, pkt, &ctx);
+}
+
 bool lora_decode_parse_meshtastic(const uint8_t* raw, size_t rawLen, LoraPacket& pkt) {
-    auto out = lora_decode_process_air(raw, rawLen, pkt);
+    auto out = lora_decode_process_air_meshtastic_only(raw, rawLen, pkt);
     return out.header_ok;
 }
 
@@ -751,9 +983,28 @@ int lora_decode_run_selftests() {
         0x89, 0x42, 0xc5, 0xb5, 0x6a, 0xe2
     };
     LoraPacket lp{};
-    auto outcome = lora_decode_process_air(pkt, sizeof(pkt), lp);
+    auto outcome = lora_decode_process_air_meshtastic_only(pkt, sizeof(pkt), lp);
     if (!outcome.valid || outcome.portnum != 1) fails++;
     if (strstr(lp.info.c_str(), "hi") == nullptr) fails++;
+
+    // LoRaWAN Join Request MHDR (mtype=0, major=0)
+    const uint8_t lw_join[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                               0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+                               0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16};
+    LoraPacket lp2{};
+    LoraDecodeContext ctx2{};
+    strncpy(ctx2.region, "US915", sizeof(ctx2.region));
+    ctx2.freq_mhz = 902.3f;
+    ctx2.sf = 9;
+    ctx2.bw_hz = 125000;
+    auto o2 = lora_decode_process_air_ex(lw_join, sizeof(lw_join), lp2, &ctx2);
+    if (o2.proto != 3) fails++;
+
+    // MeshCore-like header: version=0, payload_type=0x04 (ADVERT), path_byte valid
+    const uint8_t mc[] = {0x10, 0x00, 0x00, 0x00, 0x00, 0x05, 0xaa, 0xbb};
+    LoraPacket lp3{};
+    auto o3 = lora_decode_process_air_ex(mc, sizeof(mc), lp3, nullptr);
+    if (o3.proto != 2) fails++;
 
     return fails;
 }

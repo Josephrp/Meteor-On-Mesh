@@ -640,6 +640,10 @@ void app_main(void) {
             int rc = pinConfig.getRadioCount();
             if (rc <= 0) rc = 1;
             sxManager.init(rc);
+
+            // Standalone field use: LoRa decoder runs on boot (no host PC).
+            AppManager::startApp(AppList::LORADECODER);
+            ESP_LOGI(TAG, "Meshtonic H4M: LoRa Decoder auto-started");
         }
     }
 

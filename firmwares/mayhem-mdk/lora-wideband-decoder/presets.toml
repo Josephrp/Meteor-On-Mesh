@@ -1,0 +1,298 @@
+# Meshtonic / LWD band presets — single source for Python + generated lora_bands.h
+# Regenerate: python firmwares/mayhem-mdk/tools/gen_lora_bands.py
+
+[[preset]]
+id = "US915-meshtastic"
+region = "US915"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [906.875, 907.125, 907.375, 907.625]
+sdr_center_mhz = 915.0
+lorawan_region = ""
+
+[[preset]]
+id = "US-meshcore"
+region = "US915"
+profile = "meshcore_narrow"
+sf = 7
+bw_hz = 62500
+cr = 5
+slot_freqs_mhz = [910.525, 910.600, 910.675, 910.750]
+sdr_center_mhz = 915.0
+
+[[preset]]
+id = "US915-lorawan"
+region = "US915"
+profile = "lorawan_us915"
+sf = 9
+bw_hz = 125000
+cr = 5
+slot_freqs_mhz = [902.3, 902.7, 903.1, 903.5]
+sdr_center_mhz = 915.0
+lorawan_region = "US915"
+
+[[preset]]
+id = "EU868-meshtastic"
+region = "EU868"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [869.525, 869.525, 869.525, 869.525]
+sdr_center_mhz = 868.0
+
+[[preset]]
+id = "EU-meshcore"
+region = "EU868"
+profile = "meshcore_narrow"
+sf = 7
+bw_hz = 62500
+cr = 5
+slot_freqs_mhz = [869.525, 869.618, 869.525, 869.618]
+sdr_center_mhz = 868.0
+
+[[preset]]
+id = "EU868-lorawan"
+region = "EU868"
+profile = "lorawan_eu868"
+sf = 9
+bw_hz = 125000
+cr = 5
+slot_freqs_mhz = [868.1, 868.3, 868.5, 867.1]
+sdr_center_mhz = 868.0
+lorawan_region = "EU868"
+
+[[preset]]
+id = "EU433-meshtastic"
+region = "EU433"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [433.875, 433.875, 433.875, 433.875]
+sdr_center_mhz = 433.0
+
+[[preset]]
+id = "CN470-meshtastic"
+region = "CN470"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [486.3, 486.5, 486.7, 486.9]
+sdr_center_mhz = 490.0
+
+[[preset]]
+id = "CN470-lorawan"
+region = "CN470"
+profile = "lorawan_cn470"
+sf = 9
+bw_hz = 125000
+cr = 5
+slot_freqs_mhz = [486.3, 486.7, 487.1, 487.5]
+sdr_center_mhz = 490.0
+lorawan_region = "CN470"
+
+[[preset]]
+id = "JP-meshtastic"
+region = "JP"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [923.5, 923.75, 924.0, 924.25]
+sdr_center_mhz = 924.0
+
+[[preset]]
+id = "KR-meshtastic"
+region = "KR"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [921.9, 922.1, 922.3, 922.5]
+sdr_center_mhz = 922.0
+
+[[preset]]
+id = "IN865-meshtastic"
+region = "IN865"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [865.0625, 865.2425, 865.4225, 865.6025]
+sdr_center_mhz = 865.5
+
+[[preset]]
+id = "IN865-lorawan"
+region = "IN865"
+profile = "lorawan_in865"
+sf = 9
+bw_hz = 125000
+cr = 5
+slot_freqs_mhz = [865.0625, 865.4025, 865.7425, 866.0825]
+sdr_center_mhz = 865.5
+lorawan_region = "IN865"
+
+[[preset]]
+id = "ANZ-meshtastic"
+region = "ANZ"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [915.0, 915.25, 915.5, 915.75]
+sdr_center_mhz = 921.0
+
+[[preset]]
+id = "AU915-meshcore"
+region = "ANZ"
+profile = "meshcore_narrow"
+sf = 7
+bw_hz = 62500
+cr = 5
+slot_freqs_mhz = [915.0, 915.075, 915.15, 915.225]
+sdr_center_mhz = 921.0
+
+[[preset]]
+id = "AS923-meshtastic"
+region = "AS923"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [923.2, 923.4, 922.2, 922.4]
+sdr_center_mhz = 923.0
+
+[[preset]]
+id = "AS923-lorawan"
+region = "AS923"
+profile = "lorawan_as923"
+sf = 9
+bw_hz = 125000
+cr = 5
+slot_freqs_mhz = [923.2, 923.4, 923.6, 923.8]
+sdr_center_mhz = 923.0
+lorawan_region = "AS923"
+
+[[preset]]
+id = "SG923-meshtastic"
+region = "SG923"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [917.5, 917.75, 918.0, 918.25]
+sdr_center_mhz = 920.0
+
+[[preset]]
+id = "NZ865-meshtastic"
+region = "NZ865"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [864.5, 864.75, 865.0, 865.25]
+sdr_center_mhz = 865.0
+
+[[preset]]
+id = "RU-meshtastic"
+region = "RU"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [868.95, 869.0, 869.05, 869.1]
+sdr_center_mhz = 869.0
+
+[[preset]]
+id = "TW-meshtastic"
+region = "TW"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [922.5, 922.75, 923.0, 923.25]
+sdr_center_mhz = 923.0
+
+[[preset]]
+id = "TH-meshtastic"
+region = "TH"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [922.5, 922.75, 923.0, 923.25]
+sdr_center_mhz = 923.0
+
+[[preset]]
+id = "MY919-meshtastic"
+region = "MY919"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [921.5, 921.75, 922.0, 922.25]
+sdr_center_mhz = 922.0
+
+[[preset]]
+id = "PH915-meshtastic"
+region = "PH915"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [916.5, 916.75, 917.0, 917.25]
+sdr_center_mhz = 917.0
+
+[[preset]]
+id = "UA868-meshtastic"
+region = "UA868"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [868.3, 868.35, 868.4, 868.45]
+sdr_center_mhz = 868.0
+
+[[preset]]
+id = "UA433-meshtastic"
+region = "UA433"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [433.5, 433.55, 433.6, 433.65]
+sdr_center_mhz = 433.0
+
+[[preset]]
+id = "BR902-meshtastic"
+region = "BR902"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [903.5, 903.75, 904.0, 904.25]
+sdr_center_mhz = 905.0
+
+[[preset]]
+id = "KZ863-meshtastic"
+region = "KZ863"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [865.5, 865.75, 866.0, 866.25]
+sdr_center_mhz = 866.0
+
+[[preset]]
+id = "NP865-meshtastic"
+region = "NP865"
+profile = "meshtastic_longfast"
+sf = 11
+bw_hz = 250000
+cr = 5
+slot_freqs_mhz = [866.5, 866.75, 867.0, 867.25]
+sdr_center_mhz = 866.0

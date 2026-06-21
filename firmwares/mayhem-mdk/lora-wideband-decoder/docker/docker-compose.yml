@@ -1,0 +1,28 @@
+# Meshtonic LWD standalone (Linux + USB HackRF passthrough).
+#
+#   docker compose -f docker/docker-compose.yml up --build
+#   open http://127.0.0.1:5000/#meshtonic
+#
+# On Windows/macOS Docker Desktop, USB passthrough may not expose HackRF — run
+#   python run/meshtonic_app.py
+# natively instead.
+
+services:
+  meshtonic-lwd:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: meshtonic-lwd:latest
+    ports:
+      - "5000:5000"
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    privileged: true
+    volumes:
+      - meshtonic-lwd-data:/app/lora_web
+      - /tmp:/tmp
+    environment:
+      - LORA_CONFIG=/app/lora-meshtonic.toml
+
+volumes:
+  meshtonic-lwd-data:

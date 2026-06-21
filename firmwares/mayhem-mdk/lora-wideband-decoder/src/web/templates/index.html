@@ -91,6 +91,7 @@
   <a data-tab="map">Map</a>
   <a data-tab="search">Search</a>
   <a data-tab="stats">Stats</a>
+  <a data-tab="meshtonic">Meshtonic MDK</a>
   <a data-tab="config">Config</a>
   <span id="bell" title="Alerts" style="margin-left:auto;align-self:center;cursor:pointer;position:relative;padding:0 14px;font-size:15px">🔔<span id="bellct" style="display:none;position:absolute;top:-2px;right:6px;background:var(--warn);color:#fff;border-radius:9px;font-size:10px;padding:0 5px;line-height:15px"></span></span>
   <span id="healthbar" style="align-self:center;font-size:12px;color:var(--mut);padding-right:12px"></span>
@@ -145,6 +146,7 @@
     <div id="wfoff" class="empty" style="display:none">Waterfall streaming is off — the gate isn't spending any cycles on it. Tick "Stream waterfall" above to enable it (persists across sessions).</div>
   </div>
   <div id="tab-stats" style="display:none"></div>
+  <div id="tab-meshtonic" style="display:none"></div>
   <div id="tab-config" style="display:none"></div>
   <div id="tab-net" style="display:none">
     <div id="topsummary" class="muted" style="padding:8px 2px;font-size:13px"></div>
@@ -1500,10 +1502,58 @@ function renderAlertPanel(){const p=$('#alertpanel');if(!p)return;
 }
 function postAlert(id,patch){fetch('/api/alerts/'+id,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(patch)}).then(r=>r.json()).then(res=>{if(res.alerts)ALERTS=res.alerts;});}
 
-function renderCurrent(){ if(TAB==='pkts')renderPkts(); else if(TAB==='nodes')renderNodes(); else if(TAB==='net')startNet(); else if(TAB==='wf')renderWaterfall(); else if(TAB==='map')renderMap(); else if(TAB==='search')renderSearch(); else if(TAB==='stats')renderStatsTab(); else if(TAB==='config')renderConfig(); }
+function renderMeshtonic(){
+  const el=$('#tab-meshtonic');
+  el.innerHTML='<div class="empty" style="padding:24px">loading Meshtonic settings…</div>';
+  Promise.all([
+    fetch('/api/meshtonic/settings').then(r=>r.json()),
+    fetch('/api/meshtonic/presets').then(r=>r.json()),
+  ]).then(([cfg,pres])=>{
+    const list=(pres.presets||[]);
+    const opts=list.map(p=>'<option value="'+esc(p.id||'')+'"'+(p.id===cfg.preset_id?' selected':'')+'>'+esc(p.id||'')+' — '+esc(p.region||'')+' / '+esc(p.profile||'')+'</option>').join('');
+    el.innerHTML='<div style="max-width:920px;padding:16px 0">'
+      +'<h3 style="margin:0 0 6px">Meshtonic MDK + ESP32PP</h3>'
+      +'<p class="muted" style="line-height:1.5;margin-bottom:14px">Standalone host app: decode with <b>HackRF</b> (Config → SDR → Soapy → <code>hackrf</code>), press <b>Start</b>, and optionally mirror packets to your ESP32PP over Wi‑Fi. Presets match the 4× WIO band registry.</p>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:12px">'
+        +'<label>ESP URL<br><input id="mtesp" type="text" value="'+esc(cfg.esp_url||'http://192.168.4.1')+'" style="width:220px"></label>'
+        +'<label>Preset<br><select id="mtpreset" style="min-width:220px">'+opts+'</select></label>'
+        +'<label style="display:flex;align-items:center;gap:6px;margin-top:18px"><input type="checkbox" id="mtbridge"'+(cfg.bridge_enabled?' checked':'')+'> Bridge packets to ESP</label>'
+        +'<label style="display:flex;align-items:center;gap:6px;margin-top:18px"><input type="checkbox" id="mtapply"'+(cfg.apply_preset_on_start!==false?' checked':'')+'> Apply preset on Start</label>'
+        +'<button id="mtsave" class="go">Save</button>'
+        +'<button id="mtapplybtn" class="go">Apply to ESP</button>'
+        +'<button id="mtping">Ping ESP</button>'
+        +'<a id="mtopenesp" class="muted" href="#" target="_blank" rel="noopener" style="margin-top:18px">Open ESP32PP UI ↗</a>'
+      +'</div>'
+      +'<div id="mtstatus" class="muted" style="font-size:12px;min-height:18px;margin-bottom:10px"></div>'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">'
+        +'<button class="chip" data-cmd="LORA:START">LORA:START</button>'
+        +'<button class="chip" data-cmd="LORA:STOP">LORA:STOP</button>'
+        +'<button class="chip" data-cmd="LORA:STATUS">LORA:STATUS</button>'
+      +'</div>'
+      +'<p class="muted" style="font-size:11px">HackRF tip: Config tab → SDR <b>SoapySDR</b>, driver <code>hackrf</code>, 20 MHz sample rate, center 915 MHz (US) or 868 MHz (EU). Requires <code>soapysdr-module-hackrf</code> on PATH.</p>'
+    +'</div>';
+    const q=id=>el.querySelector(id);
+    const setStatus=(t,ok)=>{const s=q('#mtstatus'); if(s){s.textContent=t; s.style.color=ok===true?'var(--ok)':ok===false?'var(--warn)':'var(--mut)';}};
+  const save=()=>fetch('/api/meshtonic/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      esp_url:q('#mtesp').value.trim(), preset_id:q('#mtpreset').value,
+      bridge_enabled:q('#mtbridge').checked, apply_preset_on_start:q('#mtapply').checked})});
+    q('#mtsave').onclick=()=>save().then(()=>setStatus('Settings saved.',true));
+    q('#mtapplybtn').onclick=()=>{save().then(()=>fetch('/api/meshtonic/esp/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})}))
+      .then(r=>r.json()).then(res=>setStatus(res.ok?'Preset applied on ESP.':'Apply failed: '+(res.error||'unknown'),res.ok));};
+    q('#mtping').onclick=()=>{const u=q('#mtesp').value.trim(); fetch('/api/meshtonic/esp/status?esp='+encodeURIComponent(u))
+      .then(r=>r.json()).then(res=>{setStatus(res.ok?'ESP reachable.':'ESP unreachable: '+(res.error||''),res.ok);
+        if(res.esp_ui) q('#mtopenesp').href=res.esp_ui;});};
+    el.querySelectorAll('[data-cmd]').forEach(b=>b.onclick=()=>{const cmd=b.dataset.cmd;
+      fetch('/api/meshtonic/esp/cmd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cmd})})
+        .then(r=>r.json()).then(res=>setStatus(cmd+': '+(res.ok?'ok':(res.error||'failed')),res.ok));});
+    q('#mtping').click();
+  }).catch(()=>{el.innerHTML='<div class="empty">Failed to load Meshtonic panel.</div>';});
+}
+
+function renderCurrent(){ if(TAB==='pkts')renderPkts(); else if(TAB==='nodes')renderNodes(); else if(TAB==='net')startNet(); else if(TAB==='wf')renderWaterfall(); else if(TAB==='map')renderMap(); else if(TAB==='search')renderSearch(); else if(TAB==='stats')renderStatsTab(); else if(TAB==='meshtonic')renderMeshtonic(); else if(TAB==='config')renderConfig(); }
 function renderStats(s){$('#s_pkts').textContent=s.packets;$('#s_dec').textContent=s.decoded;$('#s_enc').textContent=s.encrypted;$('#s_nodes').textContent=s.nodes;$('#pipedot').className='dot '+(s.pipeline_running?'on':'off');$('#pipetxt').textContent=s.pipeline_running?'running':'stopped';$('#btnStart').style.display=s.pipeline_running?'none':'';$('#btnStop').style.display=s.pipeline_running?'':'none';}
 
-const TABS=['pkts','nodes','net','wf','map','search','stats','config'];
+const TABS=['pkts','nodes','net','wf','map','search','stats','meshtonic','config'];
 function activateTab(name){
   if(!TABS.includes(name))name='pkts';
   document.querySelectorAll('nav a').forEach(x=>x.classList.toggle('active',x.dataset.tab===name));

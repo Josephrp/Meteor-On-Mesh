@@ -24,3 +24,5 @@
 #define PPCMD_LORADEC_GETPACKETS  0xa00f
 #define PPCMD_LORADEC_SETCONFIG   0xa010
 #define PPCMD_LORADEC_CONTROL     0xa011   // start/stop, arm local radios, etc. (payload byte 0 = cmd)
+#define PPCMD_LORADEC_FEEDIQ      0xa012   // HackRF IQ burst chunks from PortaPack (see docs/PORTAPACK_LORADEC.md)
+#define PPCMD_LORADEC_GETUI       0xa013   // Multi-line UI text for PortaPack LCD

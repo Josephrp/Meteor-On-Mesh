@@ -366,6 +366,26 @@
             </div>
         </section>
 
+        <section id="loradecoder">
+            <h2>LoRa Multi-Band Decoder</h2>
+            <div>
+                <button class="uicontrols" onclick="loraCmd('LORA:START')">Start</button>
+                <button class="uicontrols" onclick="loraCmd('LORA:STOP')">Stop</button>
+                <button class="uicontrols" onclick="loraCmd('LORA:STATUS')">Status</button>
+            </div>
+            <div style="margin-top:8px">
+                <button class="uicontrols" onclick="loraCmd('LORA:PRESET:US915-meshtastic')">US Meshtastic</button>
+                <button class="uicontrols" onclick="loraCmd('LORA:PRESET:US-meshcore')">US MeshCore</button>
+                <button class="uicontrols" onclick="loraCmd('LORA:PRESET:EU868-meshtastic')">EU868 MT</button>
+                <button class="uicontrols" onclick="loraCmd('LORA:PRESET:US915-lorawan')">US LoRaWAN</button>
+            </div>
+            <table id="loraBandsTable" style="width:100%;margin-top:10px;font-size:12px;border-collapse:collapse">
+                <thead><tr><th>Region</th><th>Profile</th><th>Pkts</th><th>Active</th></tr></thead>
+                <tbody id="loraBandsBody"></tbody>
+            </table>
+            <pre id="loraPktLog" style="max-height:120px;overflow:auto;font-size:11px"></pre>
+        </section>
+
         <section id="manualcommand">
             <h2>Manual Commands</h2>
             <input type="text" id="manualtxt" />
@@ -574,6 +594,10 @@
         async function onMessage(event) {
             try {
                 var str = await event.data.text();//String(event.data);
+                var trimmed = str.trim();
+                if (trimmed.startsWith('{') && trimmed.indexOf('loradec_') >= 0) {
+                    try { handleLoraJson(JSON.parse(trimmed)); return; } catch (e) { }
+                }
                 for (let i = 0; i < str.length; i++) {
                     var resetline = false;
                     respLastLine += str[i];
@@ -612,6 +636,32 @@
 
         function exitCritical() {
             sendMessage("#$##$$#ENABLEESPASYNC\r\n");
+        }
+
+        function loraCmd(cmd) {
+            sendMessage("#$##$$$04\r\n");
+            setTimeout(function () { sendMessage(cmd + "\r\n"); }, 250);
+        }
+
+        function handleLoraJson(j) {
+            if (j.type === "loradec_status" && j.bands_in_use) {
+                var tb = document.getElementById("loraBandsBody");
+                if (!tb) return;
+                tb.innerHTML = "";
+                j.bands_in_use.forEach(function (b) {
+                    var tr = document.createElement("tr");
+                    tr.innerHTML = "<td>" + b.region + "</td><td>" + b.profile + "</td><td>" +
+                        b.pkts + "</td><td>" + (b.active ? "yes" : "no") + "</td>";
+                    tb.appendChild(tr);
+                });
+            }
+            if (j.type === "loradec_packets" && j.packets) {
+                var el = document.getElementById("loraPktLog");
+                if (!el) return;
+                j.packets.forEach(function (p) {
+                    el.textContent = (p.proto || "?") + " " + p.freq + " " + (p.info || "") + "\n" + el.textContent;
+                });
+            }
         }
 
         function sendMessage(data) {
