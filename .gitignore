@@ -1,7 +1,7 @@
 backups/
 refs/
-!case/refs/
-!case/refs/**
+#!case/refs/
+#!case/refs/**
 *.rpt
 *.txt
 case/refs
