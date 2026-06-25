@@ -1820,7 +1820,7 @@
 					)
 				)
 			)
-			(pin bidirectional inverted
+			(pin passive inverted
 				(at -3.81 -1.27 0)
 				(length 5.08)
 				(name "3"
@@ -1838,7 +1838,7 @@
 					)
 				)
 			)
-			(pin bidirectional inverted
+			(pin passive inverted
 				(at -3.81 -3.81 0)
 				(length 5.08)
 				(name "4"
@@ -2045,7 +2045,7 @@
 					)
 				)
 			)
-			(pin bidirectional inverted
+			(pin passive inverted
 				(at -3.81 -1.27 0)
 				(length 5.08)
 				(name "3"
@@ -2063,7 +2063,7 @@
 					)
 				)
 			)
-			(pin bidirectional inverted
+			(pin passive inverted
 				(at -3.81 -3.81 0)
 				(length 5.08)
 				(name "4"

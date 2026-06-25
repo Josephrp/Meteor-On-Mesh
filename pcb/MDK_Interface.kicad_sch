@@ -128,231 +128,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "GROVE-CONNECTOR-DIP-90D_4P-2.0__1"
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 1.016)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "J25"
-				(at 5.08 1.27 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.143 1.143)
-					)
-					(justify left)
-				)
-			)
-			(property "Value" "GROVE-CONNECTOR-DIP-90D_4P-2.0_"
-				(at 5.08 -1.27 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.143 1.143)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "SKU" "320110034"
-				(at 0.762 3.81 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 0.508 0.508)
-					)
-				)
-			)
-			(property "ki_locked" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "*HW4-2.0-90D*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "GROVE-CONNECTOR-DIP-90D_4P-2.0__1_1_0"
-				(polyline
-					(pts
-						(xy -1.27 5.08) (xy 3.81 5.08)
-					)
-					(stroke
-						(width 0)
-						(type solid)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -1.27 -5.08) (xy -1.27 5.08)
-					)
-					(stroke
-						(width 0)
-						(type solid)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 3.81 5.08) (xy 3.81 -5.08)
-					)
-					(stroke
-						(width 0)
-						(type solid)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 3.81 -5.08) (xy -1.27 -5.08)
-					)
-					(stroke
-						(width 0)
-						(type solid)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "GROVE-CONNECTOR-DIP-90D_4P-2.0__1_1_1"
-				(pin passive inverted_clock
-					(at -3.81 3.81 0)
-					(length 5.08)
-					(name "1"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-				(pin passive inverted
-					(at -3.81 1.27 0)
-					(length 5.08)
-					(name "2"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-				(pin bidirectional inverted
-					(at -3.81 -1.27 0)
-					(length 5.08)
-					(name "3"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-				(pin bidirectional inverted
-					(at -3.81 -3.81 0)
-					(length 5.08)
-					(name "4"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.016 1.016)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "PCM_SparkFun-Connector:Conn_01x02_P2.54mm"
 			(pin_names
 				(offset 1.016)
@@ -869,6 +644,231 @@
 						(effects
 							(font
 								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "libdb:GROVE-CONNECTOR-DIP-90D_4P-2.0_"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 1.016)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "J25"
+				(at 5.08 1.27 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.143 1.143)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "GROVE-CONNECTOR-DIP-90D_4P-2.0_"
+				(at 5.08 -1.27 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.143 1.143)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "SKU" "320110034"
+				(at 0.762 3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 0.508 0.508)
+					)
+				)
+			)
+			(property "ki_locked" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "*HW4-2.0-90D*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "GROVE-CONNECTOR-DIP-90D_4P-2.0__1_0"
+				(polyline
+					(pts
+						(xy -1.27 5.08) (xy 3.81 5.08)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -5.08) (xy -1.27 5.08)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 3.81 5.08) (xy 3.81 -5.08)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 3.81 -5.08) (xy -1.27 -5.08)
+					)
+					(stroke
+						(width 0)
+						(type solid)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GROVE-CONNECTOR-DIP-90D_4P-2.0__1_1"
+				(pin passive inverted_clock
+					(at -3.81 3.81 0)
+					(length 5.08)
+					(name "1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive inverted
+					(at -3.81 1.27 0)
+					(length 5.08)
+					(name "2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive inverted
+					(at -3.81 -1.27 0)
+					(length 5.08)
+					(name "3"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive inverted
+					(at -3.81 -3.81 0)
+					(length 5.08)
+					(name "4"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.016 1.016)
 							)
 						)
 					)
@@ -1433,7 +1433,7 @@
 			)
 		)
 	)
-	(global_label "I2C_SDA"
+	(global_label "3V3"
 		(shape input)
 		(at 52.07 105.41 180)
 		(fields_autoplaced yes)
@@ -1445,7 +1445,7 @@
 		)
 		(uuid "0f3a673b-6844-404d-8c66-55ecc0794e36")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 41.4648 105.41 0)
+			(at 45.5772 105.41 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1479,7 +1479,7 @@
 			)
 		)
 	)
-	(global_label "UART0_RX"
+	(global_label "3V3"
 		(shape input)
 		(at 52.07 43.18 180)
 		(fields_autoplaced yes)
@@ -1491,7 +1491,7 @@
 		)
 		(uuid "1a2f6990-2aea-4879-a5f8-3ee9132508dc")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 39.7715 43.18 0)
+			(at 45.5772 43.18 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1525,7 +1525,7 @@
 			)
 		)
 	)
-	(global_label "GND"
+	(global_label "MCP_GPB2"
 		(shape input)
 		(at 52.07 53.34 180)
 		(fields_autoplaced yes)
@@ -1537,7 +1537,7 @@
 		)
 		(uuid "271d2772-32a7-4ef4-aa43-c9055f33b0c5")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.2143 53.34 0)
+			(at 39.1063 53.34 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1548,7 +1548,7 @@
 			)
 		)
 	)
-	(global_label "MCP_GPA7"
+	(global_label "3V3"
 		(shape input)
 		(at 52.07 135.89 180)
 		(fields_autoplaced yes)
@@ -1560,7 +1560,7 @@
 		)
 		(uuid "29057fd4-4140-45a3-8723-7112a3286a4c")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 39.2877 135.89 0)
+			(at 45.5772 135.89 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1594,7 +1594,7 @@
 			)
 		)
 	)
-	(global_label "GND"
+	(global_label "UART0_RX"
 		(shape input)
 		(at 52.07 115.57 180)
 		(fields_autoplaced yes)
@@ -1606,99 +1606,7 @@
 		)
 		(uuid "38779bb9-e189-4582-ac63-dd296c0ec014")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.2143 115.57 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-	)
-	(global_label "GND"
-		(shape input)
-		(at 52.07 68.58 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "3ce94d62-8fc3-45f9-aa14-65f7e447fbc9")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.2143 68.58 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-	)
-	(global_label "3V3"
-		(shape input)
-		(at 52.07 86.36 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "3eb189c9-954d-4f6c-8f0f-2f6980f89b4e")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.5772 86.36 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-	)
-	(global_label "3V3"
-		(shape input)
-		(at 52.07 133.35 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "4f1f8ae4-060d-418b-bc3e-3a7b9e4a4430")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.5772 133.35 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-	)
-	(global_label "GND"
-		(shape input)
-		(at 52.07 83.82 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "554ec72f-2c0f-423d-a036-49b720c70af2")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.2143 83.82 0)
+			(at 39.7715 115.57 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1711,7 +1619,7 @@
 	)
 	(global_label "I2C_SCL"
 		(shape input)
-		(at 52.07 76.2 180)
+		(at 52.07 68.58 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1719,9 +1627,9 @@
 			)
 			(justify right)
 		)
-		(uuid "5c3262e6-13ee-4d99-9e43-48ae8e57ceea")
+		(uuid "3ce94d62-8fc3-45f9-aa14-65f7e447fbc9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 41.5253 76.2 0)
+			(at 41.5253 68.58 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1732,7 +1640,99 @@
 			)
 		)
 	)
-	(global_label "UART0_RX"
+	(global_label "UART1_TX"
+		(shape input)
+		(at 52.07 86.36 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "3eb189c9-954d-4f6c-8f0f-2f6980f89b4e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 40.0739 86.36 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "ADC_LIGHT"
+		(shape input)
+		(at 52.07 133.35 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4f1f8ae4-060d-418b-bc3e-3a7b9e4a4430")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 39.2876 133.35 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "UART1_RX"
+		(shape input)
+		(at 52.07 83.82 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "554ec72f-2c0f-423d-a036-49b720c70af2")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 39.7715 83.82 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "GND"
+		(shape input)
+		(at 52.07 76.2 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5c3262e6-13ee-4d99-9e43-48ae8e57ceea")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 45.2143 76.2 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "3V3"
 		(shape input)
 		(at 52.07 120.65 180)
 		(fields_autoplaced yes)
@@ -1744,7 +1744,7 @@
 		)
 		(uuid "5c88dd19-8ee6-4009-a431-829cd629b316")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 39.7715 120.65 0)
+			(at 45.5772 120.65 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1801,7 +1801,7 @@
 			)
 		)
 	)
-	(global_label "GND"
+	(global_label "UART0_RX"
 		(shape input)
 		(at 52.07 38.1 180)
 		(fields_autoplaced yes)
@@ -1813,7 +1813,7 @@
 		)
 		(uuid "6ca63945-f9c1-4916-8199-b2edebe66117")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.2143 38.1 0)
+			(at 39.7715 38.1 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1847,7 +1847,7 @@
 			)
 		)
 	)
-	(global_label "3V3"
+	(global_label "UART0_TX"
 		(shape input)
 		(at 52.07 118.11 180)
 		(fields_autoplaced yes)
@@ -1859,7 +1859,7 @@
 		)
 		(uuid "7c5a594b-342b-4c28-b10c-34dfa0be2ec8")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.5772 118.11 0)
+			(at 40.0739 118.11 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1893,7 +1893,7 @@
 			)
 		)
 	)
-	(global_label "GND"
+	(global_label "MCP_GPA7"
 		(shape input)
 		(at 52.07 130.81 180)
 		(fields_autoplaced yes)
@@ -1905,7 +1905,7 @@
 		)
 		(uuid "92e20d01-6b8f-4d4f-bffb-675e6b44fccd")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.2143 130.81 0)
+			(at 39.2877 130.81 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1916,7 +1916,7 @@
 			)
 		)
 	)
-	(global_label "3V3"
+	(global_label "I2C_SDA"
 		(shape input)
 		(at 52.07 71.12 180)
 		(fields_autoplaced yes)
@@ -1928,7 +1928,7 @@
 		)
 		(uuid "9af71ecf-36d2-4b41-9dc4-3236b2502b38")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.5772 71.12 0)
+			(at 41.4648 71.12 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1962,7 +1962,7 @@
 			)
 		)
 	)
-	(global_label "UART0_TX"
+	(global_label "GND"
 		(shape input)
 		(at 52.07 45.72 180)
 		(fields_autoplaced yes)
@@ -1974,7 +1974,7 @@
 		)
 		(uuid "a79e3959-43ca-42c1-a8c6-eeb5984b3ef5")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 40.0739 45.72 0)
+			(at 45.2143 45.72 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1985,7 +1985,7 @@
 			)
 		)
 	)
-	(global_label "I2C_SCL"
+	(global_label "GND"
 		(shape input)
 		(at 52.07 107.95 180)
 		(fields_autoplaced yes)
@@ -1997,7 +1997,7 @@
 		)
 		(uuid "ae727e18-cc4c-42d1-a48b-a8acd7b7057b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 41.5253 107.95 0)
+			(at 45.2143 107.95 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2031,7 +2031,7 @@
 			)
 		)
 	)
-	(global_label "GND"
+	(global_label "I2C_SCL"
 		(shape input)
 		(at 52.07 100.33 180)
 		(fields_autoplaced yes)
@@ -2043,7 +2043,30 @@
 		)
 		(uuid "b4d95cf8-3c11-4a20-83ca-785aa1f4a2c6")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.2143 100.33 0)
+			(at 41.5253 100.33 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+	)
+	(global_label "MCP_GPB3"
+		(shape input)
+		(at 52.07 55.88 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bf357669-d102-4263-8f8a-f73e9a214751")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 39.1063 55.88 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2056,29 +2079,6 @@
 	)
 	(global_label "3V3"
 		(shape input)
-		(at 52.07 55.88 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "bf357669-d102-4263-8f8a-f73e9a214751")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.5772 55.88 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-	)
-	(global_label "MCP_GPB2"
-		(shape input)
 		(at 52.07 58.42 180)
 		(fields_autoplaced yes)
 		(effects
@@ -2089,7 +2089,7 @@
 		)
 		(uuid "c27fd396-b35e-4e06-801f-419bef88b330")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 39.1063 58.42 0)
+			(at 45.5772 58.42 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2123,7 +2123,7 @@
 			)
 		)
 	)
-	(global_label "MCP_GPB3"
+	(global_label "GND"
 		(shape input)
 		(at 52.07 60.96 180)
 		(fields_autoplaced yes)
@@ -2135,7 +2135,7 @@
 		)
 		(uuid "cdad3d41-8bd4-47ad-aba9-30e4808686a6")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 39.1063 60.96 0)
+			(at 45.2143 60.96 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2146,7 +2146,7 @@
 			)
 		)
 	)
-	(global_label "3V3"
+	(global_label "I2C_SDA"
 		(shape input)
 		(at 52.07 102.87 180)
 		(fields_autoplaced yes)
@@ -2158,7 +2158,7 @@
 		)
 		(uuid "dbb8ed43-d41d-4d57-b496-a0c247b1bfcb")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.5772 102.87 0)
+			(at 41.4648 102.87 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2169,7 +2169,7 @@
 			)
 		)
 	)
-	(global_label "UART1_TX"
+	(global_label "GND"
 		(shape input)
 		(at 52.07 91.44 180)
 		(fields_autoplaced yes)
@@ -2181,7 +2181,7 @@
 		)
 		(uuid "ddd5d5de-efec-4789-bfed-84795333b26a")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 40.0739 91.44 0)
+			(at 45.2143 91.44 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2192,7 +2192,7 @@
 			)
 		)
 	)
-	(global_label "3V3"
+	(global_label "UART0_TX"
 		(shape input)
 		(at 52.07 40.64 180)
 		(fields_autoplaced yes)
@@ -2204,7 +2204,7 @@
 		)
 		(uuid "e92c5169-5d31-4514-a362-4d30faf5148c")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 45.5772 40.64 0)
+			(at 40.0739 40.64 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2238,7 +2238,7 @@
 			)
 		)
 	)
-	(global_label "ADC_LIGHT"
+	(global_label "GND"
 		(shape input)
 		(at 52.07 138.43 180)
 		(fields_autoplaced yes)
@@ -2250,7 +2250,7 @@
 		)
 		(uuid "ee439edc-97e3-4347-a78d-fbbd4fe562c9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 39.2876 138.43 0)
+			(at 45.2143 138.43 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2284,7 +2284,7 @@
 			)
 		)
 	)
-	(global_label "I2C_SDA"
+	(global_label "3V3"
 		(shape input)
 		(at 52.07 73.66 180)
 		(fields_autoplaced yes)
@@ -2296,7 +2296,7 @@
 		)
 		(uuid "f26c7a89-977a-4e37-9087-17ecbeb426e8")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 41.4648 73.66 0)
+			(at 45.5772 73.66 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2307,7 +2307,7 @@
 			)
 		)
 	)
-	(global_label "UART0_TX"
+	(global_label "GND"
 		(shape input)
 		(at 52.07 123.19 180)
 		(fields_autoplaced yes)
@@ -2319,7 +2319,7 @@
 		)
 		(uuid "f6ba8f8c-c40f-4f39-a96b-300e1a7861d9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 40.0739 123.19 0)
+			(at 45.2143 123.19 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2353,7 +2353,7 @@
 			)
 		)
 	)
-	(global_label "UART1_RX"
+	(global_label "3V3"
 		(shape input)
 		(at 52.07 88.9 180)
 		(fields_autoplaced yes)
@@ -2365,7 +2365,7 @@
 		)
 		(uuid "fb38aa6e-d77f-4673-aeef-44a9c6585b6f")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 39.7715 88.9 0)
+			(at 45.5772 88.9 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2550,7 +2550,6 @@
 		)
 	)
 	(symbol
-		(lib_name "GROVE-CONNECTOR-DIP-90D_4P-2.0__1")
 		(lib_id "libdb:GROVE-CONNECTOR-DIP-90D_4P-2.0_")
 		(at 55.88 57.15 0)
 		(unit 1)
@@ -3606,7 +3605,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "seeed:GROVE-HW4-2.0"
+		(property "Value" "GROVE-CONNECTOR-DIP_4P-2.0_"
 			(at 60.96 135.89 0)
 			(show_name no)
 			(do_not_autoplace no)
