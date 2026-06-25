@@ -1892,7 +1892,7 @@
 		)
 		(uuid "f413daf7-3c29-49b0-85e4-b6f9b9b6cb8b")
 	)
-	(global_label "I2C_SCL"
+	(global_label "I2C_SDA"
 		(shape input)
 		(at 111.76 138.43 180)
 		(fields_autoplaced yes)
@@ -1904,7 +1904,7 @@
 		)
 		(uuid "04fd5b7b-6058-4ce2-8846-8149c94b318a")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 101.2153 138.43 0)
+			(at 101.1548 138.43 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects

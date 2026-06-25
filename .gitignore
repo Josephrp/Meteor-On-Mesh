@@ -1,8 +1,11 @@
 backups/
 refs/
-#!case/refs/
-#!case/refs/**
+case/refs/
+case/refs/**
 *.rpt
 *.txt
-case/refs
+!pcb/refs
+!pcb/refs/**
+
 .cursor
+*.lck

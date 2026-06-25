@@ -81,18 +81,18 @@ void meshtonicMcp23017Init()
         return;
     }
 
-    const uint8_t iodirA = (1U << MESHTONIC_MCP_GPA5_DIO1) | (1U << MESHTONIC_MCP_GPA7_BUSY);
-    const uint8_t gppuA = (1U << MESHTONIC_MCP_GPA5_DIO1);
-    const uint8_t olatA = (1U << MESHTONIC_MCP_GPA3_CS);
+    // v2: WIO1 CS + DIO1 are native XIAO GPIOs; only WIO1 BUSY (GPA0) is on the MCP.
+    const uint8_t iodirA = (1U << MESHTONIC_MCP_WIO1_BUSY); // BUSY = input
 
     meshtonicMcp23017WriteRegister(MESHTONIC_MCP23017_REG_IOCON, 0x02);
     meshtonicMcp23017WriteRegister(MESHTONIC_MCP23017_REG_IODIRA, iodirA);
-    meshtonicMcp23017WriteRegister(MESHTONIC_MCP23017_REG_GPPUA, gppuA);
-    meshtonicMcp23017WriteRegister(MESHTONIC_MCP23017_REG_OLATA, olatA);
-    meshtonicMcp23017WriteRegister(MESHTONIC_MCP23017_REG_GPINTENA, (1U << MESHTONIC_MCP_GPA5_DIO1));
-
-    pinMode(MESHTONIC_MCP_INTA_PIN, INPUT_PULLUP);
+    meshtonicMcp23017WriteRegister(MESHTONIC_MCP23017_REG_GPPUA, 0x00);
+    meshtonicMcp23017WriteRegister(MESHTONIC_MCP23017_REG_OLATA, 0x00);
+    // No MCP interrupt source: WIO1 DIO1 is native (its IRQ attaches directly in
+    // the radio GPIO bridge), so GPINTENA stays disabled.
+    meshtonicMcp23017WriteRegister(MESHTONIC_MCP23017_REG_GPINTENA, 0x00);
 
     mcpReady = true;
-    LOG_INFO("MCP23017 init OK (WIO1 CS=GPA3 DIO1=GPA5 BUSY=GPA7 INTA=GPIO%d)", MESHTONIC_MCP_INTA_PIN);
+    LOG_INFO("MCP23017 init OK (v2: WIO1 BUSY=GPA0; CS=GPIO%d DIO1=GPIO%d native)",
+             MESHTONIC_WIO1_CS_GPIO, MESHTONIC_WIO1_DIO1_GPIO);
 }

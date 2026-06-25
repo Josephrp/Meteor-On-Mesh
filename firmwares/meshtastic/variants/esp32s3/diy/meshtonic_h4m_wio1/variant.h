@@ -2,7 +2,11 @@
 
 /*
  * Meshtonic H4M Companion v2 — WIO1-first Meshtastic port.
- * Radio CS/BUSY/DIO1 are on MCP23017; SPI data lines are direct XIAO GPIOs.
+ *
+ * Verified against pcb/meshtonic_h4m_v2.kicad_pcb and the official XIAO ESP32-S3
+ * Plus D->GPIO map (Dn != GPIOn above D5). For WIO1: CS and DIO1 are NATIVE XIAO
+ * GPIOs; BUSY is on the MCP23017; LORA_RST is a shared MCP line. SPI data lines
+ * are native GPIOs routed via the ESP32-S3 GPIO matrix.
  */
 
 #define MESHTONIC_H4M 1
@@ -26,21 +30,23 @@
 #define GPS_TX_PIN 8
 #define GPS_THREAD_INTERVAL 50
 
-/* Shared SPI (radio + TFT + optional SD) */
-#define LORA_SCK 13
-#define LORA_MISO 12
-#define LORA_MOSI 11
+/* Shared SPI (radio + TFT + optional SD) — XIAO Plus pads D11/D12/D13 = GPIO38/39/40 */
+#define LORA_SCK 40
+#define LORA_MISO 39
+#define LORA_MOSI 38
 
-/* Optional microSD on D15/GPIO38 — enable when socket populated and SDFs is configured in platformio.ini */
+/* Optional microSD on D15/GPIO42 — enable when socket populated and SDFs is configured in platformio.ini */
 /* #define HAS_SDCARD 1 */
-/* #define SDCARD_CS 38 */
+/* #define SDCARD_CS 42 */
 
-/* MCP23017 @ 0x20 — WIO1 control */
+/* WIO1 control (v2): CS + DIO1 are native XIAO GPIOs; BUSY is on the MCP23017.
+ * (XIAO ESP32-S3 Plus: D2=GPIO3, D18=GPIO12, D7=GPIO44.) */
 #define MESHTONIC_MCP23017_ADDR 0x20
-#define MESHTONIC_MCP_GPA3_CS 3
-#define MESHTONIC_MCP_GPA5_DIO1 5
-#define MESHTONIC_MCP_GPA7_BUSY 7
-#define MESHTONIC_MCP_INTA_PIN 10
+#define MESHTONIC_WIO1_CS_GPIO 3     /* native D2 — strapping pin, output idle-high */
+#define MESHTONIC_WIO1_DIO1_GPIO 12  /* native D18 */
+#define MESHTONIC_MCP_WIO1_BUSY 0    /* MCP GPA0 */
+#define MESHTONIC_MCP_LORA_RST 12    /* MCP GPB4 — shared across all radios */
+#define MESHTONIC_MCP_INTA_PIN 44    /* native D7/GPIO44 */
 
 /* TCA9548A @ 0x70 — sensor hub channels 0-3 */
 #define MESHTONIC_TCA9548A_ADDR 0x70
@@ -81,11 +87,11 @@
 #define LGFX_SCREEN_WIDTH 240
 #define LGFX_SCREEN_HEIGHT 320
 #define DISPLAY_SIZE 240x320
-#define LGFX_PIN_SCK 13
-#define LGFX_PIN_MOSI 11
-#define LGFX_PIN_MISO 12
+#define LGFX_PIN_SCK 40
+#define LGFX_PIN_MOSI 38
+#define LGFX_PIN_MISO 39
 #define LGFX_PIN_DC 43
-#define LGFX_PIN_CS 17
+#define LGFX_PIN_CS 11
 #define LGFX_PIN_RST 9
 #define LGFX_PIN_BL -1
 #define LGFX_ROTATION 0

@@ -67,15 +67,16 @@ uint32_t LockingArduinoHal::digitalRead(uint32_t pin)
 
 uint32_t LockingArduinoHal::pinToInterrupt(uint32_t pin)
 {
+    // v2: WIO1 DIO1 is native GPIO; route the virtual DIO1 to that real pin.
     if (pin == MESHTONIC_VPIN_DIO1) {
-        return digitalPinToInterrupt(MESHTONIC_MCP_INTA_PIN);
+        return digitalPinToInterrupt(MESHTONIC_WIO1_DIO1_GPIO);
     }
     return ArduinoHal::pinToInterrupt(pin);
 }
 
 void LockingArduinoHal::attachInterrupt(uint32_t interruptNum, void (*interruptCb)(void), uint32_t mode)
 {
-    if (interruptNum == digitalPinToInterrupt(MESHTONIC_MCP_INTA_PIN)) {
+    if (interruptNum == digitalPinToInterrupt(MESHTONIC_WIO1_DIO1_GPIO)) {
         meshtonicMcpEnableRadioInterrupt(interruptCb);
         return;
     }
@@ -84,7 +85,7 @@ void LockingArduinoHal::attachInterrupt(uint32_t interruptNum, void (*interruptC
 
 void LockingArduinoHal::detachInterrupt(uint32_t interruptNum)
 {
-    if (interruptNum == digitalPinToInterrupt(MESHTONIC_MCP_INTA_PIN)) {
+    if (interruptNum == digitalPinToInterrupt(MESHTONIC_WIO1_DIO1_GPIO)) {
         meshtonicMcpDisableRadioInterrupt();
         return;
     }

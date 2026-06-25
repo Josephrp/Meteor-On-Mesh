@@ -525,9 +525,11 @@ void EPAppLoraDecoder::armLocalRadios() {
 
     spi_host_device_t host = SPI2_HOST;
 
+    // Shared SPI bus on the XIAO ESP32-S3 Plus native pads D11/D12/D13 => real
+    // GPIO38 (MOSI) / GPIO39 (MISO) / GPIO40 (SCK), routed via the GPIO matrix.
     for (int i = 0; i < config.radio_count && i < MAX_RADIOS; ++i) {
         auto* r = new LoraRadio(i);
-        if (r->init(host, 11, 12, 13, 10000000) != ESP_OK) {
+        if (r->init(host, 38, 39, 40, 10000000) != ESP_OK) {
             ESP_LOGW(TAG, "LoraRadio %d SPI init failed", i);
             delete r;
             continue;

@@ -10,6 +10,7 @@
 #include "esp_log.h"
 #include "esp_err.h"
 #include "driver/spi_master.h"
+#include "driver/gpio.h"
 #include "freertos/task.h"
 #include "freertos/portmacro.h"
 #include "freertos/FreeRTOS.h"
@@ -53,7 +54,7 @@ extern SXRadioManager sxManager;
 LoraRadio::LoraRadio(int s) : slot(s) {}
 
 esp_err_t LoraRadio::init(spi_host_device_t host, int mosi, int miso, int sclk, int freq_hz) {
-    // Ensure shared bus (11/12/13) is up exactly once (display or other users may pre-init).
+    // Ensure shared bus (GPIO38/39/40) is up exactly once (display or other users may pre-init).
     esp_err_t err = spi_bus_manager_init(host, mosi, miso, sclk, 4096);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "spi_bus_manager_init failed: %s", esp_err_to_name(err));
@@ -166,19 +167,12 @@ esp_err_t LoraRadio::readRegister(uint16_t addr, uint8_t* val) {
 }
 
 esp_err_t LoraRadio::reset() {
-    if (!g_mcp_ready) return ESP_ERR_INVALID_STATE;
-    int rp = sxManager.getRstPin(slot);
-    if (rp == 0xFF) {
-        // LORA_RST is shared net on this board; no per-radio MCP RST. Use standby as entry point.
-        ESP_LOGD(TAG, "reset: shared LORA_RST (slot %d), skipping per-slot pulse", slot);
-        return setStandby();
-    }
-    // Pulse RST low via MCP (if assigned)
-    meshtonic_mcp_write_pin(static_cast<unsigned char>(rp), false);
-    vTaskDelay(pdMS_TO_TICKS(2));
-    meshtonic_mcp_write_pin(rp, true);
-    vTaskDelay(pdMS_TO_TICKS(10));
-    return ESP_OK;
+    // LORA_RST is a single shared net (MCP GPB4) across all 4 radios, so we do NOT
+    // pulse it per-slot during arming (that would reset already-configured radios).
+    // Soft standby is the per-radio entry point; a global hardware reset is a
+    // separate manager-level action when needed.
+    ESP_LOGD(TAG, "reset: shared LORA_RST (slot %d), using soft standby", slot);
+    return setStandby();
 }
 
 esp_err_t LoraRadio::setStandby() {
@@ -335,9 +329,13 @@ bool LoraRadio::isBusy() {
 }
 
 bool LoraRadio::readDio1() {
+    // WIO1 DIO1 is a native ESP32-S3 GPIO; WIO2..4 DIO1 are on the MCP23017.
+    if (sxManager.isDio1Native(slot)) {
+        return gpio_get_level((gpio_num_t)sxManager.getDio1Gpio(slot)) != 0;
+    }
     if (!g_mcp_ready) return false;
     bool v = false;
-    int p = sxManager.getDio1Pin(slot);
+    int p = sxManager.getDio1McpPin(slot);
     if (p != 0xFF) mcp23017_read_pin(&g_mcp, static_cast<unsigned char>(p), &v);
     return v;
 }
@@ -345,7 +343,7 @@ bool LoraRadio::readDio1() {
 bool LoraRadio::readBusy() {
     if (!g_mcp_ready) return false;
     bool v = false;
-    int p = sxManager.getBusyPin(slot);
+    int p = sxManager.getBusyMcpPin(slot);
     if (p != 0xFF) mcp23017_read_pin(&g_mcp, static_cast<unsigned char>(p), &v);
     return v;
 }

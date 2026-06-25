@@ -566,53 +566,64 @@ void app_main(void) {
                 if (rc <= 0) rc = 1;
                 sxManager.setRadioCount(rc);
 
-                // Set correct per-radio pin directions using the audited WIO MCP map.
-                // CS/RST (if per) = output; DIO1/BUSY = input. Also pullup DIO1 and enable its INT.
+                // v2 map: chip-selects are native ESP32-S3 GPIOs (configured in
+                // sxManager.init), so the MCP only carries per-radio status inputs +
+                // shared control outputs. BUSY (all slots) = MCP input; DIO1 for slots
+                // 1-3 = MCP input+pullup+INT (WIO1 DIO1 is a native GPIO, handled below).
                 for (int s = 0; s < rc; s++) {
-                    int cs = sxManager.getCsPin(s);
-                    int di = sxManager.getDio1Pin(s);
-                    int bu = sxManager.getBusyPin(s);
-                    int rp = sxManager.getRstPin(s);
-                    if (cs >= 0 && cs < 16) {
-                        mcp23017_set_pin_direction(&g_mcp, (uint8_t)cs, false); // output
-                        meshtonic_mcp_write_pin((uint8_t)cs, true); // idle high
-                    }
-                    if (di >= 0 && di < 16) {
-                        mcp23017_set_pin_direction(&g_mcp, (uint8_t)di, true); // input
-                        mcp23017_set_pullup(&g_mcp, (uint8_t)di, true);
-                        mcp23017_set_interrupt(&g_mcp, (uint8_t)di, true);
-                    }
+                    int bu = sxManager.getBusyMcpPin(s);
                     if (bu >= 0 && bu < 16) {
                         mcp23017_set_pin_direction(&g_mcp, (uint8_t)bu, true); // input
                     }
-                    if (rp >= 0 && rp < 16) {
-                        mcp23017_set_pin_direction(&g_mcp, (uint8_t)rp, false);
-                        meshtonic_mcp_write_pin((uint8_t)rp, true);
+                    if (!sxManager.isDio1Native(s)) {
+                        int di = sxManager.getDio1McpPin(s);
+                        if (di >= 0 && di < 16) {
+                            mcp23017_set_pin_direction(&g_mcp, (uint8_t)di, true); // input
+                            mcp23017_set_pullup(&g_mcp, (uint8_t)di, true);
+                            mcp23017_set_interrupt(&g_mcp, (uint8_t)di, true);
+                        }
                     }
                 }
                 g_mcp_ready = true;
-                ESP_LOGI(TAG, "MCP23017 ready (Meshtonic, %d radios, directions+INT set)", rc);
 
-                // Prep MCP INTA pin on ESP (GPIO10 per H4M pin audit / variant). Actual ISR attach later.
-                // Configure as input + pullup so MCP interrupt can be sensed.
+                // Shared control lines on the MCP GPB bank: LORA_RST (GPB4) idle high,
+                // RF switch enable (GPB0) disabled until a radio arms RX.
+                mcp23017_set_pin_direction(&g_mcp, (uint8_t)sxManager.getSharedRstMcpPin(), false);
+                meshtonic_mcp_write_pin((uint8_t)sxManager.getSharedRstMcpPin(), true);
+                mcp23017_set_pin_direction(&g_mcp, (uint8_t)sxManager.getRfSwEnMcpPin(), false);
+                meshtonic_mcp_write_pin((uint8_t)sxManager.getRfSwEnMcpPin(), false);
+                ESP_LOGI(TAG, "MCP23017 ready (Meshtonic v2, %d radios, BUSY/DIO1 inputs + shared RST/RFSW set)", rc);
+
+                // WIO1 DIO1 is a native ESP32-S3 GPIO (not on the MCP) — configure as input.
+                gpio_config_t d1 = {};
+                d1.pin_bit_mask = (1ULL << sxManager.getDio1Gpio(0));
+                d1.mode = GPIO_MODE_INPUT;
+                d1.pull_up_en = GPIO_PULLUP_DISABLE;
+                d1.pull_down_en = GPIO_PULLDOWN_DISABLE;
+                d1.intr_type = GPIO_INTR_DISABLE;
+                gpio_config(&d1);
+
+                // MCP INTA is wired to native GPIO44 (D7) on v2 (was GPIO10 on v1;
+                // GPIO10 is now CS_WIO3). Configure as input + pullup so it can be sensed.
+                const int intaGpio = sxManager.getMcpIntaGpio();
                 gpio_config_t ina = {};
-                ina.pin_bit_mask = (1ULL << 10);
+                ina.pin_bit_mask = (1ULL << intaGpio);
                 ina.mode = GPIO_MODE_INPUT;
                 ina.pull_up_en = GPIO_PULLUP_ENABLE;
                 ina.pull_down_en = GPIO_PULLDOWN_DISABLE;
                 ina.intr_type = GPIO_INTR_DISABLE; // will be set to edge when ISR registered in phase 2
                 gpio_config(&ina);
 
-                // Install ISR service (idempotent if called multiple) and attach handler for INTA (GPIO10)
+                // Install ISR service (idempotent if called multiple) and attach handler for INTA
                 static bool isrServiceInstalled = false;
                 if (!isrServiceInstalled) {
                     gpio_install_isr_service(0);
                     isrServiceInstalled = true;
                 }
                 // Attach falling edge (MCP INTA active low on event)
-                gpio_set_intr_type((gpio_num_t)10, GPIO_INTR_NEGEDGE);
-                gpio_isr_handler_add((gpio_num_t)10, meshtonicMcpIntaIsrThunk, nullptr);
-                ESP_LOGI(TAG, "MCP INTA ISR attached on GPIO10");
+                gpio_set_intr_type((gpio_num_t)intaGpio, GPIO_INTR_NEGEDGE);
+                gpio_isr_handler_add((gpio_num_t)intaGpio, meshtonicMcpIntaIsrThunk, nullptr);
+                ESP_LOGI(TAG, "MCP INTA ISR attached on GPIO%d", intaGpio);
             } else {
                 ESP_LOGW(TAG, "MCP23017 init failed");
             }
