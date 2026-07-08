@@ -1009,56 +1009,56 @@
 		(uuid "f78e8d4a-90a9-4466-adf0-8c73ace7f1b4")
 	)
 	(junction
-		(at 163.83 99.06)
+		(at 196.85 99.06)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "05d5afba-eef8-4009-ba4c-4ab6af670083")
+		(uuid "41d4f113-615f-4df6-b98c-8b5a5ba98b6f")
 	)
 	(junction
-		(at 171.45 91.44)
+		(at 226.06 93.98)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "0649144d-cb20-4915-8412-aecfb9f97125")
+		(uuid "65c20748-2881-457e-b1d3-9f3d56b5de8c")
 	)
 	(junction
-		(at 177.8 93.98)
+		(at 222.25 96.52)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "16152480-9211-4eaf-b1d1-0be67657481a")
+		(uuid "6c1ae4cf-095e-4b03-82ee-d3623b39ed3f")
 	)
 	(junction
-		(at 167.64 91.44)
+		(at 203.2 91.44)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "7283b114-d9b2-46f8-ad77-4958e6a3cf21")
+		(uuid "833b345f-e240-44f9-93ed-a061c462d027")
 	)
 	(junction
-		(at 173.99 96.52)
+		(at 207.01 91.44)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "82cee1b4-0ffd-4791-b31f-31279f7fb179")
+		(uuid "9985046d-a549-4d8b-8b67-68fa4f178684")
 	)
 	(junction
-		(at 167.64 99.06)
+		(at 236.22 93.98)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "a8fd6b52-4846-4847-b557-868742d51f51")
+		(uuid "9a7808a2-9067-4038-9f11-5870ae41de8c")
 	)
 	(junction
-		(at 176.53 96.52)
+		(at 231.14 96.52)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "ae11b92c-c5a3-4fec-970f-a920abd9d0ef")
+		(uuid "d8971267-f461-408f-a2fc-30ce0843c9b8")
 	)
 	(junction
-		(at 187.96 93.98)
+		(at 189.23 99.06)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "e62e484f-7d78-4890-a90e-34d432be475d")
+		(uuid "e3a32444-0516-49a3-bc32-83ddce596afb")
 	)
 	(wire
 		(pts
-			(xy 167.64 118.11) (xy 167.64 99.06)
+			(xy 196.85 113.03) (xy 196.85 99.06)
 		)
 		(stroke
 			(width 0)
@@ -1068,7 +1068,27 @@
 	)
 	(wire
 		(pts
-			(xy 175.26 91.44) (xy 171.45 91.44)
+			(xy 189.23 99.06) (xy 196.85 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0e5278a5-74d3-4289-a0a5-b4fb3b01977b")
+	)
+	(wire
+		(pts
+			(xy 158.75 101.6) (xy 156.21 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0efc2824-4bdb-4bc1-9c03-4dbcd43ed706")
+	)
+	(wire
+		(pts
+			(xy 210.82 91.44) (xy 207.01 91.44)
 		)
 		(stroke
 			(width 0)
@@ -1078,17 +1098,17 @@
 	)
 	(wire
 		(pts
-			(xy 176.53 96.52) (xy 173.99 96.52)
+			(xy 236.22 91.44) (xy 236.22 93.98)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "242dc102-934d-4a2f-a4c5-d99a7618ef7c")
+		(uuid "24a369c2-6743-4f03-8b48-0c385e957480")
 	)
 	(wire
 		(pts
-			(xy 177.8 93.98) (xy 156.21 93.98)
+			(xy 156.21 93.98) (xy 226.06 93.98)
 		)
 		(stroke
 			(width 0)
@@ -1098,7 +1118,7 @@
 	)
 	(wire
 		(pts
-			(xy 171.45 99.06) (xy 167.64 99.06)
+			(xy 200.66 99.06) (xy 196.85 99.06)
 		)
 		(stroke
 			(width 0)
@@ -1108,7 +1128,7 @@
 	)
 	(wire
 		(pts
-			(xy 173.99 99.06) (xy 173.99 96.52)
+			(xy 222.25 97.79) (xy 222.25 96.52)
 		)
 		(stroke
 			(width 0)
@@ -1118,7 +1138,17 @@
 	)
 	(wire
 		(pts
-			(xy 177.8 91.44) (xy 177.8 93.98)
+			(xy 241.3 99.06) (xy 236.22 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5662bcb9-f56f-4708-b531-8efa11734036")
+	)
+	(wire
+		(pts
+			(xy 226.06 91.44) (xy 226.06 93.98)
 		)
 		(stroke
 			(width 0)
@@ -1128,7 +1158,17 @@
 	)
 	(wire
 		(pts
-			(xy 171.45 91.44) (xy 167.64 91.44)
+			(xy 222.25 96.52) (xy 231.14 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "66a28514-e932-4a4e-8e47-ea51447f3b3b")
+	)
+	(wire
+		(pts
+			(xy 207.01 91.44) (xy 203.2 91.44)
 		)
 		(stroke
 			(width 0)
@@ -1138,7 +1178,7 @@
 	)
 	(wire
 		(pts
-			(xy 167.64 91.44) (xy 156.21 91.44)
+			(xy 156.21 91.44) (xy 203.2 91.44)
 		)
 		(stroke
 			(width 0)
@@ -1148,7 +1188,7 @@
 	)
 	(wire
 		(pts
-			(xy 171.45 82.55) (xy 171.45 91.44)
+			(xy 207.01 82.55) (xy 207.01 91.44)
 		)
 		(stroke
 			(width 0)
@@ -1158,7 +1198,7 @@
 	)
 	(wire
 		(pts
-			(xy 196.85 93.98) (xy 187.96 93.98)
+			(xy 240.03 93.98) (xy 236.22 93.98)
 		)
 		(stroke
 			(width 0)
@@ -1168,17 +1208,17 @@
 	)
 	(wire
 		(pts
-			(xy 187.96 106.68) (xy 187.96 93.98)
+			(xy 199.39 113.03) (xy 199.39 118.11)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "c3109e7a-854a-4f09-8e9b-6f965e436124")
+		(uuid "baaed8c2-9251-422d-8c97-78717840583e")
 	)
 	(wire
 		(pts
-			(xy 176.53 111.76) (xy 176.53 96.52)
+			(xy 231.14 99.06) (xy 231.14 96.52)
 		)
 		(stroke
 			(width 0)
@@ -1188,7 +1228,17 @@
 	)
 	(wire
 		(pts
-			(xy 173.99 96.52) (xy 156.21 96.52)
+			(xy 158.75 88.9) (xy 156.21 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cebbbfbd-c6e8-4341-bb5f-865ebf5c6e78")
+	)
+	(wire
+		(pts
+			(xy 156.21 96.52) (xy 222.25 96.52)
 		)
 		(stroke
 			(width 0)
@@ -1198,7 +1248,7 @@
 	)
 	(wire
 		(pts
-			(xy 187.96 93.98) (xy 177.8 93.98)
+			(xy 236.22 93.98) (xy 226.06 93.98)
 		)
 		(stroke
 			(width 0)
@@ -1208,17 +1258,7 @@
 	)
 	(wire
 		(pts
-			(xy 167.64 99.06) (xy 163.83 99.06)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "db4b8197-2126-4274-b14e-f04b78ef80d3")
-	)
-	(wire
-		(pts
-			(xy 179.07 96.52) (xy 176.53 96.52)
+			(xy 240.03 96.52) (xy 231.14 96.52)
 		)
 		(stroke
 			(width 0)
@@ -1228,7 +1268,7 @@
 	)
 	(wire
 		(pts
-			(xy 163.83 99.06) (xy 156.21 99.06)
+			(xy 156.21 99.06) (xy 189.23 99.06)
 		)
 		(stroke
 			(width 0)
@@ -1238,7 +1278,7 @@
 	)
 	(global_label "VCOIN_H4M"
 		(shape input)
-		(at 156.21 88.9 0)
+		(at 158.75 88.9 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1248,7 +1288,7 @@
 		)
 		(uuid "083e5db4-dec1-4ea6-96db-49979e8b60d3")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 169.7786 88.9 0)
+			(at 172.3186 88.9 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1284,7 +1324,7 @@
 	)
 	(global_label "H4M_3V3"
 		(shape input)
-		(at 175.26 91.44 0)
+		(at 210.82 91.44 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1294,7 +1334,7 @@
 		)
 		(uuid "2bfbb013-170a-474c-a4e0-683ab3b723fd")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 186.7118 91.44 0)
+			(at 222.2718 91.44 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1307,7 +1347,7 @@
 	)
 	(global_label "I2C_SCL"
 		(shape input)
-		(at 181.61 111.76 0)
+		(at 241.3 99.06 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1317,7 +1357,7 @@
 		)
 		(uuid "30f13d8c-9095-4a38-8498-8ec0253bdfc2")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 192.1547 111.76 0)
+			(at 251.8447 99.06 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1330,7 +1370,7 @@
 	)
 	(global_label "3V3"
 		(shape input)
-		(at 173.99 82.55 0)
+		(at 209.55 82.55 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1340,7 +1380,7 @@
 		)
 		(uuid "36214c09-a199-4c93-a064-4bdab4f27134")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 180.4828 82.55 0)
+			(at 216.0428 82.55 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1399,7 +1439,7 @@
 	)
 	(global_label "H4M_SDA"
 		(shape input)
-		(at 196.85 93.98 0)
+		(at 240.03 93.98 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1409,7 +1449,7 @@
 		)
 		(uuid "4e543a58-a6a9-4971-9744-3938323b8326")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 208.3623 93.98 0)
+			(at 251.5423 93.98 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1422,7 +1462,7 @@
 	)
 	(global_label "VBAT_H4M"
 		(shape input)
-		(at 171.45 99.06 0)
+		(at 200.66 99.06 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1432,7 +1472,7 @@
 		)
 		(uuid "72a675eb-5147-4580-b7fd-fb256a289969")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 183.809 99.06 0)
+			(at 213.019 99.06 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1445,8 +1485,7 @@
 	)
 	(global_label "GND"
 		(shape input)
-		(at 156.21 101.6 0)
-		(fields_autoplaced yes)
+		(at 158.75 101.6 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1455,7 +1494,7 @@
 		)
 		(uuid "7346ea5e-11d1-4d4c-9b5b-e6d16ede49c7")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 163.0657 101.6 0)
+			(at 165.6057 101.6 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1468,7 +1507,7 @@
 	)
 	(global_label "I2C_SDA"
 		(shape input)
-		(at 193.04 106.68 0)
+		(at 241.3 91.44 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1478,7 +1517,7 @@
 		)
 		(uuid "a9cb94fc-1b2d-431e-ba8d-b1d5a02b8076")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 203.6452 106.68 0)
+			(at 251.9052 91.44 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1491,7 +1530,7 @@
 	)
 	(global_label "H4M_SCL"
 		(shape input)
-		(at 179.07 96.52 0)
+		(at 240.03 96.52 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1501,7 +1540,7 @@
 		)
 		(uuid "b38b9a27-aaee-4d17-bd83-29e7dd3026e9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 190.5218 96.52 0)
+			(at 251.4818 96.52 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1537,7 +1576,7 @@
 	)
 	(global_label "VBAT"
 		(shape input)
-		(at 170.18 118.11 0)
+		(at 199.39 118.11 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -1547,7 +1586,7 @@
 		)
 		(uuid "c944d14a-8dbb-45b5-bbc4-4b0d1dbf4420")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 177.58 118.11 0)
+			(at 206.79 118.11 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1682,7 +1721,7 @@
 	)
 	(symbol
 		(lib_id "PCM_SparkFun-Resistor:33_0402")
-		(at 190.5 106.68 0)
+		(at 238.76 91.44 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1693,7 +1732,7 @@
 		(fields_autoplaced yes)
 		(uuid "08b61cdf-67ad-4905-a820-c7d123a91de6")
 		(property "Reference" "R_H4M_SDA1"
-			(at 190.5 100.33 0)
+			(at 238.76 85.09 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1703,7 +1742,7 @@
 			)
 		)
 		(property "Value" "33"
-			(at 190.5 102.87 0)
+			(at 238.76 87.63 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1713,7 +1752,7 @@
 			)
 		)
 		(property "Footprint" "PCM_SparkFun-Resistor:R_0402_1005Metric"
-			(at 190.5 110.998 0)
+			(at 238.76 95.758 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1724,7 +1763,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
-			(at 190.5 115.57 0)
+			(at 238.76 100.33 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1735,7 +1774,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 190.5 118.11 0)
+			(at 238.76 102.87 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1746,7 +1785,7 @@
 			)
 		)
 		(property "PROD_ID" "RES-14883"
-			(at 190.246 113.03 0)
+			(at 238.506 97.79 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1959,7 +1998,7 @@
 	)
 	(symbol
 		(lib_id "PCM_SparkFun-Connector:Conn_01x02_P2.54mm")
-		(at 171.45 77.47 90)
+		(at 207.01 77.47 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1970,7 +2009,7 @@
 		(fields_autoplaced yes)
 		(uuid "31b5ab64-7680-40d1-8946-b44f23010847")
 		(property "Reference" "JP_H4M_3V1"
-			(at 176.53 76.1999 90)
+			(at 212.09 76.1999 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1981,7 +2020,7 @@
 			)
 		)
 		(property "Value" "3V3_ISO"
-			(at 176.53 78.7399 90)
+			(at 212.09 78.7399 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1992,7 +2031,7 @@
 			)
 		)
 		(property "Footprint" "PCM_SparkFun-Connector:1x02_P2.54mm"
-			(at 179.07 77.47 0)
+			(at 214.63 77.47 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2003,7 +2042,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 180.34 77.47 0)
+			(at 215.9 77.47 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2014,7 +2053,7 @@
 			)
 		)
 		(property "Description" "Basic 0.1\" PTH"
-			(at 182.88 77.47 0)
+			(at 218.44 77.47 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2041,7 +2080,7 @@
 	)
 	(symbol
 		(lib_id "PCM_SparkFun-Connector:Conn_01x02_P2.54mm")
-		(at 167.64 113.03 90)
+		(at 196.85 107.95 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2052,7 +2091,7 @@
 		(fields_autoplaced yes)
 		(uuid "371a3009-43a6-4ad4-b997-d8d9cb2321e6")
 		(property "Reference" "JP_VBAT_H4M1"
-			(at 172.72 111.7599 90)
+			(at 201.93 106.6799 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2063,7 +2102,7 @@
 			)
 		)
 		(property "Value" "VBAT_ISO"
-			(at 172.72 114.2999 90)
+			(at 201.93 109.2199 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2074,7 +2113,7 @@
 			)
 		)
 		(property "Footprint" "PCM_SparkFun-Connector:1x02_P2.54mm"
-			(at 175.26 113.03 0)
+			(at 204.47 107.95 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2085,7 +2124,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 176.53 113.03 0)
+			(at 205.74 107.95 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2096,7 +2135,7 @@
 			)
 		)
 		(property "Description" "Basic 0.1\" PTH"
-			(at 179.07 113.03 0)
+			(at 208.28 107.95 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2123,7 +2162,7 @@
 	)
 	(symbol
 		(lib_id "PCM_SparkFun-Connector:TestPoint_0.5mm")
-		(at 173.99 99.06 180)
+		(at 222.25 97.79 180)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2131,10 +2170,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "4c2483c8-529e-46f7-a905-fc526503d5d1")
 		(property "Reference" "TP_H4M_SCL1"
-			(at 173.99 104.14 0)
+			(at 222.758 103.124 0)
 			(show_name no)
 			(do_not_autoplace yes)
 			(effects
@@ -2144,7 +2182,7 @@
 			)
 		)
 		(property "Value" "0.5mm"
-			(at 173.99 95.25 0)
+			(at 222.25 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2155,7 +2193,7 @@
 			)
 		)
 		(property "Footprint" "PCM_SparkFun-Connector:TestPoint-0.5mm"
-			(at 173.99 92.71 0)
+			(at 222.25 91.44 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2166,7 +2204,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 173.99 91.44 0)
+			(at 222.25 90.17 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2177,7 +2215,7 @@
 			)
 		)
 		(property "Description" "Test Point"
-			(at 173.99 88.9 0)
+			(at 222.25 87.63 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2201,7 +2239,7 @@
 	)
 	(symbol
 		(lib_id "PCM_SparkFun-Connector:TestPoint_0.5mm")
-		(at 163.83 99.06 180)
+		(at 189.23 99.06 180)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2212,7 +2250,7 @@
 		(fields_autoplaced yes)
 		(uuid "8418a60a-ef33-4e24-9c3b-b2ec4d155ca0")
 		(property "Reference" "TP_VBAT_H4M1"
-			(at 163.83 104.14 0)
+			(at 189.23 104.14 0)
 			(show_name no)
 			(do_not_autoplace yes)
 			(effects
@@ -2222,7 +2260,7 @@
 			)
 		)
 		(property "Value" "0.5mm"
-			(at 163.83 95.25 0)
+			(at 189.23 95.25 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2233,7 +2271,7 @@
 			)
 		)
 		(property "Footprint" "PCM_SparkFun-Connector:TestPoint-0.5mm"
-			(at 163.83 92.71 0)
+			(at 189.23 92.71 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2244,7 +2282,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 163.83 91.44 0)
+			(at 189.23 91.44 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2255,7 +2293,7 @@
 			)
 		)
 		(property "Description" "Test Point"
-			(at 163.83 88.9 0)
+			(at 189.23 88.9 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2355,7 +2393,7 @@
 	)
 	(symbol
 		(lib_id "PCM_SparkFun-Resistor:33_0402")
-		(at 179.07 111.76 0)
+		(at 233.68 99.06 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2363,10 +2401,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "978ef4f8-0094-4246-8008-03bf68475ac0")
 		(property "Reference" "R_H4M_SCL1"
-			(at 179.07 105.41 0)
+			(at 234.188 100.584 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2376,7 +2413,7 @@
 			)
 		)
 		(property "Value" "33"
-			(at 179.07 107.95 0)
+			(at 233.68 102.616 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2386,7 +2423,7 @@
 			)
 		)
 		(property "Footprint" "PCM_SparkFun-Resistor:R_0402_1005Metric"
-			(at 179.07 116.078 0)
+			(at 233.68 103.378 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2397,7 +2434,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
-			(at 179.07 120.65 0)
+			(at 233.68 107.95 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2408,7 +2445,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 179.07 123.19 0)
+			(at 233.68 110.49 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2419,7 +2456,7 @@
 			)
 		)
 		(property "PROD_ID" "RES-14883"
-			(at 178.816 118.11 0)
+			(at 233.426 105.41 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2446,7 +2483,7 @@
 	)
 	(symbol
 		(lib_id "PCM_SparkFun-Connector:TestPoint_0.5mm")
-		(at 177.8 91.44 0)
+		(at 226.06 91.44 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2457,7 +2494,7 @@
 		(fields_autoplaced yes)
 		(uuid "b7e90316-a41a-4203-990c-8c503260e220")
 		(property "Reference" "TP_H4M_SDA1"
-			(at 177.8 86.36 0)
+			(at 226.06 86.36 0)
 			(show_name no)
 			(do_not_autoplace yes)
 			(effects
@@ -2467,7 +2504,7 @@
 			)
 		)
 		(property "Value" "0.5mm"
-			(at 177.8 95.25 0)
+			(at 226.06 95.25 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2478,7 +2515,7 @@
 			)
 		)
 		(property "Footprint" "PCM_SparkFun-Connector:TestPoint-0.5mm"
-			(at 177.8 97.79 0)
+			(at 226.06 97.79 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2489,7 +2526,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 177.8 99.06 0)
+			(at 226.06 99.06 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2500,7 +2537,7 @@
 			)
 		)
 		(property "Description" "Test Point"
-			(at 177.8 101.6 0)
+			(at 226.06 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2524,7 +2561,7 @@
 	)
 	(symbol
 		(lib_id "PCM_SparkFun-Connector:TestPoint_0.5mm")
-		(at 167.64 91.44 0)
+		(at 203.2 91.44 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2535,7 +2572,7 @@
 		(fields_autoplaced yes)
 		(uuid "bcddac96-c949-4edd-9a7d-744a271087f6")
 		(property "Reference" "TP_H4M_3V1"
-			(at 167.64 86.36 0)
+			(at 203.2 86.36 0)
 			(show_name no)
 			(do_not_autoplace yes)
 			(effects
@@ -2545,7 +2582,7 @@
 			)
 		)
 		(property "Value" "0.5mm"
-			(at 167.64 95.25 0)
+			(at 203.2 95.25 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2556,7 +2593,7 @@
 			)
 		)
 		(property "Footprint" "PCM_SparkFun-Connector:TestPoint-0.5mm"
-			(at 167.64 97.79 0)
+			(at 203.2 97.79 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2567,7 +2604,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 167.64 99.06 0)
+			(at 203.2 99.06 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2578,7 +2615,7 @@
 			)
 		)
 		(property "Description" "Test Point"
-			(at 167.64 101.6 0)
+			(at 203.2 101.6 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
