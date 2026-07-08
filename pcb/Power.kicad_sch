@@ -2412,6 +2412,170 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "PCM_SparkFun-Resistor:10k_0603"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "R"
+				(at 0 -2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "10k"
+				(at 0 2.54 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+				(at 0 -4.318 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+				(at 0 -8.89 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Resistor"
+				(at 0 -11.43 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "PROD_ID" "RES-00824"
+				(at 0 -6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "SparkFun R res resistor"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "R_*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "10k_0603_0_1"
+				(polyline
+					(pts
+						(xy -1.524 0) (xy -1.143 1.016) (xy -0.762 0) (xy -0.381 -1.016) (xy 0 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0.381 1.016) (xy 0.762 0) (xy 1.143 -1.016) (xy 1.524 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "10k_0603_1_1"
+				(pin passive line
+					(at -2.54 0 0)
+					(length 1.016)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 0 180)
+					(length 1.016)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "PCM_SparkFun-Resistor:2.0k_0402"
 			(pin_numbers
 				(hide yes)
@@ -3492,6 +3656,12 @@
 		(uuid "1f5ac182-fee3-48a8-98d2-3d7f8c5ca92b")
 	)
 	(junction
+		(at 167.64 39.37)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "29fe75a5-e646-4407-a4b8-8e79d31c18fe")
+	)
+	(junction
 		(at 182.88 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3502,12 +3672,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "6d7a424c-2ce6-47a2-9ee1-78a65d8b5499")
-	)
-	(junction
-		(at 167.64 41.91)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "6ee65a3a-f68d-4c5f-9b5d-5f5cf685e4e2")
 	)
 	(junction
 		(at 62.23 67.31)
@@ -3552,16 +3716,16 @@
 		(uuid "e6d9c04f-f78e-4548-9161-16dff0666b5e")
 	)
 	(junction
+		(at 167.64 41.91)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f35fddf3-81d2-4465-8637-8325dda02d3c")
+	)
+	(junction
 		(at 147.32 77.47)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f3c054ba-f3b2-4f8a-9c40-dbb039587512")
-	)
-	(junction
-		(at 167.64 39.37)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "fe57abb9-3ec9-4e6f-b072-9b4cde671b61")
 	)
 	(no_connect
 		(at 113.03 83.82)
@@ -3719,6 +3883,16 @@
 	)
 	(wire
 		(pts
+			(xy 170.18 46.99) (xy 167.64 46.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "29f01c08-3acc-4400-b7a2-6c462eff5c62")
+	)
+	(wire
+		(pts
 			(xy 146.05 39.37) (xy 147.32 39.37)
 		)
 		(stroke
@@ -3729,7 +3903,7 @@
 	)
 	(wire
 		(pts
-			(xy 167.64 49.53) (xy 167.64 52.07)
+			(xy 167.64 49.53) (xy 170.18 49.53)
 		)
 		(stroke
 			(width 0)
@@ -3756,6 +3930,16 @@
 			(type default)
 		)
 		(uuid "42de35b7-3836-48fd-a871-26a9b2a3a989")
+	)
+	(wire
+		(pts
+			(xy 179.07 46.99) (xy 175.26 46.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "48cb0b4d-41cd-4b5a-8235-2a403a8f82ca")
 	)
 	(wire
 		(pts
@@ -3856,16 +4040,6 @@
 			(type default)
 		)
 		(uuid "67babce8-0cc6-428c-a00c-54fc1ef8e0bf")
-	)
-	(wire
-		(pts
-			(xy 184.15 59.69) (xy 181.61 59.69)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "695e809a-1047-4e61-b188-c7d0c98f9024")
 	)
 	(wire
 		(pts
@@ -3999,7 +4173,7 @@
 	)
 	(wire
 		(pts
-			(xy 167.64 39.37) (xy 168.91 39.37)
+			(xy 167.64 31.75) (xy 167.64 39.37)
 		)
 		(stroke
 			(width 0)
@@ -4009,7 +4183,7 @@
 	)
 	(wire
 		(pts
-			(xy 184.15 59.69) (xy 186.69 58.42)
+			(xy 179.07 41.91) (xy 181.61 41.91)
 		)
 		(stroke
 			(width 0)
@@ -4069,7 +4243,7 @@
 	)
 	(wire
 		(pts
-			(xy 167.64 41.91) (xy 186.69 50.8)
+			(xy 167.64 41.91) (xy 173.99 41.91)
 		)
 		(stroke
 			(width 0)
@@ -4096,16 +4270,6 @@
 			(type default)
 		)
 		(uuid "d0cd7913-2e5b-4122-8921-2c27d02c11eb")
-	)
-	(wire
-		(pts
-			(xy 186.69 53.34) (xy 186.69 50.8)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d7686d24-4774-4e1a-ab65-3236b6145622")
 	)
 	(wire
 		(pts
@@ -4176,6 +4340,16 @@
 			(type default)
 		)
 		(uuid "f62e181f-9b39-4bfe-beaf-5e4a065d3615")
+	)
+	(wire
+		(pts
+			(xy 177.8 49.53) (xy 175.26 49.53)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f67cca32-5d74-4b7a-8d5e-f5e616a18750")
 	)
 	(label "VIN_CHG"
 		(at 45.72 59.69 0)
@@ -4462,7 +4636,7 @@
 	)
 	(global_label "VBAT"
 		(shape input)
-		(at 168.91 39.37 0)
+		(at 167.64 31.75 90)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4472,7 +4646,7 @@
 		)
 		(uuid "cc1ebb1a-7997-4860-a2a1-8fd44daf8e9f")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 176.31 39.37 0)
+			(at 167.64 24.35 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4531,7 +4705,7 @@
 	)
 	(global_label "GND"
 		(shape input)
-		(at 167.64 46.99 0)
+		(at 179.07 46.99 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -4541,7 +4715,7 @@
 		)
 		(uuid "db66ec51-0929-4594-b5f1-12c1a0c2f667")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 174.4957 46.99 0)
+			(at 185.9257 46.99 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4641,6 +4815,97 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+			)
+		)
+	)
+	(symbol
+		(lib_id "PCM_SparkFun-Resistor:10k_0603")
+		(at 172.72 46.99 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0efc8e60-3bb6-40cb-810f-a38ca09266da")
+		(property "Reference" "R45"
+			(at 172.72 40.64 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10k"
+			(at 172.72 43.18 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "PCM_SparkFun-Resistor:R_0603_1608Metric"
+			(at 172.72 51.308 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
+			(at 172.72 55.88 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 172.72 58.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "PROD_ID" "RES-00824"
+			(at 172.72 53.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "2f97d9df-82e9-4dc3-93b8-aa78e2a395e6")
+		)
+		(pin "2"
+			(uuid "7ae8030f-9e0c-416c-afce-199aeeb33ef1")
+		)
+		(instances
+			(project "meshtonic_h4m_v2"
+				(path "/b7f3416a-02f6-4ba6-9720-a51769341590/95c96868-f05a-4901-857a-fe6ce5cc7905"
+					(reference "R45")
+					(unit 1)
+				)
 			)
 		)
 	)
@@ -4808,7 +5073,7 @@
 	)
 	(symbol
 		(lib_id "PCM_SparkFun-Capacitor:22uF_0603_6.3V_20%")
-		(at 186.69 55.88 180)
+		(at 176.53 41.91 270)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -4819,29 +5084,27 @@
 		(fields_autoplaced yes)
 		(uuid "1a7b2ab6-6b91-40dd-953e-be8f9cf25f02")
 		(property "Reference" "C5"
-			(at 189.23 52.0635 0)
+			(at 176.5236 30.48 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
 		(property "Value" "22uF"
-			(at 189.23 54.6035 0)
+			(at 176.5236 33.02 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
 		(property "Footprint" "PCM_SparkFun-Capacitor:C_0603_1608Metric"
-			(at 186.69 44.45 0)
+			(at 165.1 41.91 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4852,7 +5115,7 @@
 			)
 		)
 		(property "Datasheet" "https://cdn.sparkfun.com/assets/8/a/4/a/5/Kemet_Capacitor_Datasheet.pdf"
-			(at 186.69 39.37 0)
+			(at 160.02 41.91 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4863,7 +5126,7 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
-			(at 186.69 36.83 0)
+			(at 157.48 41.91 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4874,7 +5137,7 @@
 			)
 		)
 		(property "PROD_ID" "CAP-14464"
-			(at 187.96 41.91 0)
+			(at 162.56 40.64 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4885,25 +5148,23 @@
 			)
 		)
 		(property "Voltage" "6.3V"
-			(at 189.23 57.1435 0)
+			(at 176.5236 35.56 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
 		(property "Tolerance" "20%"
-			(at 189.23 59.6835 0)
+			(at 176.5236 38.1 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
 			)
 		)
 		(pin "1"
@@ -4931,10 +5192,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "28fb0716-951c-4efe-9604-7481d09aff82")
 		(property "Reference" "R6"
-			(at 182.88 74.93 0)
+			(at 182.626 79.502 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -4944,7 +5204,7 @@
 			)
 		)
 		(property "Value" "100k"
-			(at 182.88 77.47 0)
+			(at 183.134 83.058 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5587,7 +5847,7 @@
 	)
 	(symbol
 		(lib_id "PCM_SparkFun-PowerSymbol:GND")
-		(at 172.72 52.07 90)
+		(at 177.8 49.53 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -5598,7 +5858,7 @@
 		(fields_autoplaced yes)
 		(uuid "455c89e9-08e1-4ef2-9df3-5c99b6b5bda4")
 		(property "Reference" "#PWR02"
-			(at 179.07 52.07 0)
+			(at 184.15 49.53 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5609,7 +5869,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 176.53 52.07 0)
+			(at 181.61 49.53 0)
 			(show_name no)
 			(do_not_autoplace yes)
 			(effects
@@ -5619,7 +5879,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 172.72 52.07 0)
+			(at 177.8 49.53 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5630,7 +5890,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 172.72 52.07 0)
+			(at 177.8 49.53 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5641,7 +5901,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 181.61 52.07 0)
+			(at 186.69 49.53 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6054,7 +6314,7 @@
 			)
 		)
 		(property "Value" "22uF"
-			(at 177.8063 54.61 90)
+			(at 178.308 67.564 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6108,7 +6368,7 @@
 			)
 		)
 		(property "Voltage" "6.3V"
-			(at 177.8063 57.15 90)
+			(at 177.8 63.754 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6118,7 +6378,7 @@
 			)
 		)
 		(property "Tolerance" "20%"
-			(at 177.8063 59.69 90)
+			(at 177.8 65.532 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6232,7 +6492,7 @@
 		(dnp no)
 		(uuid "b27f5ee7-10ef-49fe-b007-b5451f941dc1")
 		(property "Reference" "C4"
-			(at 174.244 76.708 90)
+			(at 177.8 73.66 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6242,7 +6502,7 @@
 			)
 		)
 		(property "Value" "22uF"
-			(at 172.212 74.168 90)
+			(at 178.054 77.724 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6306,7 +6566,7 @@
 			)
 		)
 		(property "Tolerance" "20%"
-			(at 177.546 76.708 90)
+			(at 177.8 75.692 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6820,7 +7080,7 @@
 	)
 	(symbol
 		(lib_id "PCM_SparkFun-PowerSymbol:GND")
-		(at 181.61 59.69 0)
+		(at 181.61 41.91 90)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6831,7 +7091,7 @@
 		(fields_autoplaced yes)
 		(uuid "e6f3e468-2668-4d02-9ba9-981596c9cada")
 		(property "Reference" "#PWR03"
-			(at 181.61 66.04 0)
+			(at 187.96 41.91 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6842,7 +7102,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 181.61 63.5 0)
+			(at 185.42 41.91 0)
 			(show_name no)
 			(do_not_autoplace yes)
 			(effects
@@ -6852,7 +7112,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 181.61 59.69 0)
+			(at 181.61 41.91 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6863,7 +7123,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 181.61 59.69 0)
+			(at 181.61 41.91 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6874,7 +7134,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 181.61 68.58 0)
+			(at 190.5 41.91 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6898,7 +7158,7 @@
 	)
 	(symbol
 		(lib_id "PCM_SparkFun-Resistor:2.0k_0402")
-		(at 170.18 52.07 180)
+		(at 172.72 49.53 180)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6909,7 +7169,7 @@
 		(fields_autoplaced yes)
 		(uuid "f7f9b35e-b048-4b06-a1a8-959809dafebe")
 		(property "Reference" "R5"
-			(at 170.18 58.42 0)
+			(at 172.72 55.88 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6919,7 +7179,7 @@
 			)
 		)
 		(property "Value" "2.0k"
-			(at 170.18 55.88 0)
+			(at 172.72 53.34 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6929,7 +7189,7 @@
 			)
 		)
 		(property "Footprint" "PCM_SparkFun-Resistor:R_0402_1005Metric"
-			(at 170.18 47.752 0)
+			(at 172.72 45.212 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6940,7 +7200,7 @@
 			)
 		)
 		(property "Datasheet" "https://www.vishay.com/docs/20035/dcrcwe3.pdf"
-			(at 170.18 43.18 0)
+			(at 172.72 40.64 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6951,7 +7211,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 170.18 40.64 0)
+			(at 172.72 38.1 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6962,7 +7222,7 @@
 			)
 		)
 		(property "PROD_ID" "RES-15406"
-			(at 170.18 45.212 0)
+			(at 172.72 42.672 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
