@@ -1,0 +1,51 @@
+Meshtonic — multi-license notice
+================================
+
+Copyright (c) 2026 Josephrp and Meshtonic contributors.
+
+This repository is a monorepo. Different trees carry different licenses.
+There is no single license that applies to every file.
+
+1. First-party hardware design
+------------------------------
+Paths: pcb/, case/
+
+SPDX-License-Identifier: CERN-OHL-P-2.0
+
+Full text: LICENSES/CERN-OHL-P-2.0.txt
+https://spdx.org/licenses/CERN-OHL-P-2.0.html
+
+This covers schematics, PCB layouts, BOMs, fab artifacts, and enclosure
+CAD produced for the Meshtonic H4M Companion.
+
+2. First-party documentation and media
+--------------------------------------
+Paths: README.md, static/, and this LICENSE file
+
+SPDX-License-Identifier: CC-BY-4.0
+
+Full text: LICENSES/CC-BY-4.0.txt
+https://creativecommons.org/licenses/by/4.0/
+
+3. Firmware (third-party trees + Meshtonic board support)
+--------------------------------------------------------
+Paths under firmwares/ keep the license of their containing project.
+Meshtonic-specific board support and apps added inside those trees follow
+the same license as the host tree unless a file says otherwise.
+
+| Path | License |
+|------|---------|
+| firmwares/meshtastic/ | GPL-3.0-only — see firmwares/meshtastic/LICENSE |
+| firmwares/mayhem-firmware/ | GPL-3.0 — see that tree |
+| firmwares/mayhem-mdk/ | HTL (custom; no commercial use) — firmwares/mayhem-mdk/LICENSE |
+| firmwares/mayhem-mdk/lora-wideband-decoder/ | See that subtree’s LICENSE |
+| firmwares/pin_mapping.cpp | CERN-OHL-P-2.0 (shared with the hardware design) |
+
+Upstream copyrights remain with their respective authors. Do not treat a
+vendored firmware tree as re-licensed by this root notice.
+
+4. Third-party libraries inside pcb/
+------------------------------------
+KiCad symbol/footprint libraries under pcb/libs/ may carry their own
+upstream licenses (for example Seeed Fusion / Grove libraries). Those
+licenses are unchanged by this notice.

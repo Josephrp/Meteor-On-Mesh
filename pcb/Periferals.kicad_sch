@@ -6366,7 +6366,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R_0603"
+		(property "Value" "0"
 			(at 123.19 118.1101 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7297,7 +7297,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R_0603"
+		(property "Value" "10k"
 			(at 129.032 136.144 0)
 			(show_name no)
 			(do_not_autoplace no)

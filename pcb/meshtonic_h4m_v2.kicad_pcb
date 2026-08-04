@@ -6461,7 +6461,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/1221/MBKK2012T1R0M_SS.pdf"
+		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/1853/MBKK2012T1R5M_SS.pdf"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -66895,7 +66895,7 @@
 				)
 			)
 		)
-		(property "Value" "R_0603"
+		(property "Value" "0"
 			(at 0 1.43 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -67544,7 +67544,7 @@
 				)
 			)
 		)
-		(property "Value" "R_0603"
+		(property "Value" "10k"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(hide yes)

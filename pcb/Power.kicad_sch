@@ -1367,7 +1367,7 @@
 					)
 				)
 			)
-			(property "Value" "1.0uH"
+			(property "Value" "1.5uH"
 				(at 0 -1.27 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -1388,7 +1388,7 @@
 					)
 				)
 			)
-			(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/1221/MBKK2012T1R0M_SS.pdf"
+			(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/1853/MBKK2012T1R5M_SS.pdf"
 				(at 0 -11.43 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -5787,7 +5787,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/1221/MBKK2012T1R0M_SS.pdf"
+		(property "Datasheet" "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/1853/MBKK2012T1R5M_SS.pdf"
 			(at 102.87 80.01 0)
 			(hide yes)
 			(show_name no)

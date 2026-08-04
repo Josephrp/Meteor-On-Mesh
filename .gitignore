@@ -6,6 +6,9 @@ case/refs/**
 *.txt
 !pcb/refs
 !pcb/refs/**
+!LICENSES/
+!LICENSES/**
 
 .cursor
 *.lck
+*.zip

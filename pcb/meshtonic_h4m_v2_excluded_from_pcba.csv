@@ -1,0 +1,5 @@
+Designator,Reason,Action
+"TP1,TP_H4M_3V1,TP_H4M_SCL1,TP_H4M_SDA1,TP_VBAT_H4M1",Test points,Seeed: do not include test points in PCBA BOM
+"J_WIO1,J_WIO2,J_WIO3,J_WIO4",XIAO-ESP32-S3-DIP hybrid SMD+TH landing (15.24mm row spacing); not a 2.54mm dual-row header,"Hand-fit 2x 1x7 female headers 2.54mm (e.g. PPPC071LFBN-RC) per site, or SMD-solder Wio modules"
+"DISP1,WIO1,WIO2,WIO3,WIO4,ST4",Excluded from board in schematic,Not fabricated / not assembled
+"J16,J17,J18,J19,J20,J21,J22,J23",DNP / excluded from board,Not for Fusion purchase
